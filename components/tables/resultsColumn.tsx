@@ -1,73 +1,50 @@
-import { UserRole } from "@/types";
-import FormContainer from "../FormContainer";
+"use client";
 
-type ResultsList = {
-    id: number;
-    score: number;
-    title: string;
-    student: {
-        id: string;
-        name: string;
-        surname: string;
-    };
-    teacher: {
-        name: string;
-        surname: string;
-    };
-    className: string;
-    startTime: Date;
-    endTime: Date;
-    type: string;
-    lessonId: number;
-    testId: number;
-} | null
+import DeleteModal from "@/components/DeleteModal";
+import DropdownOptions from "@/components/DropdownOptions";
+import FormModal from "@/components/FormModal";
+import { DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import { Result } from "@/lib/generated/graphql/client";
+import { ColumnDef } from "@tanstack/react-table";
 
+export const resultsColumn: ColumnDef<Result>[] = [
+    {
+        accessorKey: "uploadedAt",
+        header: "Uploaded At",
+        cell: ({ row: { original } }) => (
+            <span>
+                {new Date(original.uploadedAt).toLocaleDateString("en-NG", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                })}
+            </span>
+        ),
+    },
+    {
+        id: "Actions",
+        cell: ({ row: { original } }) => (
+            <DropdownOptions>
+                <>
+                    <FormModal
+                        table="result"
+                        type="update"
+                        data={original}
+                        triggerTitle="Update"
+                    />
 
-export const resultsColumn = (role: UserRole) => [
-    {
-        accessor: "title",
-        header: 'Subject',
-        cell: (item: ResultsList) => <div>{item?.title}</div>
+                    <DropdownMenuSeparator />
+
+                    <DeleteModal
+                        table="result"
+                        id={original.id}
+                        triggerTitle="Delete"
+                    />
+                </>
+            </DropdownOptions>
+        ),
+        enableHiding: false,
+        enableSorting: false,
+        enableGlobalFilter: false,
     },
-    {
-        accessor: "student",
-        header: "Student",
-        cell: (item: ResultsList) => <div>{item?.student.name} {item?.student.surname}</div>
-    },
-    ...(role === 'admin' ? [{
-        accessor: "teacher",
-        header: "Teacher",
-        cell: (item: ResultsList) => <div>{item?.teacher.name} {item?.teacher.surname}</div>
-    }] : []),
-    {
-        accessor: "score",
-        header: "Score",
-        cell: (item: ResultsList) => <div>{item?.score}</div>
-    },
-    {
-        accessor: "type",
-        header: "Type",
-        cell: (item: ResultsList) => <div className="capitalize">{item?.type}</div>
-    },
-    {
-        accessor: "date",
-        header: "Date",
-        cell: (item: ResultsList) => <div>{new Intl.DateTimeFormat("en-NG").format(item?.startTime)}</div>
-    },
-    ...(role === "admin" || role === "teacher"
-        ? [
-            {
-                header: "Actions",
-                accessor: "action",
-                cell: (item: ResultsList) => (
-                    <div>
-                        <div className="flex items-center gap-2">
-                            <FormContainer table="result" type="update" data={item} />
-                            <FormContainer table="result" type="delete" id={item?.id} />
-                        </div>
-                    </div>
-                )
-            },
-        ]
-        : []),
-]
+];

@@ -1,119 +1,121 @@
 "use server";
 
-import { CurrentState } from "@/types";
+import { getCurrentUser, handleGraphqlServerErrors } from "@/lib/server/utils";
 import { clerkClient } from "@clerk/nextjs/server";
-import { handleServerErrors } from "../utils";
-import { ParentSchema } from "../zod/validation";
-import { getCurrentUser } from "@/lib/serverUtils";
+import { ParentInput } from "../generated/graphql/server";
+import { AppError, NotFoundError } from "../pothos/errors";
 import prisma from "../prisma";
+import { handleServerErrors } from "../utils";
+import { createUser, deleteUserAuthInfo, updateUser } from "./school";
 
-export const createParent = async (
-  currentState: CurrentState,
-  { password, ...data }: ParentSchema,
-) => {
+const allowedRoles = ["manager", "administration"];
+
+interface Props extends ParentInput {
+  slug: string;
+}
+
+export const createParentAction = async ({
+  password,
+  primaryId,
+  slug,
+  ...data
+}: Omit<Props, "id">) => {
   const { accessLevel, schoolId } = await getCurrentUser();
 
-  if (accessLevel !== "manager") {
-    return { success: false, error: "Unauthorized" };
+  if (!allowedRoles.includes(accessLevel!)) {
+    throw new AppError(
+      "You are not authorized to perform this action",
+      "UNAUTHORIZED",
+    );
   }
 
-  const client = await clerkClient();
-  let userId = "";
+  let userId = null;
+
+  const username = `${slug}-${primaryId}`;
 
   try {
-    const user = await client.users.createUser({
-      username: data.username,
-      password: password,
-      firstName: data.name,
-      lastName: data.surname,
-      publicMetadata: { accessLevel: "parent" },
-    });
+    if (primaryId && password) {
+      const user = await createUser({
+        username,
+        password: password,
+        firstName: data.name,
+        lastName: data.surname,
+        accessLevel: "parent",
+        schoolId: schoolId!,
+      });
 
-    userId = user.id;
+      userId = user.id;
+    }
 
-    await prisma.parent.create({
+    return await prisma.parent.create({
       data: {
-        ...data,
+        schoolId: schoolId!,
         clerkUserId: userId,
-        schoolId,
+        ...data,
+        ...(primaryId && { primaryId: username }),
       },
     });
-
-    return { success: true, error: false };
   } catch (err: any) {
-    if (userId !== "") {
-      await client.users.deleteUser(userId);
+    if (userId) {
+      await deleteUserAuthInfo(userId);
     }
 
-    console.log(err);
-    const serverErrors = handleServerErrors(err);
-
-    if (serverErrors?.error) {
-      return {
-        success: false,
-        error: serverErrors.error,
-      };
-    }
-
-    return {
-      success: false,
-      error: "Something went wrong while creating the parent",
-    };
+    handleGraphqlServerErrors(err);
   }
 };
 
-export const updateParent = async (
-  currentState: CurrentState,
-  { password, ...data }: ParentSchema,
-) => {
+export const updateParentAction = async ({
+  password,
+  primaryId,
+  slug,
+  ...data
+}: Props) => {
+  if (!data.id) {
+    throw new NotFoundError("Parent");
+  }
+
+  const { accessLevel, schoolId } = await getCurrentUser();
+
+  if (!allowedRoles.includes(accessLevel!)) {
+    throw new AppError(
+      "You are not authorized to perform this action",
+      "UNAUTHORIZED",
+    );
+  }
+
   try {
-    if (!data.id) return { success: false, error: "Parent doesn't exist" };
-
-    const { accessLevel, schoolId } = await getCurrentUser();
-
-    if (accessLevel !== "manager") {
-      return { success: false, error: "Unauthorized" };
-    }
-
-    const client = await clerkClient();
-
-    await client.users.updateUser(data.id, {
-      username: data.username,
-      ...(password !== "" && { password: password }),
+    const username = `${slug}-${primaryId}`;
+    const authData = {
+      username,
       firstName: data.name,
       lastName: data.surname,
-    });
+      schoolId: schoolId!,
+      accessLevel: "parent",
+      ...(password && { password }),
+    };
+    if (primaryId && data.clerkUserId) {
+      await updateUser({ ...authData, clerkId: data.id });
+    } else if (primaryId && !data.clerkUserId && password) {
+      await createUser({ ...authData });
+    }
 
-    const resData = await prisma.parent.update({
+    return await prisma.parent.update({
       where: {
         id: data.id,
         schoolId,
       },
-      data,
+      data: {
+        ...data,
+        ...(primaryId && { primaryId: username }),
+        id: data.id!,
+      },
     });
-
-    if (!resData) throw Error;
-
-    return { success: true, error: false };
   } catch (err: any) {
-    console.log(err);
-    const serverErrors = handleServerErrors(err);
-
-    if (serverErrors?.error) {
-      return {
-        success: false,
-        error: serverErrors.error,
-      };
-    }
-
-    return {
-      success: false,
-      error: "Something went wrong while updating the parent",
-    };
+    handleGraphqlServerErrors(err);
   }
 };
 
-export const deleteParent = async (parentId: string) => {
+export const deleteParentAction = async (parentId: string) => {
   try {
     const client = await clerkClient();
     const { accessLevel, schoolId } = await getCurrentUser();

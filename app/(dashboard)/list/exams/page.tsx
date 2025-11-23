@@ -1,11 +1,12 @@
 import { examsColumn } from "@/components/tables/examsColumn";
-import { createServerClient, getCurrentUser } from "@/lib/serverUtils";
+import { getCurrentUser } from "@/lib/server/utils";
 import { gql } from "@urql/core";
 import { DataTable } from "@/components/tables/data-table";
 import {
   GetExamsQuery,
   GetExamsQueryVariables,
 } from "@/lib/generated/graphql/server";
+import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
 
 const GET_EXAMS = gql(`
   query GetExams($filter: ExamFilter) {
@@ -32,7 +33,7 @@ const GET_EXAMS = gql(`
 const ExamsListPage = async () => {
   const { accessLevel } = await getCurrentUser();
 
-  const { client } = await createServerClient();
+  const { client } = await createUrqlServerClient();
 
   const { data } = await client
     .query<GetExamsQuery, GetExamsQueryVariables>(GET_EXAMS, {})

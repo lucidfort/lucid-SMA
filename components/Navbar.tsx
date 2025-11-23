@@ -1,11 +1,11 @@
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import prisma from "@/lib/prisma";
 import { RoleAccessLevel } from "@/types";
-import { School } from "@prisma/client";
 import Image from "next/image";
 import { Suspense } from "react";
 import Notifications from "./Notifications";
 import { Skeleton } from "./ui/skeleton";
+import { School } from "@/lib/generated/graphql/server";
 
 type SchoolDetails = Pick<School, "name" | "motto" | "slug" | "id" | "logo">;
 
@@ -56,7 +56,7 @@ const Navbar = async ({
         <div className="navbar-user_icons relative">
           <Image src="/announcement.svg" alt="message" width={20} height={20} />
           <Suspense fallback={<Skeleton className="h-10 w-10 rounded-full" />}>
-            <Notifications accessLevel={accessLevel} userId={userId} />
+            <Notifications schoolId={school.id} />
           </Suspense>
         </div>
 

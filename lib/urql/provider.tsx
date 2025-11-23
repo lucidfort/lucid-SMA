@@ -1,25 +1,30 @@
 "use client";
 
-import { Provider } from "urql";
-import { createUrqlClient } from "@/lib/urql/client";
-import { ReactNode, useMemo } from "react";
+import { Client, UrqlProvider as Provider, SSRExchange } from "@urql/next";
+import { ReactNode, useEffect, useState } from "react";
+// import { createUrqlClient } from "./clients/browser.client";
 
 export function UrqlProvider({
   children,
-  urqlState,
 }: {
   children: ReactNode;
-  urqlState?: any;
 }) {
-  const { client } = useMemo(() => {
-    const initialState =
-      urqlState ??
-      (typeof window !== "undefined"
-        ? JSON.parse(document.getElementById("urql-data")?.textContent || "{}")
-        : undefined);
+  const [clientBundle, setClientBundle] = useState<{ client: Client; ssr: SSRExchange } | null>(null)
 
-    return createUrqlClient(undefined, initialState);
-  }, [urqlState]);
+  useEffect(() => {
+    const setup = async () => {
+      if (typeof window !== "undefined") {
+        const { createUrqlClient } = await import("./clients/browser.client")
+        const { client, ssr } = createUrqlClient();
+        setClientBundle({ client, ssr })
+      }
+    }
 
-  return <Provider value={client}>{children}</Provider>;
+    setup()
+  }, [])
+
+  if (!clientBundle) return <div className="sr-only">Loading...</div>
+
+
+  return <Provider client={clientBundle.client} ssr={clientBundle.ssr}>{children}</Provider>;
 }

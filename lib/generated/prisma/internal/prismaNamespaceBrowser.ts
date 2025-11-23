@@ -43,7 +43,6 @@ export const ModelName = {
   Result: 'Result',
   TermlyResult: 'TermlyResult',
   Invoice: 'Invoice',
-  InvoiceLine: 'InvoiceLine',
   InvoicePayment: 'InvoicePayment',
   SalaryPayment: 'SalaryPayment',
   StaffBankAccount: 'StaffBankAccount',
@@ -217,7 +216,6 @@ export type ManagerScalarFieldEnum = (typeof ManagerScalarFieldEnum)[keyof typeo
 
 export const StudentScalarFieldEnum = {
   id: 'id',
-  clerkUserId: 'clerkUserId',
   registrationNumber: 'registrationNumber',
   name: 'name',
   surname: 'surname',
@@ -376,7 +374,6 @@ export const ResultScalarFieldEnum = {
   id: 'id',
   score: 'score',
   grade: 'grade',
-  remarks: 'remarks',
   uploadedAt: 'uploadedAt',
   schoolId: 'schoolId',
   studentId: 'studentId',
@@ -410,13 +407,8 @@ export const InvoiceScalarFieldEnum = {
   title: 'title',
   amount: 'amount',
   dueDate: 'dueDate',
-  status: 'status',
-  issuedDate: 'issuedDate',
   schoolId: 'schoolId',
   termId: 'termId',
-  studentId: 'studentId',
-  gradeId: 'gradeId',
-  classId: 'classId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -424,31 +416,18 @@ export const InvoiceScalarFieldEnum = {
 export type InvoiceScalarFieldEnum = (typeof InvoiceScalarFieldEnum)[keyof typeof InvoiceScalarFieldEnum]
 
 
-export const InvoiceLineScalarFieldEnum = {
-  id: 'id',
-  description: 'description',
-  amount: 'amount',
-  invoiceId: 'invoiceId'
-} as const
-
-export type InvoiceLineScalarFieldEnum = (typeof InvoiceLineScalarFieldEnum)[keyof typeof InvoiceLineScalarFieldEnum]
-
-
 export const InvoicePaymentScalarFieldEnum = {
   id: 'id',
   amountPaid: 'amountPaid',
   currency: 'currency',
   reference: 'reference',
-  paymentDate: 'paymentDate',
-  narration: 'narration',
-  payerName: 'payerName',
+  payerEmail: 'payerEmail',
   method: 'method',
   status: 'status',
-  providerReference: 'providerReference',
-  schoolId: 'schoolId',
-  invoiceId: 'invoiceId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  paidAt: 'paidAt',
+  schoolId: 'schoolId',
+  invoiceId: 'invoiceId'
 } as const
 
 export type InvoicePaymentScalarFieldEnum = (typeof InvoicePaymentScalarFieldEnum)[keyof typeof InvoicePaymentScalarFieldEnum]
@@ -506,13 +485,11 @@ export const AnnouncementScalarFieldEnum = {
   id: 'id',
   title: 'title',
   content: 'content',
-  isPublished: 'isPublished',
-  draftedAt: 'draftedAt',
   publishedAt: 'publishedAt',
   updatedAt: 'updatedAt',
+  staffOnly: 'staffOnly',
   schoolId: 'schoolId',
   termId: 'termId',
-  classId: 'classId',
   gradeId: 'gradeId'
 } as const
 
@@ -538,7 +515,6 @@ export const TeacherSubjectAssignmentScalarFieldEnum = {
   schoolId: 'schoolId',
   teacherId: 'teacherId',
   subjectId: 'subjectId',
-  gradeId: 'gradeId',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

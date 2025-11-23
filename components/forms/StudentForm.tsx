@@ -1,6 +1,6 @@
 "use client";
 
-import { StudentSchema, studentSchema } from "@/lib/zod/validation";
+import { StudentSchema, studentSchema } from "@/lib/validation";
 import { FormProps } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
@@ -14,26 +14,67 @@ import { Form } from "@/components/ui/form";
 import { SelectContent, SelectItem } from "@/components/ui/select";
 import { relationships, userSex } from "@/constants";
 import {
-  SexEnum,
+  CreateStudentMutation,
+  ParentStudent,
+  ParentStudentRelationship,
+  Sex,
+  UpdateStudentMutation,
   useCreateStudentMutation,
   useGetClassesQuery,
   useGetGradesQuery,
   useGetProgramsQuery,
+  useGetSchoolQuery,
+  useUpdateStudentMutation,
 } from "@/lib/generated/graphql/client";
-import { studentDefaultValues } from "@/lib/zod/defaultValues";
 import { Button } from "@/components/ui/button";
 import { handleGraphqlClientErrors } from "@/lib/utils";
 
 const StudentForm = ({ type, data, setOpen, relatedData }: FormProps) => {
   const router = useRouter();
 
-  const { schoolSlug } = relatedData ?? {};
+  const primaryParent = data?.guardians.find(
+    (guardian: Omit<ParentStudent, "student">) => guardian.isPrimary,
+  );
+
+  const secondaryParent = data?.guardians.find(
+    (guardian: Omit<ParentStudent, "student">) => !guardian.isPrimary,
+  );
 
   const form = useForm<StudentSchema>({
-    resolver: zodResolver(studentSchema(schoolSlug)),
-    defaultValues: studentDefaultValues(data, relatedData),
+    resolver: zodResolver(studentSchema),
+    defaultValues: {
+      name: data?.name ?? "",
+      surname: data?.surname ?? "",
+      address: data?.address ?? "",
+      registrationNumber: data?.registrationNumber?.split("-")[1] ?? "",
+      birthday: data?.birthday ? new Date(data.birthday) : new Date(),
+      sex: data?.sex ?? "MALE",
+      img: data?.img,
+      programId: data?.class.grade.programId,
+      gradeId: data?.class.grade.id,
+      classId: data?.class.id,
+      primaryGuardian: {
+        id: primaryParent?.parent.id ?? "",
+        name: primaryParent
+          ? `${primaryParent.parent.name} ${primaryParent.parent.surname}`
+          : "",
+        relation: primaryParent.relation ?? "",
+      },
+      secondaryGuardian: secondaryParent
+        ? {
+            id: secondaryParent?.parent.id,
+            name: secondaryParent
+              ? `${secondaryParent.parent.name} ${secondaryParent.parent.surname}`
+              : "",
+            relation: secondaryParent.relation,
+          }
+        : null,
+    },
   });
 
+  const [schoolResult] = useGetSchoolQuery({
+    variables: { id: relatedData?.schoolId },
+  });
   const [programs] = useGetProgramsQuery();
 
   const programId = form.watch("programId");
@@ -44,11 +85,12 @@ const StudentForm = ({ type, data, setOpen, relatedData }: FormProps) => {
 
   const gradeId = form.watch("gradeId");
   const [classes] = useGetClassesQuery({
-    variables: { where: { gradeId: gradeId! } },
     pause: !gradeId,
+    variables: { filter: { gradeId: gradeId! } },
   });
 
-  const [mutationResult, createStudent] = useCreateStudentMutation();
+  const [createResult, createStudent] = useCreateStudentMutation();
+  const [updateResult, updateStudent] = useUpdateStudentMutation();
 
   const onSubmit = form.handleSubmit(async (values) => {
     const hasNewImg = data?.img !== values.img;
@@ -56,32 +98,68 @@ const StudentForm = ({ type, data, setOpen, relatedData }: FormProps) => {
     const formData = {
       ...(type === "update" && {
         id: data.id,
-        omgImg: hasNewImg ? data?.img : null,
+        oldImg: hasNewImg ? data?.img : null,
       }),
-      ...values,
-      sex: values.sex as SexEnum,
-      primaryGuardian: values.primaryGuardian.id,
-      secondaryGuardian: values?.secondaryGuardian?.id,
+      primaryGuardian: {
+        id: values.primaryGuardian.id,
+        relation: values.primaryGuardian.relation as ParentStudentRelationship,
+      },
+      ...(values.secondaryGuardian &&
+        values.secondaryGuardian.id && {
+          secondaryGuardian: {
+            id: values.secondaryGuardian.id,
+            relation: values.secondaryGuardian
+              .relation as ParentStudentRelationship,
+          },
+        }),
+      name: values.name,
+      surname: values.surname,
+      address: values.address,
+      birthday: values.birthday,
+      registrationNumber: values.registrationNumber,
+      img: values.img,
+      sex: values.sex as Sex,
+      classId: values.classId,
+      medicalCondition: values.medicalCondition,
     };
 
-    delete formData.gradeId;
+    const response =
+      type === "create"
+        ? await createStudent({ input: formData })
+        : await updateStudent({ input: formData });
 
-    const response = await createStudent({ input: formData });
+    console.log({ response });
 
-    const typeName = response.data?.createStudent?.__typename;
-    if (typeName === "MutationCreateStudentSuccess") {
+    const mutationResult =
+      type === "create"
+        ? (response.data as CreateStudentMutation)?.createStudent
+        : (response.data as UpdateStudentMutation)?.updateStudent;
+
+    if (!mutationResult) {
+      toast.error("Something went wrong");
+      return;
+    }
+
+    if (
+      mutationResult.__typename === "MutationCreateStudentSuccess" ||
+      mutationResult.__typename === "MutationUpdateStudentSuccess"
+    ) {
       toast.success(`Student ${type}d successfully!`);
       setOpen(false);
       router.refresh();
     } else {
-      const error = handleGraphqlClientErrors(typeName);
+      const error = handleGraphqlClientErrors(mutationResult);
       toast.error(error ?? "Something went wrong");
     }
   });
 
+  const slug = schoolResult.data?.school?.slug;
+
   const selectedProgram = programs?.data?.programs?.find(
     ({ id }) => programId === id,
   )?.name;
+
+  const isLoading = createResult.fetching || updateResult.fetching;
 
   return (
     <Form {...form}>
@@ -96,6 +174,7 @@ const StudentForm = ({ type, data, setOpen, relatedData }: FormProps) => {
             control={form.control}
             name="registrationNumber"
             placeholder="202"
+            prefix={slug}
             fieldType={FormFieldType.INPUT}
           />
           <InputField
@@ -142,7 +221,7 @@ const StudentForm = ({ type, data, setOpen, relatedData }: FormProps) => {
           <FileUploader
             control={form.control}
             name="img"
-            folder={schoolSlug ? `${schoolSlug}/students` : "students"}
+            folder={slug ? `${slug}/students` : "students"}
             label="Students"
           />
         </div>
@@ -163,7 +242,7 @@ const StudentForm = ({ type, data, setOpen, relatedData }: FormProps) => {
             control={form.control}
             fieldType={FormFieldType.SELECT}
             label="Relationship"
-            name="primaryGuardianRelationship"
+            name="primaryGuardian.relation"
           >
             <SelectContent>
               {relationships.map((relationship) => (
@@ -185,7 +264,7 @@ const StudentForm = ({ type, data, setOpen, relatedData }: FormProps) => {
             control={form.control}
             fieldType={FormFieldType.SELECT}
             label="Relationship"
-            name="secondaryGuardianRelationship"
+            name="secondaryGuardian.relation"
             placeholder="Select relationship"
           >
             <SelectContent>
@@ -265,10 +344,10 @@ const StudentForm = ({ type, data, setOpen, relatedData }: FormProps) => {
 
         <Button
           type="submit"
-          disabled={mutationResult.fetching}
+          disabled={!form.formState.isDirty || isLoading}
           className="form-submit_btn"
         >
-          {mutationResult.fetching ? (
+          {isLoading ? (
             <Loader2 className="animate-spin text-lamaYellow" />
           ) : (
             type

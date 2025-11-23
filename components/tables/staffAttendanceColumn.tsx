@@ -1,18 +1,21 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
-import { markStaffAttendance } from "@/lib/actions";
 import { isToday, isWeekend } from "date-fns";
+import StaffAttendanceMarker from "../StaffAttendanceMarker";
+import DropdownOptions from "../DropdownOptions";
+import { DropdownMenuItem } from "../ui/dropdown-menu";
+import Link from "next/link";
 
 type StaffAttendanceList = {
   id: string;
   name: string;
   surname: string;
   date: Date;
-  attendances: {
-    clockInTime: Date;
-  }[];
+  attendance?: {
+    clockInTime?: Date;
+    reasonForAbsence?: string;
+  };
 };
 
 export const staffAttendanceColumn: ColumnDef<StaffAttendanceList>[] = [
@@ -24,41 +27,52 @@ export const staffAttendanceColumn: ColumnDef<StaffAttendanceList>[] = [
     ),
   },
   {
-    accessorKey: "clockInTime",
+    accessorKey: "attendance.clockInTime",
     header: "Clock In Time",
-    cell: ({ row: { original } }) => (
+    cell: ({ row: { original: { attendance } } }) => (
       <span>
-        {original.attendances[0]?.clockInTime.toLocaleTimeString("en-CA", {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true,
-        }) ?? "-"}
+        {attendance?.clockInTime ? (
+          new Date(attendance.clockInTime).toLocaleTimeString("en-NG", { hour: "2-digit", minute: "2-digit", hour12: true })
+        ) : "-"}
+      </span>
+    ),
+    enableGlobalFilter: false,
+  },
+  {
+    accessorKey: "attendance.reasonForAbsence",
+    header: "Reason for Absence",
+    cell: ({ row: { original: { attendance } } }) => (
+      <span>
+        {attendance?.reasonForAbsence ?? "-"}
       </span>
     ),
     enableGlobalFilter: false,
   },
   {
     id: "actions",
-    cell: ({ row: { original } }) => {
-      const isEndOfTheWeek = isWeekend(original.date);
-      const isDateToday = isToday(original.date);
+    cell: ({ row: { original: { date, id, attendance } } }) => {
+      const isEndOfTheWeek = isWeekend(date);
+      const isDateToday = isToday(date);
 
-      if (original.attendances.length === 0 && isDateToday && !isEndOfTheWeek) {
-        return (
-          <Button
-            variant="ghost"
-            className="rounded-xl bg-lamaPurple"
-            onClick={async () => {
-              await markStaffAttendance({
-                staffId: original.id,
-                date: original.date,
-              });
-            }}
-          >
-            Check in
-          </Button>
-        );
-      }
+      return (
+        <DropdownOptions>
+          <DropdownMenuItem>
+            <Link href={`/list/staffs/${id}`}>View Staff</Link>
+          </DropdownMenuItem>
+
+          {(!attendance && isDateToday && !isEndOfTheWeek) && (
+            <>
+              <DropdownMenuItem asChild>
+                <StaffAttendanceMarker type="check-in" date={date} staffId={id} />
+              </DropdownMenuItem>
+
+              <DropdownMenuItem asChild>
+                <StaffAttendanceMarker type="absent" date={date} staffId={id} />
+              </DropdownMenuItem>
+            </>
+          )}
+        </DropdownOptions>
+      )
     },
     enableSorting: false,
     enableGlobalFilter: false,

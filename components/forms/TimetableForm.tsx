@@ -3,7 +3,7 @@
 import {
   timetableAssignmentSchema,
   TimetableAssignmentSchema,
-} from "@/lib/zod/validation";
+} from "@/lib/validation";
 import { FormProps } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
@@ -129,6 +129,11 @@ const TimetableForm = ({ data, setOpen }: FormProps) => {
             control={form.control}
             fieldType={FormFieldType.INPUT}
             disabled={isAssignmentForm}
+            inputProps={{
+              min: "07:00",
+              max: "18:00",
+              step: "1800",
+            }}
           />
 
           <InputField
@@ -138,6 +143,11 @@ const TimetableForm = ({ data, setOpen }: FormProps) => {
             control={form.control}
             fieldType={FormFieldType.INPUT}
             disabled={isAssignmentForm}
+            inputProps={{
+              min: "07:00",
+              max: "18:00",
+              step: "1800",
+            }}
           />
 
           {isAssignmentForm && (

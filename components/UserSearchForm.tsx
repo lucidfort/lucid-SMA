@@ -29,6 +29,7 @@ type UserSearchProps = {
   control: any;
   name: string;
   containerClassname?: string;
+  grades?: string[]
 };
 
 const UserSearchForm = ({
@@ -37,13 +38,17 @@ const UserSearchForm = ({
   name,
   control,
   containerClassname,
+  grades
 }: UserSearchProps) => {
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
   const options = {
     pause: true,
-    variables: { searchTerm },
+    variables: {
+      searchTerm,
+      ...(type === "student" && { filter: { grades } })
+    },
   };
 
   const [students, reexecuteStudentsQuery] = useGetStudentsQuery(options);

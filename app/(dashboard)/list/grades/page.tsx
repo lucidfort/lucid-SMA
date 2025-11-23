@@ -1,4 +1,4 @@
-import { createServerClient, getCurrentUser } from "@/lib/serverUtils";
+import { getCurrentUser } from "@/lib/server/utils";
 import { SearchParams } from "@/types";
 import { gradesColumn } from "@/components/tables/gradesColumn";
 import { DataTable } from "@/components/tables/data-table";
@@ -7,10 +7,11 @@ import {
   GetGradesQuery,
   GetGradesQueryVariables,
 } from "@/lib/generated/graphql/server";
+import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
 
 const GET_GRADES = gql(`
-    query GetGrades($where: GradeWhereInput) {
-      grades(where: $where) {
+    query GetGrades($where: GradeFilterInput) {
+      grades(filter: $where) {
           id
           name
           classes {
@@ -26,7 +27,7 @@ const GradesListPage = async ({ searchParams }: SearchParams) => {
   const { supervisorId } = await searchParams;
 
   const { accessLevel } = await getCurrentUser();
-  const { client } = await createServerClient();
+  const { client } = await createUrqlServerClient();
   const { data } = await client
     .query<
       GetGradesQuery,

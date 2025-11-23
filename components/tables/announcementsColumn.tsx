@@ -1,63 +1,84 @@
-import { UserRole } from "@/types";
-import { Announcement } from "@prisma/client";
-import FormContainer from "../FormContainer";
+"use client";
+
 import MessageBoard from "@/components/MessageBoard";
+import { Announcement } from "@/lib/generated/graphql/client";
+import { ColumnDef } from "@tanstack/react-table";
+import FormModal from "../FormModal";
+import DropdownOptions from "../DropdownOptions";
+import { isPast } from "date-fns";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import DeleteModal from "@/components/DeleteModal";
 
-type AnnouncementsList = Announcement & { class: { name: string } | null };
-
-export const announcementsColumn = (role: UserRole) => [
+export const announcementsColumn: ColumnDef<Announcement>[] = [
   {
-    accessor: "title",
+    accessorKey: "title",
     header: "Title",
-    className: "min-w-40",
-    cell: (item: AnnouncementsList) => (
-      <span className="min-w-40">{item.title}</span>
+    cell: ({ row: { original } }) => (
+      <MessageBoard
+        type="announcement"
+        title={original.title}
+        description={original.content}
+        date={new Intl.DateTimeFormat("en-NG").format(
+          new Date(original.publishedAt),
+        )}
+        trigger={<span>{original.title}</span>}
+      />
     ),
   },
   {
-    accessor: "description",
-    header: "Description",
-    className: "min-w-52",
-    cell: (item: AnnouncementsList) => (
-      <span className="min-w-52">{item.description}</span>
-    ),
-  },
-  {
-    accessor: "class",
+    accessorFn: (row) => row.grade?.name,
     header: "Class",
-    cell: (item: AnnouncementsList) => <span>{item.class?.name || "-"}</span>,
-  },
-  {
-    accessor: "date",
-    header: "Date",
-    cell: (item: AnnouncementsList) => (
-      <span>{new Intl.DateTimeFormat("en-CA").format(item.createdAt)}</span>
+    cell: ({ row: { original } }) => (
+      <span>{original?.grade?.name || "-"}</span>
     ),
   },
   {
-    header: "Actions",
-    accessor: "action",
-    cell: (item: AnnouncementsList) => {
-      const isPast = new Date(item.createdAt).getTime() < Date.now();
+    accessorKey: "date",
+    header: "Date",
+    cell: ({ row: { original } }) => (
+      <span>
+        {new Intl.DateTimeFormat("en-CA").format(
+          new Date(original.publishedAt),
+        )}
+      </span>
+    ),
+  },
+  {
+    id: "actions",
+    cell: ({ row: { original } }) => {
+      const publishedAt = new Date(original.publishedAt);
+      const isPresent = isPast(publishedAt);
 
       return (
-        <div className="flex items-center gap-2">
-          <MessageBoard
-            type="announcement"
-            title={item.title}
-            description={item.description}
-            date={new Intl.DateTimeFormat("en-NG").format(item.createdAt)}
-          />
+        <DropdownOptions>
+          <DropdownMenuItem asChild>
+            <MessageBoard
+              type="announcement"
+              title={original.title}
+              description={original.content}
+              date={new Intl.DateTimeFormat("en-NG").format(
+                new Date(original.publishedAt),
+              )}
+              trigger={<span className="pl-2">View</span>}
+            />
+          </DropdownMenuItem>
 
-          <div className={role === "admin" ? "flex gap-2" : "hidden"}>
-            {!isPast && (
-              <FormContainer table="announcement" type="update" data={item} />
-            )}
+          {isPresent && (
+            <DropdownMenuItem asChild>
+              <FormModal table="announcement" type="update" data={original} />
+            </DropdownMenuItem>
+          )}
 
-            <FormContainer table="announcement" type="delete" id={item.id} />
-          </div>
-        </div>
+          <DropdownMenuItem asChild>
+            <DeleteModal
+              id={original.id}
+              table="announcement"
+              triggerTitle={"Delete"}
+            />
+          </DropdownMenuItem>
+        </DropdownOptions>
       );
     },
+    meta: { roles: ["manager"] },
   },
 ];

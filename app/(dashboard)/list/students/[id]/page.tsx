@@ -1,75 +1,82 @@
 import Announcements from "@/components/Announcements";
 import AttendanceChartContainer from "@/components/AttendanceChartContainer";
 import { InfoCard, ParentInfoCard, SmallCard } from "@/components/Card";
+import ErrorListener from "@/components/ErrorListener";
 import PerformanceChartContainer from "@/components/PerformanceChartContainer";
-import prisma from "@/lib/prisma";
-import { getCurrentUser } from "@/lib/serverUtils";
+import {
+  GetStudentQuery,
+  GetStudentQueryVariables,
+  Parent,
+} from "@/lib/generated/graphql/server";
+import { getCurrentUser } from "@/lib/server/utils";
+import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
 import { SearchParams } from "@/types";
-import { AttendanceStatus, Parent, ParentStudentRelationship, Student } from "@prisma/client";
+import { subDays } from "date-fns";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { gql } from "urql/core";
+
+const GET_STUDENT = gql(`
+    query GetStudent($id: ID!, $attendanceFilter: AttendanceFilter!) {
+      student(id: $id) {
+        id 
+        name 
+        surname 
+        registrationNumber 
+        activeState 
+        sex 
+        address 
+        birthday
+        img
+        class {
+          id 
+          name
+          grade {
+            id
+            name
+            programId
+          }
+        }
+        guardians {
+          isPrimary
+          relation
+          parent {
+            id name surname email phone address
+          }
+        }
+        attendances(attendanceFilter: $attendanceFilter) {
+          date present
+        }
+    }
+  }
+`);
 
 const SingleStudentPage = async ({ params }: SearchParams) => {
   const { id } = await params;
-  const { schoolId, currentUserId } = await getCurrentUser();
+  const { accessLevel, schoolId } = await getCurrentUser();
 
   const today = new Date();
-  const dayOfWeek = today.getDay();
-  const daysSinceMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+  const daysSinceMonday = (today.getDay() / 6) % 7;
 
-  const lastMonday = new Date(today);
-  lastMonday.setDate(today.getDate() - daysSinceMonday);
+  const lastMonday = subDays(today, daysSinceMonday);
 
-  const student:
-    | ({
-      class: {
-        id: string;
-        name: string;
-        grade: {
-          id: string;
-          name: string;
-        };
-      };
-      parentStudents:
-      | {
-        relation: ParentStudentRelationship;
-        parent: Parent;
-      }[]
-      | null;
-      attendances: {
-        date: Date;
-        status: AttendanceStatus;
-      }[];
-    } & Student)
-    | null = await prisma.student.findUnique({
-      where: {
-        id,
-        schoolId
-      },
-      include: {
-        class: {
-          select: {
-            id: true,
-            name: true,
-            grade: { select: { id: true, name: true } },
-          },
-        },
-        parentStudents: {
-          select: {
-            relation: true,
-            parent: true,
-          },
-        },
-        attendances: {
-          where: { studentId: id, date: { gte: lastMonday } },
-          select: { date: true, status: true },
-        },
-      },
-    });
+  const { client } = await createUrqlServerClient();
+  const { data, error } = await client.query<
+    GetStudentQuery,
+    GetStudentQueryVariables
+  >(GET_STUDENT, {
+    id,
+    attendanceFilter: {
+      startDate: lastMonday,
+    },
+    // skipAttendance:
+  });
 
+  const student = data?.student;
   if (!student) return notFound();
 
-  const presentDays = student.attendances.filter((day) => day.status === "PRESENT").length;
+  const attendances = student?.attendances || [];
+  const presentDays = attendances.filter((day) => day.present).length;
   const percentage = Math.floor((presentDays / 5) * 100);
 
   const cards = [
@@ -93,10 +100,31 @@ const SingleStudentPage = async ({ params }: SearchParams) => {
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 xl:flex-row">
       {/* LEFT */}
-      <div className="w-full xl:w-2/3">
-        <div className="flex flex-col gap-4 lg:flex-row">
-          <InfoCard table="student" data={student} />
+      <div className="flex w-full flex-col gap-4 xl:w-2/3">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <InfoCard
+            table="student"
+            data={student}
+            accessLevel={accessLevel!}
+            schoolId={schoolId!}
+          />
           <SmallCard cards={cards} />
+        </div>
+
+        <div className="flex flex-col justify-between gap-4 lg:flex-row">
+          {student.guardians &&
+            student.guardians.length > 0 &&
+            student.guardians.map((guardian) => (
+              <ParentInfoCard
+                key={guardian.parent.id}
+                parent={guardian.parent as Parent}
+                relation={guardian.relation}
+              />
+            ))}
+        </div>
+
+        <div className="h-[450px] w-full">
+          <AttendanceChartContainer data={attendances} />
         </div>
       </div>
 
@@ -129,22 +157,22 @@ const SingleStudentPage = async ({ params }: SearchParams) => {
             >
               Student&apos;s Results
             </Link>
-            <div className="flex cursor-pointer items-center gap-2 rounded-md bg-lamaSkyLight p-3">
-              <span>Pay Fees</span>
-            </div>
+
+            <Link
+              className="rounded-md bg-lamaYellowLight p-3"
+              href={`/list/fees/pay?studentId=${id}`}
+            >
+              Pay Fees
+            </Link>
           </div>
         </div>
 
-        {student.parentStudents && (
-          <ParentInfoCard data={student.parentStudents} />
-        )}
+        <PerformanceChartContainer studentId={id} />
 
-        <PerformanceChartContainer schoolId={schoolId} studentId={id} />
-
-        <AttendanceChartContainer studentId={id} />
-
-        <Announcements accessLevel="student" userId={currentUserId!} schoolId={schoolId} />
+        <Announcements gradeId={student.class.grade.id} />
       </div>
+
+      <ErrorListener error={error?.graphQLErrors} />
     </div>
   );
 };

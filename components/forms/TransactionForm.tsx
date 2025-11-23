@@ -1,229 +1,142 @@
 "use client";
 
-import type React from "react";
-
-import { initiateTransaction } from "@/lib/actions";
-import { transactionSchema, TransactionSchema } from "@/lib/zod/validation";
-import { UserRole } from "@/types";
+import { transactionSchema, TransactionSchema } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Fee, Student } from "@prisma/client";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { startTransition, useActionState, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import InputField, { FormFieldType } from "../InputField";
+import UserSearchForm from "../UserSearchForm";
+import { Form } from "../ui/form";
+import {
+  MutationInitiateFeePaymentArgs,
+  useGetInvoicesQuery,
+  useInitializeFeePaymentMutation,
+} from "@/lib/generated/graphql/client";
+import { SelectContent, SelectItem } from "../ui/select";
+import { useEffect } from "react";
 import { toast } from "sonner";
-import InputField from "../InputField";
-import { Label } from "../ui/label";
-import { Textarea } from "../ui/textarea";
+import { handleGraphqlClientErrors } from "@/lib/utils";
 
-type FeeType = Pick<Fee, "id" | "amount" | "description">;
-type StudentType = Pick<Student, "id" | "name" | "surname">;
-
-interface PaymentFormProps {
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  relatedData?: {
-    email?: string;
-    feeId?: number;
-    studentId?: string;
-    paymentDetails: FeeType[];
-    userRole: UserRole;
-    students: StudentType[];
-  };
+interface TransactionFormProps {
+  invoiceId: string;
+  studentId?: string;
 }
 
-const TransactionForm = ({ setOpen, relatedData }: PaymentFormProps) => {
+const TransactionForm = ({ invoiceId, studentId }: TransactionFormProps) => {
   const router = useRouter();
-  const [selectedFee, setSelectedFee] = useState<FeeType | null>(null);
-  const [selectedStudent, setSelectedStudent] = useState<StudentType | null>(
-    null,
-  );
 
-  const { email, paymentDetails, userRole, students } = relatedData;
+  const [invoicesResult] = useGetInvoicesQuery({
+    variables: { filter: { invoiceId: invoiceId } },
+  });
+  const invoices = invoicesResult.data?.invoices;
 
-  const defaultAmount =
-    paymentDetails.find((fee) => fee.id === relatedData?.feeId)?.amount || 0;
-
-  const {
-    watch,
-    setValue,
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<TransactionSchema>({
+  const form = useForm<TransactionSchema>({
     resolver: zodResolver(transactionSchema),
     defaultValues: {
-      email: email,
-      amount: defaultAmount,
-      feeId: relatedData?.feeId || parseInt(""),
-      studentId: relatedData?.studentId || "",
-      extraDescription: "",
+      invoiceId,
+      student: { id: studentId },
+      amount: 0,
     },
   });
 
-  const feeId = watch("feeId");
-  const studentId = watch("studentId");
-  const amount = watch("amount");
+  const [initiateResult, initiateFeePayment] =
+    useInitializeFeePaymentMutation();
 
-  const [state, formAction, pending] = useActionState(initiateTransaction, {
-    success: false,
-    error: false,
-    data: "",
-  });
+  const fee = form.watch("invoiceId");
+  const amount = form.watch("amount");
 
   useEffect(() => {
-    if (state.success && state.data) {
-      toast.success("Payment Initialized", {
-        description: "Redirecting to payment page",
-      });
-      setOpen(false);
+    if (fee && fee.length > 3) {
+      const selectedInvoiceAmount = invoices?.find(
+        (invoice) => invoice.id === fee,
+      )?.amount;
 
-      router.push(state.data);
-    } else if (state.error) {
-      if (typeof state.error === "string") {
-        toast.error(state.error);
-      } else {
-        toast.error(`Payment initialization failed`);
-      }
+      form.setValue("amount", selectedInvoiceAmount ?? 0);
     }
-  }, [state, router, setOpen]);
+  }, [fee, form, invoices]);
 
-  useEffect(() => {
-    const feeSelected = paymentDetails.find(
-      (fee) => fee.id.toString() === feeId.toString(),
-    );
-    if (feeSelected) {
-      setSelectedFee({
-        id: feeSelected.id,
-        amount: feeSelected.amount,
-        description: feeSelected.description,
-      });
-
-      setValue("amount", feeSelected.amount, {
-        shouldValidate: true,
-        shouldDirty: true,
-        shouldTouch: true,
-      });
-    }
-
-    const studentSelected = students?.find(
-      (student) => student.id === studentId,
-    );
-    if (studentSelected) {
-      setSelectedStudent({
-        id: studentSelected.id,
-        name: studentSelected.name,
-        surname: studentSelected.surname,
-      });
-    }
-  }, [feeId, studentId, paymentDetails, students, setValue]);
-
-  const onSubmit = handleSubmit((values) => {
-    if (!selectedFee || !selectedStudent) return;
-
-    const formData = {
-      ...values,
-      userRole,
-      fee: selectedFee,
-      student: selectedStudent,
+  const onSubmit = form.handleSubmit(async (values) => {
+    const input: MutationInitiateFeePaymentArgs = {
+      input: {
+        amount: values.amount,
+        studentId: values.student.id,
+        invoiceId: values.invoiceId,
+        email: values.email,
+      },
     };
 
-    startTransition(() => {
-      formAction(formData);
-    });
+    const res = await initiateFeePayment({ ...input });
+
+    const mutationResult = res.data?.initiateFeePayment;
+
+    if (mutationResult?.__typename === "MutationInitiateFeePaymentSuccess") {
+      toast.success("Payment Initialized");
+      router.push(mutationResult.data.authorization_url);
+    } else {
+      const message = handleGraphqlClientErrors(mutationResult);
+      toast.error(message);
+    }
   });
 
+  const gradesForSelectedInvoice = invoices
+    ?.find((invoice) => invoice.id === fee)
+    ?.grades.map((grade) => grade.id);
+  const isLoading = initiateResult.fetching;
+
   return (
-    <form
-      onSubmit={onSubmit}
-      className="flex flex-wrap items-center justify-between gap-4"
-    >
-      <InputField
-        label="Email"
-        name="email"
-        type="email"
-        register={register}
-        error={errors.email}
-        containerClassName="md:w-[45%]"
-      />
+    <Form {...form}>
+      <form onSubmit={onSubmit} className="flex flex-col gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <InputField
+            control={form.control}
+            fieldType={FormFieldType.SELECT}
+            label="Invoice"
+            name="invoiceId"
+          >
+            <SelectContent>
+              {invoices?.map(({ id, number, title }) => (
+                <SelectItem key={id} value={id}>
+                  {number} - {title}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </InputField>
 
-      <div className="flex w-full flex-col gap-2 md:w-[45%]">
-        <Label htmlFor="studentId" className="text-xs text-gray-500">
-          Student
-        </Label>
-        <select
-          {...register("studentId")}
-          id="studentId"
-          className="w-full rounded-md p-2 text-sm ring-[1.5px] ring-gray-300"
+          <InputField
+            label="Email"
+            name="email"
+            type="email"
+            control={form.control}
+            fieldType={FormFieldType.INPUT}
+          />
+
+          <UserSearchForm
+            type="student"
+            control={form.control}
+            name="student"
+            label="Student"
+            grades={gradesForSelectedInvoice}
+          />
+
+          <InputField
+            label="Amount"
+            name="amount"
+            control={form.control}
+            fieldType={FormFieldType.INPUT}
+            disabled
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="form-submit_btn mt-5 w-full"
+          disabled={isLoading}
         >
-          {students?.map(
-            (student: { id: string; name: string; surname: string }) => (
-              <option key={student.id} value={student.id} className="py-1">
-                {student.name + " " + student.surname}
-              </option>
-            ),
-          )}
-        </select>
-        {errors.studentId?.message && (
-          <p className="text-xs text-red-400">
-            {errors.studentId.message.toString()}
-          </p>
-        )}
-      </div>
-
-      <div className="flex w-full flex-col gap-2 md:w-[45%]">
-        <Label htmlFor="feeId" className="text-xs text-gray-500">
-          Fee
-        </Label>
-        <select
-          {...register("feeId")}
-          id="feeId"
-          className="w-full rounded-md p-2 text-sm ring-[1.5px] ring-gray-300"
-        >
-          {paymentDetails?.map((fee) => (
-            <option key={fee.id} value={fee.id} className="py-1">
-              {fee.description}
-            </option>
-          ))}
-        </select>
-        {errors.feeId?.message && (
-          <p className="text-xs text-red-400">
-            {errors.feeId.message.toString()}
-          </p>
-        )}
-      </div>
-
-      <InputField
-        label="Amount"
-        name="amount"
-        type="amount"
-        register={register}
-        error={errors.amount}
-        containerClassName="md:w-[45%]"
-        inputProps={{ disabled: true }}
-      />
-
-      <div className="flex w-full flex-col gap-2">
-        <Label htmlFor="description" className="text-xs text-gray-500">
-          Description
-        </Label>
-        <Textarea
-          id="description"
-          {...register("extraDescription")}
-          className="custom-scrollbar w-full rounded-md p-2 text-sm ring-[1.5px] ring-gray-300"
-        />
-      </div>
-
-      {state?.error && (
-        <span className="text-red-500">Something went wrong</span>
-      )}
-      <button
-        type="submit"
-        className="form-submit_btn mt-5 w-full"
-        disabled={pending}
-      >
-        {!pending ? `Pay ${amount}` : <Loader2 className="animate-spin" />}
-      </button>
-    </form>
+          {!isLoading ? `Pay ${amount}` : <Loader2 className="animate-spin" />}
+        </button>
+      </form>
+    </Form>
   );
 };
 

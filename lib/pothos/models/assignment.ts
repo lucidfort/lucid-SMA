@@ -27,6 +27,8 @@ const AssignmentFilter = builder.inputType("AssignmentFilter", {
   fields: (t) => ({
     teacherId: t.id({ required: false }),
     classId: t.id({ required: false }),
+    termId: t.id({ required: false }),
+    subjectId: t.id({ required: false }),
   }),
 });
 
@@ -35,7 +37,7 @@ builder.prismaObject("Assignment", {
     id: t.exposeID("id", { nullable: false }),
     startDate: t.expose("startDate", { type: "DateTime", nullable: false }),
     dueDate: t.expose("dueDate", { type: "DateTime", nullable: false }),
-    maxScore: t.exposeInt("maxScore"),
+    maxScore: t.exposeInt("maxScore", { nullable: false }),
     subject: t.relation("subject", { nullable: false }),
     class: t.relation("class", { nullable: false }),
     term: t.relation("term", { nullable: false }),
@@ -46,6 +48,7 @@ builder.queryType({
   fields: (t) => ({
     assignments: t.prismaField({
       type: ["Assignment"],
+      directives: { rateLimit: { limit: 10, duration: 240 } },
       args: {
         filter: t.arg({ type: AssignmentFilter, required: false }),
       },

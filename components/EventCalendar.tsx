@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
@@ -13,13 +13,18 @@ const EventCalendar = () => {
   const [value, onChange] = useState<Value>(new Date());
 
   const router = useRouter();
+  const searchParams = useSearchParams()
 
   useEffect(() => {
     if (value instanceof Date) {
       const isoDate = value.toLocaleDateString("en-CA");
-      router.push(`?date=${isoDate}`);
+
+      const params = new URLSearchParams(searchParams.toString())
+      params.set("date", isoDate);
+
+      router.push(`?${params.toString()}`);
     }
-  }, [value, router]);
+  }, [value, router, searchParams]);
 
   return <Calendar onChange={onChange} value={value} view="month" />;
 };

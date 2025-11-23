@@ -1,103 +1,60 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-import prisma from "../prisma";
-import { handleServerErrors } from "../utils";
-import { getCurrentUser } from "@/lib/serverUtils";
 import {
-  StaffAttendanceSchema,
-  StudentAttendanceSchema,
-} from "@/lib/zod/validation";
+  StaffAttendanceInput,
+  StudentAttendanceInput,
+} from "@/lib/generated/graphql/server";
+import { getCurrentUser, handleGraphqlServerErrors } from "@/lib/server/utils";
+import prisma from "../prisma";
 
-export const markStudentAttendance = async (data: StudentAttendanceSchema) => {
+export const markStudentAttendance = async (data: StudentAttendanceInput) => {
   try {
     const { schoolId } = await getCurrentUser();
 
-    const { lessonId, records, classId, date } = data;
+    const { records, date, classId, termId } = data;
 
-    await Promise.all(
+    return await Promise.all(
       records.map((record) =>
         prisma.studentAttendance.upsert({
-          where: lessonId
-            ? {
-                schoolId_studentId_date_lessonId: {
-                  schoolId,
-                  date,
-                  lessonId,
-                  studentId: record.studentId,
-                },
-              }
-            : {
-                schoolId_studentId_date_classId: {
-                  schoolId,
-                  date,
-                  studentId: record.studentId,
-                  classId: classId!,
-                },
-              },
+          where: {
+            schoolId_classId_studentId_date: {
+              schoolId: schoolId!,
+              date,
+              classId,
+              studentId: record.studentId,
+            },
+          },
           update: {
-            status: record.status,
+            present: record.present,
           },
           create: {
-            schoolId,
-            termId: "54f1dae1-0c83-4a1e-b282-d8a48d033d8a",
+            schoolId: schoolId!,
+            termId: termId!,
             classId,
-            lessonId,
             date,
             studentId: record.studentId,
-            status: record.status,
+            present: record.present,
           },
         }),
       ),
     );
-
-    revalidatePath("/list/attendance");
-
-    return { success: true, error: false };
   } catch (error) {
-    console.log(error);
-    const serverErrors = handleServerErrors(error);
-
-    if (serverErrors?.error) {
-      return {
-        success: false,
-        error: serverErrors.error,
-      };
-    }
-    return { success: false, error: true };
+    handleGraphqlServerErrors(error);
   }
 };
 
-export const markStaffAttendance = async (data: StaffAttendanceSchema) => {
+export const markStaffAttendance = async (data: StaffAttendanceInput) => {
   try {
     const { schoolId } = await getCurrentUser();
 
-    console.log(data);
-
-    const { date, staffId } = data;
-
-    await prisma.staffAttendance.create({
+    return await prisma.staffAttendance.create({
       data: {
-        schoolId,
-        termId: "54f1dae1-0c83-4a1e-b282-d8a48d033d8a",
-        date,
-        staffId,
+        ...data,
+        schoolId: schoolId!,
+        termId: data.termId!,
       },
     });
-
-    revalidatePath("/list/attendance/staff");
-
-    return { success: true, error: false };
   } catch (error) {
-    console.log(error);
-    const serverErrors = handleServerErrors(error);
-
-    if (serverErrors?.error) {
-      return {
-        success: false,
-        error: serverErrors.error,
-      };
-    }
-    return { success: false, error: true };
+    handleGraphqlServerErrors(error);
   }
 };

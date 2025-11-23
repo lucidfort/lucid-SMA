@@ -21,8 +21,7 @@ export type AccessLevel = (typeof AccessLevel)[keyof typeof AccessLevel]
 
 export const UserSex = {
   MALE: 'MALE',
-  FEMALE: 'FEMALE',
-  OTHER: 'OTHER'
+  FEMALE: 'FEMALE'
 } as const
 
 export type UserSex = (typeof UserSex)[keyof typeof UserSex]
@@ -80,15 +79,6 @@ export const ExamType = {
 } as const
 
 export type ExamType = (typeof ExamType)[keyof typeof ExamType]
-
-
-export const InvoiceStatus = {
-  DRAFT: 'DRAFT',
-  PUBLISHED: 'PUBLISHED',
-  CANCELLED: 'CANCELLED'
-} as const
-
-export type InvoiceStatus = (typeof InvoiceStatus)[keyof typeof InvoiceStatus]
 
 
 export const PaymentStatus = {

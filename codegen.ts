@@ -5,15 +5,26 @@ const config: CodegenConfig = {
   ignoreNoDocuments: true,
   generates: {
     "./lib/generated/graphql/client.ts": {
-      documents: ["./lib/urql/operations/*.graphql"],
+      documents: ["./operations/client/*.graphql"],
       plugins: ["typescript", "typescript-operations", "typescript-urql"],
       config: {
         withHooks: true,
       },
     },
     "./lib/generated/graphql/server.ts": {
-      documents: ["./app/**/*.tsx", "./components/**/*.tsx"],
+      documents: [
+        "./app/**/*.tsx",
+        "./components/**/*.tsx",
+        "./operations/server/*.ts",
+      ],
       plugins: ["typescript", "typescript-operations"],
+    },
+    "introspectedSchema.json": {
+      plugins: ["introspection"],
+      config: {
+        minify: true,
+        descriptions: false,
+      },
     },
   },
 };

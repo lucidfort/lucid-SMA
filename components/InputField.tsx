@@ -1,9 +1,4 @@
-import { cn } from "@/lib/utils";
-import { ChevronDown, ChevronDownIcon, Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import {
   FormControl,
   FormField,
@@ -11,23 +6,27 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { ControllerRenderProps, FieldValues } from "react-hook-form";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
+import { ChevronDown, ChevronDownIcon, Eye, EyeOff } from "lucide-react";
 import * as React from "react";
+import { useState } from "react";
+import { ControllerRenderProps, FieldValues } from "react-hook-form";
 import { Calendar } from "./ui/calendar";
 import { Checkbox } from "./ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 export enum FormFieldType {
   INPUT = "input",
   TEXTAREA = "textarea",
-  PHONE_INPUT = "phoneInput",
   CHECKBOX = "checkbox",
   RADIO = "radio",
   DATE_PICKER = "datePicker",
@@ -43,6 +42,7 @@ interface InputFieldProps {
   name: string;
   containerClassName?: string;
   placeholder?: string;
+  prefix?: string;
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   children?: React.ReactNode;
   disabled?: boolean;
@@ -63,6 +63,7 @@ const InputField = ({
   disabled = false,
   options,
   placeholder,
+  prefix,
   children,
   inputProps,
 }: InputFieldProps) => {
@@ -85,7 +86,13 @@ const InputField = ({
       case FormFieldType.INPUT:
         return (
           <FormControl>
-            <div className="relative">
+            <div className="relative flex items-center gap-2">
+              {prefix && (
+                <span className="pointer-events-none rounded-md p-2 text-sm whitespace-nowrap ring-[1.5px] ring-gray-300 select-none">
+                  {prefix}-
+                </span>
+              )}
+
               <Input
                 {...field}
                 value={
@@ -96,7 +103,9 @@ const InputField = ({
                 type={inputType}
                 placeholder={placeholder}
                 disabled={disabled}
-                className="w-full rounded-md p-2 text-sm ring-[1.5px] ring-gray-300 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-4"
+                className={cn(
+                  "w-full rounded-md p-2 text-sm ring-[1.5px] ring-gray-300 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-4",
+                )}
                 {...inputProps}
               />
 
@@ -164,13 +173,15 @@ const InputField = ({
                 role="combobox"
                 disabled={disabled}
                 className={cn(
-                  "line-clamp-1 flex w-full items-center justify-between rounded-md p-2 text-sm text-ellipsis text-gray-700 ring-[1.5px] ring-gray-300",
+                  "flex w-full items-center justify-between rounded-md p-2 text-sm text-gray-700 ring-[1.5px] ring-gray-300",
                   selectedOptions.length === 0 && "text-gray-400",
                 )}
               >
-                {selectedOptions.length > 0
-                  ? selectedOptions.map((opt: any) => opt?.name).join(", ")
-                  : placeholder}
+                <div className="line-clamp-1 text-ellipsis">
+                  {selectedOptions.length > 0
+                    ? selectedOptions.map((opt: any) => opt?.name).join(", ")
+                    : placeholder}
+                </div>
                 <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
@@ -250,6 +261,10 @@ const InputField = ({
               defaultValue={field.value}
               onValueChange={(val) => field.onChange(val || "")}
               disabled={disabled}
+              className={cn(
+                "flex-flex-wrap flex w-full gap-6 rounded-lg border-2 border-dashed p-2.5",
+                containerClassName,
+              )}
             >
               {options?.map((opt) => (
                 <div key={opt.id} className="flex items-center space-x-2">
@@ -279,7 +294,10 @@ const InputField = ({
           className={cn("flex w-full flex-col gap-2", containerClassName)}
         >
           {!fieldsWithoutLabels.includes(fieldType) && (
-            <FormLabel htmlFor={name} className="text-sm text-gray-700">
+            <FormLabel
+              htmlFor={name}
+              className="text-sm text-gray-700 capitalize"
+            >
               {label}
             </FormLabel>
           )}

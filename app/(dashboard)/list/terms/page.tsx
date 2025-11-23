@@ -1,8 +1,9 @@
 import { DataTable } from "@/components/tables/data-table";
-import { createServerClient, getCurrentUser } from "@/lib/serverUtils";
+import { getCurrentUser } from "@/lib/server/utils";
 import { gql } from "@urql/core";
 import { GetTermsQuery } from "@/lib/generated/graphql/server";
 import { termsColumns } from "@/components/tables/termColumns";
+import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
 
 const GET_TERMS = gql(`
     query GetTerms {
@@ -19,7 +20,7 @@ const GET_TERMS = gql(`
 const TermsListPage = async () => {
   const { accessLevel } = await getCurrentUser();
 
-  const { client } = await createServerClient();
+  const { client } = await createUrqlServerClient();
   const { data } = await client.query<GetTermsQuery>(GET_TERMS, {});
 
   return (

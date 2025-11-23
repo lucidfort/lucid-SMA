@@ -1,6 +1,6 @@
 "use client";
 
-import { eventSchema, EventSchema } from "@/lib/zod/validation";
+import { eventSchema, EventSchema } from "@/lib/validation";
 import { FormProps } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";

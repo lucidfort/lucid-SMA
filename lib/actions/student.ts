@@ -1,79 +1,69 @@
 "use server";
 
+import { AppError, NotFoundError } from "@/lib/pothos/errors";
 import prisma from "@/lib/prisma";
-import { getCurrentUser, handleGraphqlServerErrors } from "@/lib/serverUtils";
-import { clerkClient } from "@clerk/nextjs/server";
+import { getCurrentUser, handleGraphqlServerErrors } from "@/lib/server/utils";
 import { deleteImage } from "../cloudinary";
+import { StudentInput } from "../generated/graphql/server";
 import { extractImageId } from "../utils";
-import { StudentSchema } from "../zod/validation";
-import { AppError } from "@/lib/pothos/errors";
-import { ParentStudentRelationship } from "@/lib/generated/prisma/enums";
 
-export const createStudentAction = async ({
-  password,
-  programId,
-  ...data
-}: StudentSchema) => {
-  const client = await clerkClient();
-  const { accessLevel, schoolId } = await getCurrentUser();
+type GuardianRelation =
+  | "FATHER"
+  | "MOTHER"
+  | "GUARDIAN"
+  | "GRANDPARENT"
+  | "SIBLING"
+  | "OTHER";
 
-  if (!schoolId) {
-    throw new AppError(
-      "Please log in to perform this action",
-      "SCHOOLID_MISSING",
-    );
+interface InputProps
+  extends Omit<StudentInput, "sex" | "primaryGuardian" | "secondaryGuardian"> {
+  slug: string;
+  sex: "MALE" | "FEMALE";
+  primaryGuardian: {
+    id: string;
+    relation: GuardianRelation;
+  };
+  secondaryGuardian?: {
+    id: string;
+    relation: GuardianRelation;
+  } | null;
+}
+
+const checkClassAvailability = async (classId: string, schoolId: string) => {
+  const classItem = await prisma.class.findUnique({
+    where: { id: classId, schoolId: schoolId },
+    select: { capacity: true, _count: { select: { students: true } } },
+  });
+
+  if (classItem && classItem.capacity === classItem._count.students) {
+    throw new AppError("There's no space in this class", "CLASS_OCCUPIED");
   }
 
-  if (accessLevel !== "manager") {
-    throw new AppError(
-      "You are not authorized to perform this action",
-      "UNAUTHORIZED",
-    );
-  }
+  return;
+};
 
-  let clerkUserId = "";
+export const createStudentAction = async (data: Omit<InputProps, "id">) => {
+  const { schoolId } = await getCurrentUser();
 
   try {
-    const classItem = await prisma.class.findUnique({
-      where: { id: data.classId, schoolId: schoolId! },
-      select: { capacity: true, _count: { select: { students: true } } },
-    });
-
-    if (classItem && classItem.capacity === classItem._count.students) {
-      throw new AppError("There's no space in this class", "CLASS_OCCUPIED");
-    }
-
-    const program = await prisma.program.findUnique({
-      where: { id: programId!, schoolId: schoolId! },
-      select: { name: true },
-    });
-
-    if (program && program.name === "SECONDARY" && password) {
-      const user = await client.users.createUser({
-        username: data.registrationNumber,
-        password,
-        firstName: data.name,
-        lastName: data.surname,
-        publicMetadata: { accessLevel: "student", schoolId },
-      });
-
-      clerkUserId = user.id;
-    }
+    await checkClassAvailability(data.classId, schoolId!);
 
     const {
       primaryGuardian,
-      primaryGuardianRelationship,
       secondaryGuardian,
-      secondaryGuardianRelationship,
+      registrationNumber: regNo,
+      slug,
       ...input
     } = data;
+
+    const registrationNumber = `${slug}-${regNo}`;
 
     return await prisma.$transaction(async (tx) => {
       const student = await tx.student.create({
         data: {
-          ...input,
           schoolId: schoolId!,
-          clerkUserId,
+          ...input,
+          registrationNumber,
         },
       });
 
@@ -81,16 +71,15 @@ export const createStudentAction = async ({
         {
           parentId: primaryGuardian.id,
           studentId: student.id,
-          relation: primaryGuardianRelationship as ParentStudentRelationship,
+          relation: primaryGuardian.relation,
           isPrimary: true,
         },
-        ...(secondaryGuardian?.id
+        ...(secondaryGuardian
           ? [
               {
                 parentId: secondaryGuardian.id,
                 studentId: student.id,
-                relation:
-                  secondaryGuardianRelationship as ParentStudentRelationship,
+                relation: secondaryGuardian.relation!,
                 isPrimary: false,
               },
             ]
@@ -104,117 +93,115 @@ export const createStudentAction = async ({
       return student;
     });
   } catch (err: any) {
-    if (clerkUserId !== "") {
-      await client.users.deleteUser(clerkUserId);
-    }
-    handleGraphqlServerErrors(err);
-
-    throw new AppError("Failed to this action", "FAILED_ACTION");
+    await handleGraphqlServerErrors(err);
   }
 };
 
-export const updateStudent = async ({
-  password,
-  oldImg,
-  ...data
-}: StudentSchema) => {
+export const updateStudentAction = async (data: InputProps) => {
+  if (!data.id) {
+    throw new NotFoundError("Student");
+  }
+
   try {
-    if (!data.id) return { success: false, error: "Student doesn't exist" };
+    const { schoolId } = await getCurrentUser();
 
-    delete data.programId;
-
-    const { accessLevel, schoolId } = await getCurrentUser();
-
-    if (accessLevel !== "manager") {
-      throw new AppError(
-        "You are not authorized to perform this action",
-        "UNAUTHORIZED",
-      );
-    }
-
-    const classItem = await prisma.class.findUnique({
-      where: { id: data.classId, schoolId: schoolId! },
-      select: { capacity: true, _count: { select: { students: true } } },
-    });
-
-    if (classItem && classItem.capacity === classItem._count.students) {
-      throw new AppError("There's no space in this class", "CLASS_OCCUPIED");
-    }
-
-    const client = await clerkClient();
-
-    await client.users.updateUser(data.id, {
-      username: data.registrationNumber,
-      ...(password && password !== "" && { password: password! }),
-      firstName: data.name,
-      lastName: data.surname,
-    });
-
-    if (data.img && oldImg) {
-      const publicId = extractImageId(oldImg);
-
-      await deleteImage(publicId.id as string);
-    }
+    await checkClassAvailability(data.classId, schoolId!);
 
     const {
+      id: studentId,
       primaryGuardian,
-      primaryGuardianRelationship,
       secondaryGuardian,
-      secondaryGuardianRelationship,
+      registrationNumber: regNo,
+      oldImg,
+      img,
+      slug,
       ...input
     } = data;
 
-    return prisma.$transaction(async (tx) => {
-      const student = tx.student.update({
-        where: {
-          id: data.id,
-          schoolId,
-        },
-        data: {
-          ...input,
-        },
-      });
+    // Delete an old image if a new one was uploaded
+    if (img && oldImg) {
+      const publicId = extractImageId(oldImg);
+      await deleteImage(publicId.id as string);
+    }
 
-      const guardians = [
-        {
+    const registrationNumber = `${slug}-${regNo}`;
+
+    const guardianOps = [
+      {
+        where: {
+          parentId_studentId: {
+            parentId: primaryGuardian.id,
+            studentId: studentId!,
+          },
+        },
+        create: {
           parentId: primaryGuardian.id,
-          studentId: input.id!,
-          relation: primaryGuardianRelationship as ParentStudentRelationship,
+          relation: primaryGuardian.relation,
           isPrimary: true,
         },
-        ...(secondaryGuardian?.id
-          ? [
-              {
+        update: {
+          relation: primaryGuardian.relation,
+          isPrimary: true,
+        },
+      },
+      ...(secondaryGuardian
+        ? [
+            {
+              where: {
+                parentId_studentId: {
+                  parentId: secondaryGuardian.id,
+                  studentId: studentId!,
+                },
+              },
+              create: {
                 parentId: secondaryGuardian.id,
-                studentId: input.id!,
-                relation:
-                  secondaryGuardianRelationship as ParentStudentRelationship,
+                relation: secondaryGuardian.relation!,
                 isPrimary: false,
               },
-            ]
-          : []),
-      ];
+              update: {
+                relation: secondaryGuardian.relation,
+                isPrimary: false,
+              },
+            },
+          ]
+        : []),
+    ];
 
-      await tx.parentStudent.createMany({
-        data: guardians,
-      });
+    // Remove any guardians that are no longer in the list
+    const validGuardianIds = [
+      primaryGuardian.id,
+      ...(secondaryGuardian ? [secondaryGuardian.id] : []),
+    ];
 
-      return student;
+    return await prisma.student.update({
+      where: {
+        id: studentId!,
+        schoolId,
+      },
+      data: {
+        ...input,
+        img,
+        registrationNumber,
+        parentStudents: {
+          deleteMany: {
+            parentId: { notIn: validGuardianIds },
+          },
+          upsert: guardianOps,
+        },
+      },
     });
   } catch (err: any) {
     handleGraphqlServerErrors(err);
   }
 };
 
-export const deleteStudent = async (studentId: string) => {
+export const deleteStudentAction = async (studentId: string) => {
   try {
     const { accessLevel, schoolId } = await getCurrentUser();
 
     if (accessLevel !== "manager") {
       return { success: false, error: "Unauthorized" };
     }
-
-    const client = await clerkClient();
 
     await prisma.$transaction(async (tx) => {
       const parentLinks = await tx.parentStudent.findMany({
@@ -255,40 +242,9 @@ export const deleteStudent = async (studentId: string) => {
       await deleteImage(imageId.id as string);
     }
 
-    await client.users.deleteUser(studentId);
-
     return { success: true, error: "" };
   } catch (err: any) {
     console.log(err);
     handleGraphqlServerErrors(err);
-  }
-};
-
-export const getStudents = async (
-  currentState: {
-    data: { id: string; name: string; surname: string }[] | undefined;
-    error: boolean;
-  },
-  searchTerm: string,
-) => {
-  try {
-    const { schoolId } = await getCurrentUser();
-
-    const students: { id: string; name: string; surname: string }[] =
-      await prisma.student.findMany({
-        where: {
-          schoolId,
-          OR: [
-            { name: { contains: searchTerm, mode: "insensitive" } },
-            { surname: { contains: searchTerm, mode: "insensitive" } },
-          ],
-        },
-        select: { id: true, name: true, surname: true },
-      });
-
-    return { data: students, error: false };
-  } catch (error) {
-    console.log(error);
-    return { data: undefined, error: true };
   }
 };

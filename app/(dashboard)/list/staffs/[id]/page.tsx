@@ -1,14 +1,16 @@
 import { InfoCard } from "@/components/Card";
-import { SearchParams } from "@/types";
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { createServerClient, getCurrentUser } from "@/lib/serverUtils";
-import { gql } from "@urql/core";
+import TimetableBoard from "@/components/TimetableBoard";
 import {
   GetStaffQuery,
   GetStaffQueryVariables,
 } from "@/lib/generated/graphql/server";
-import TimetableBoard from "@/components/TimetableBoard";
+import { getCurrentUser } from "@/lib/server/utils";
+import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
+import { SearchParams } from "@/types";
+import { gql } from "@urql/core";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import Announcements from "@/components/Announcements";
 
 const GET_STAFF = gql(`
   query GetStaff($id: ID!) {
@@ -27,6 +29,7 @@ const GET_STAFF = gql(`
         id
         name
         grade {
+          id
           name
           program {
             id
@@ -39,10 +42,9 @@ const GET_STAFF = gql(`
 
 const TeacherDetailsPage = async ({ params }: SearchParams) => {
   const { id } = await params;
+  const { accessLevel, schoolId } = await getCurrentUser();
 
-  const { schoolId } = await getCurrentUser();
-
-  const { client } = await createServerClient();
+  const { client } = await createUrqlServerClient();
   const { data } = await client
     .query<GetStaffQuery, GetStaffQueryVariables>(GET_STAFF, { id })
     .toPromise();
@@ -80,15 +82,18 @@ const TeacherDetailsPage = async ({ params }: SearchParams) => {
       <div className="w-full xl:w-2/3">
         {/* TOP */}
         <div className="flex flex-col gap-4 lg:flex-row">
-          <InfoCard table="staff" data={teacher} />
+          <InfoCard
+            table="staff"
+            data={teacher}
+            accessLevel={accessLevel!}
+            schoolId={schoolId!}
+          />
           {/*<SmallCard cards={smallCards} />*/}
         </div>
 
         {/* BOTTOM */}
         <div className="mt-4 h-[800px] rounded-md bg-white px-4 py-2">
-          <TimetableBoard />
-          {/*<TimetableBoard classId={teacher.class?.id} schoolId={schoolId!} />*/}
-          {/*<BigCalendarContainer schoolId={schoolId} type="teacherId" id={id} />*/}
+          <TimetableBoard classId={teacher.class?.id ?? ""} />
         </div>
       </div>
 
@@ -130,9 +135,7 @@ const TeacherDetailsPage = async ({ params }: SearchParams) => {
           </div>
         </div>
 
-        {/*<PerformanceChartContainer schoolId={schoolId!} studentId={""} />*/}
-
-        {/*<Announcements accessLevel="teacher" userId={id} schoolId={schoolId!} />*/}
+        <Announcements gradeId={teacher.class?.grade.id} />
       </div>
     </div>
   );

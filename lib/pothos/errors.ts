@@ -98,3 +98,22 @@ export class ForeignKeyError extends AppError {
 }
 
 registerError(ForeignKeyError);
+
+export class ServerBusyError extends AppError {
+  constructor() {
+    super("The server is busy at the moment. Try again soon.", "SERVER_BUSY");
+  }
+}
+
+registerError(ServerBusyError);
+
+export class RateLimitError extends AppError {
+  constructor() {
+    super(
+      "You are making too many requests. Try again later",
+      "RATE_LIMIT_EXCEEDED",
+    );
+  }
+}
+
+registerError(RateLimitError);

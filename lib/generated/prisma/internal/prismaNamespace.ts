@@ -413,7 +413,6 @@ export const ModelName = {
   Result: 'Result',
   TermlyResult: 'TermlyResult',
   Invoice: 'Invoice',
-  InvoiceLine: 'InvoiceLine',
   InvoicePayment: 'InvoicePayment',
   SalaryPayment: 'SalaryPayment',
   StaffBankAccount: 'StaffBankAccount',
@@ -436,7 +435,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "auditLog" | "school" | "program" | "academicYear" | "term" | "grade" | "class" | "subject" | "timetablePeriod" | "periodSlot" | "timetableAssignment" | "manager" | "student" | "staff" | "parent" | "parentStudent" | "club" | "exam" | "assignment" | "studentAttendance" | "staffAttendance" | "result" | "termlyResult" | "invoice" | "invoiceLine" | "invoicePayment" | "salaryPayment" | "staffBankAccount" | "event" | "announcement" | "studentClassHistory" | "teacherSubjectAssignment"
+    modelProps: "auditLog" | "school" | "program" | "academicYear" | "term" | "grade" | "class" | "subject" | "timetablePeriod" | "periodSlot" | "timetableAssignment" | "manager" | "student" | "staff" | "parent" | "parentStudent" | "club" | "exam" | "assignment" | "studentAttendance" | "staffAttendance" | "result" | "termlyResult" | "invoice" | "invoicePayment" | "salaryPayment" | "staffBankAccount" | "event" | "announcement" | "studentClassHistory" | "teacherSubjectAssignment"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2216,80 +2215,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    InvoiceLine: {
-      payload: Prisma.$InvoiceLinePayload<ExtArgs>
-      fields: Prisma.InvoiceLineFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.InvoiceLineFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$InvoiceLinePayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.InvoiceLineFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$InvoiceLinePayload>
-        }
-        findFirst: {
-          args: Prisma.InvoiceLineFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$InvoiceLinePayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.InvoiceLineFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$InvoiceLinePayload>
-        }
-        findMany: {
-          args: Prisma.InvoiceLineFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$InvoiceLinePayload>[]
-        }
-        create: {
-          args: Prisma.InvoiceLineCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$InvoiceLinePayload>
-        }
-        createMany: {
-          args: Prisma.InvoiceLineCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.InvoiceLineCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$InvoiceLinePayload>[]
-        }
-        delete: {
-          args: Prisma.InvoiceLineDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$InvoiceLinePayload>
-        }
-        update: {
-          args: Prisma.InvoiceLineUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$InvoiceLinePayload>
-        }
-        deleteMany: {
-          args: Prisma.InvoiceLineDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.InvoiceLineUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.InvoiceLineUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$InvoiceLinePayload>[]
-        }
-        upsert: {
-          args: Prisma.InvoiceLineUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$InvoiceLinePayload>
-        }
-        aggregate: {
-          args: Prisma.InvoiceLineAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateInvoiceLine>
-        }
-        groupBy: {
-          args: Prisma.InvoiceLineGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.InvoiceLineGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.InvoiceLineCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.InvoiceLineCountAggregateOutputType> | number
-        }
-      }
-    }
     InvoicePayment: {
       payload: Prisma.$InvoicePaymentPayload<ExtArgs>
       fields: Prisma.InvoicePaymentFieldRefs
@@ -2996,7 +2921,6 @@ export type ManagerScalarFieldEnum = (typeof ManagerScalarFieldEnum)[keyof typeo
 
 export const StudentScalarFieldEnum = {
   id: 'id',
-  clerkUserId: 'clerkUserId',
   registrationNumber: 'registrationNumber',
   name: 'name',
   surname: 'surname',
@@ -3155,7 +3079,6 @@ export const ResultScalarFieldEnum = {
   id: 'id',
   score: 'score',
   grade: 'grade',
-  remarks: 'remarks',
   uploadedAt: 'uploadedAt',
   schoolId: 'schoolId',
   studentId: 'studentId',
@@ -3189,13 +3112,8 @@ export const InvoiceScalarFieldEnum = {
   title: 'title',
   amount: 'amount',
   dueDate: 'dueDate',
-  status: 'status',
-  issuedDate: 'issuedDate',
   schoolId: 'schoolId',
   termId: 'termId',
-  studentId: 'studentId',
-  gradeId: 'gradeId',
-  classId: 'classId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -3203,31 +3121,18 @@ export const InvoiceScalarFieldEnum = {
 export type InvoiceScalarFieldEnum = (typeof InvoiceScalarFieldEnum)[keyof typeof InvoiceScalarFieldEnum]
 
 
-export const InvoiceLineScalarFieldEnum = {
-  id: 'id',
-  description: 'description',
-  amount: 'amount',
-  invoiceId: 'invoiceId'
-} as const
-
-export type InvoiceLineScalarFieldEnum = (typeof InvoiceLineScalarFieldEnum)[keyof typeof InvoiceLineScalarFieldEnum]
-
-
 export const InvoicePaymentScalarFieldEnum = {
   id: 'id',
   amountPaid: 'amountPaid',
   currency: 'currency',
   reference: 'reference',
-  paymentDate: 'paymentDate',
-  narration: 'narration',
-  payerName: 'payerName',
+  payerEmail: 'payerEmail',
   method: 'method',
   status: 'status',
-  providerReference: 'providerReference',
-  schoolId: 'schoolId',
-  invoiceId: 'invoiceId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  paidAt: 'paidAt',
+  schoolId: 'schoolId',
+  invoiceId: 'invoiceId'
 } as const
 
 export type InvoicePaymentScalarFieldEnum = (typeof InvoicePaymentScalarFieldEnum)[keyof typeof InvoicePaymentScalarFieldEnum]
@@ -3285,13 +3190,11 @@ export const AnnouncementScalarFieldEnum = {
   id: 'id',
   title: 'title',
   content: 'content',
-  isPublished: 'isPublished',
-  draftedAt: 'draftedAt',
   publishedAt: 'publishedAt',
   updatedAt: 'updatedAt',
+  staffOnly: 'staffOnly',
   schoolId: 'schoolId',
   termId: 'termId',
-  classId: 'classId',
   gradeId: 'gradeId'
 } as const
 
@@ -3317,7 +3220,6 @@ export const TeacherSubjectAssignmentScalarFieldEnum = {
   schoolId: 'schoolId',
   teacherId: 'teacherId',
   subjectId: 'subjectId',
-  gradeId: 'gradeId',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -3549,34 +3451,6 @@ export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMode
 
 
 /**
- * Reference to a field of type 'Decimal'
- */
-export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
-    
-
-
-/**
- * Reference to a field of type 'Decimal[]'
- */
-export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
-    
-
-
-/**
- * Reference to a field of type 'InvoiceStatus'
- */
-export type EnumInvoiceStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InvoiceStatus'>
-    
-
-
-/**
- * Reference to a field of type 'InvoiceStatus[]'
- */
-export type ListEnumInvoiceStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InvoiceStatus[]'>
-    
-
-
-/**
  * Reference to a field of type 'PaymentStatus'
  */
 export type EnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentStatus'>
@@ -3587,6 +3461,20 @@ export type EnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Pr
  * Reference to a field of type 'PaymentStatus[]'
  */
 export type ListEnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Decimal'
+ */
+export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
+    
+
+
+/**
+ * Reference to a field of type 'Decimal[]'
+ */
+export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
     
 
 
@@ -3714,7 +3602,6 @@ export type GlobalOmitConfig = {
   result?: Prisma.ResultOmit
   termlyResult?: Prisma.TermlyResultOmit
   invoice?: Prisma.InvoiceOmit
-  invoiceLine?: Prisma.InvoiceLineOmit
   invoicePayment?: Prisma.InvoicePaymentOmit
   salaryPayment?: Prisma.SalaryPaymentOmit
   staffBankAccount?: Prisma.StaffBankAccountOmit

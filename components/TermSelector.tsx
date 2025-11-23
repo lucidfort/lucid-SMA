@@ -10,8 +10,19 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { type TermSelectorProps } from "@/types";
 import Image from "next/image";
+
+interface TermSelectorProps {
+  terms: {
+    id: string;
+    term: number;
+    isCurrent: boolean;
+    academicYear: {
+      year: string;
+    };
+  }[];
+  selectedTermId: string;
+}
 
 const TermSelector = ({ terms, selectedTermId }: TermSelectorProps) => {
   const router = useRouter();

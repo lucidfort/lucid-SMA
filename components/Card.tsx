@@ -1,44 +1,53 @@
-import { Calendar, Droplet, Mail, MapPinHouse, Phone } from "lucide-react";
-import Image from "next/image";
-import {
-  Parent,
-  ParentStudentRelationship,
-} from "@/lib/generated/prisma/client";
-import { type ReactElement } from "react";
 import FormModal from "@/components/FormModal";
+import { Parent } from "@/lib/generated/graphql/server";
+import { listCreationAccess } from "@/lib/settings";
+import { RoleAccessLevel } from "@/types";
+import { Cake, Mail, MapPinHouse, Pen, Phone } from "lucide-react";
+import Image from "next/image";
+import { type ReactElement } from "react";
 
 export const InfoCard = ({
   data,
   table,
+  accessLevel,
+  schoolId,
 }: {
   data: any;
   table: "staff" | "student";
+  accessLevel: RoleAccessLevel;
+  schoolId: string;
 }) => {
   const items = [
     {
-      icon: Calendar,
+      icon: Cake,
       alt: "age",
-      value: new Intl.DateTimeFormat("en-NG").format(data.birthday),
-    },
-    {
-      icon: Phone,
-      alt: "phone",
-      value: data.phone || "-",
-    },
-    {
-      icon: Mail,
-      alt: "email",
-      value: data.email || "-",
+      value: data.birthday
+        ? new Intl.DateTimeFormat("en-NG").format(new Date(data.birthday))
+        : "-",
     },
     {
       icon: MapPinHouse,
       alt: "address",
       value: data.address || "-",
     },
+    ...(table === "staff"
+      ? [
+          {
+            icon: Phone,
+            alt: "phone",
+            value: data.phone || "-",
+          },
+          {
+            icon: Mail,
+            alt: "email",
+            value: data.email || "-",
+          },
+        ]
+      : []),
   ];
 
   return (
-    <div className="flex flex-1 gap-4 rounded-md bg-lamaSky px-4 py-6">
+    <div className="flex max-h-fit gap-4 rounded-md bg-lamaSky px-4 py-6">
       <Image
         src={data.img || "/noAvatar.png"}
         alt="teacher"
@@ -47,20 +56,29 @@ export const InfoCard = ({
         className="h-24 w-24 rounded-full object-center"
       />
 
-      <div className="flex w-2/3 max-w-96 flex-col justify-between gap-4">
+      <div className="flex w-2/3 max-w-96 flex-col gap-4">
         <div className="flex w-full items-center justify-between gap-4">
           <div>
             <h1 className="text-xl font-semibold">
               {data.name} {data.surname}
             </h1>
-
-            <p className="text-sm text-gray-500">
-              Joined on{" "}
-              {new Intl.DateTimeFormat("en-NG").format(data.createdAt)}
-            </p>
+            <h2 className="text-sm">
+              @{data?.registrationNumber || data?.employeeId}
+            </h2>
           </div>
 
-          <FormModal table={table} type="update" data={data} />
+          {listCreationAccess[accessLevel].includes(table) && schoolId && (
+            <FormModal
+              table={table}
+              type="update"
+              data={data}
+              relatedData={{ schoolId }}
+            >
+              <div className="flex-center size-8 rounded-full bg-lamaYellow p-2">
+                <Pen className="text-black" />
+              </div>
+            </FormModal>
+          )}
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-medium">
@@ -83,7 +101,7 @@ export const SmallCard = async ({
   cards,
 }: {
   cards: {
-    value: string;
+    value: string | number;
     desc: string;
     img?: string;
     icon?: ReactElement;
@@ -118,11 +136,13 @@ export const SmallCard = async ({
 };
 
 export const ParentInfoCard = ({
-  data,
+  relation,
+  parent,
 }: {
-  data: { relation: ParentStudentRelationship; parent: Parent }[];
+  relation: string;
+  parent: Parent;
 }) => {
-  const getParentColumns = (parent: Parent) => [
+  const columns = [
     {
       label: "Name",
       value: `${parent.name} ${parent.surname}`,
@@ -143,20 +163,18 @@ export const ParentInfoCard = ({
 
   return (
     <div className="w-full rounded-md bg-lamaSky">
-      {data.map((item) => (
-        <div key={item.relation} className="flex flex-col gap-4 p-4">
-          <h3 className="text-lg font-semibold">{item.relation}</h3>
+      <div className="flex flex-col gap-4 p-4">
+        <h3 className="text-lg font-semibold">{relation}</h3>
 
-          <div className="flex flex-col gap-2 text-sm font-medium">
-            {getParentColumns(item.parent).map((item) => (
-              <div key={item.label}>
-                <span className="">{item.label}: </span>
-                <span className="ml-5">{item.value}</span>
-              </div>
-            ))}
-          </div>
+        <div className="flex flex-col gap-2 text-sm font-medium">
+          {columns.map((item) => (
+            <div key={item.label}>
+              <span className="text-gray-700">{item.label}: </span>
+              <span className="ml-5">{item.value}</span>
+            </div>
+          ))}
         </div>
-      ))}
+      </div>
     </div>
   );
 };

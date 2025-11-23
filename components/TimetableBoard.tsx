@@ -1,13 +1,13 @@
-import { dayOfWeek } from "@/constants";
-import { Clock } from "lucide-react";
 import FormModal from "@/components/FormModal";
-import { createServerClient } from "@/lib/serverUtils";
-import { gql } from "@urql/core";
+import { dayOfWeek } from "@/constants";
 import {
   GetTimetableQuery,
   GetTimetableQueryVariables,
   PeriodSlot,
 } from "@/lib/generated/graphql/server";
+import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
+import { gql } from "@urql/core";
+import { Clock } from "lucide-react";
 
 const GET_TIMETABLE = gql`
   query GetTimetable($classId: ID!) {
@@ -36,7 +36,7 @@ const GET_TIMETABLE = gql`
 `;
 
 const TimetableBoard = async ({ classId }: { classId: string }) => {
-  const { client } = await createServerClient();
+  const { client } = await createUrqlServerClient();
   const { data, error } = await client
     .query<
       GetTimetableQuery,

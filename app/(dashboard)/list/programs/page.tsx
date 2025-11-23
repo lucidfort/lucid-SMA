@@ -1,11 +1,12 @@
 import { gql } from "@urql/core";
-import { createServerClient, getCurrentUser } from "@/lib/serverUtils";
+import { getCurrentUser } from "@/lib/server/utils";
 import {
   GetProgramsQuery,
   GetProgramsQueryVariables,
 } from "@/lib/generated/graphql/server";
 import { DataTable } from "@/components/tables/data-table";
 import { programsColumn } from "@/components/tables/programsColumn";
+import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
 
 const GET_PROGRAMS = gql(`
     query GetPrograms{
@@ -14,9 +15,7 @@ const GET_PROGRAMS = gql(`
             name
             grades {
                 name
-                classes {
-                  studentCount
-                }
+                studentCount
             }
         }
     }
@@ -25,7 +24,7 @@ const GET_PROGRAMS = gql(`
 const Page = async () => {
   const { accessLevel } = await getCurrentUser();
 
-  const { client } = await createServerClient();
+  const { client } = await createUrqlServerClient();
   const { data } = await client
     .query<GetProgramsQuery, GetProgramsQueryVariables>(GET_PROGRAMS, {})
     .toPromise();

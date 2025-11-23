@@ -1,78 +1,38 @@
-import { attendanceColumn } from "@/components/tables/attendanceColumn";
-import prisma from "@/lib/prisma";
-import { getCurrentUser } from "@/lib/serverUtils";
-import type { SearchParams } from "@/types";
-import { DataTable } from "@/components/tables/data-table";
 import EventCalendar from "@/components/EventCalendar";
+import { attendanceColumn } from "@/components/tables/attendanceColumn";
+import { DataTable } from "@/components/tables/data-table";
+import { GetClassesAttendanceQuery, GetClassesAttendanceQueryVariables } from "@/lib/generated/graphql/server";
+import { getCurrentUser } from "@/lib/server/utils";
+import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
+import type { SearchParams } from "@/types";
 import { endOfDay, startOfDay } from "date-fns";
+import { gql } from "urql";
+
+const GET_CLASSES_ATTENDANCE = gql(`
+  query GetClassesAttendance ($attendanceFilter: AttendanceFilter!) {
+    classes {
+      id
+      name
+      studentCount
+      attendancePresentCount(attendanceFilter: $attendanceFilter)
+    }
+  }
+`)
 
 const ClassAttendanceListPage = async ({ searchParams }: SearchParams) => {
-  const { date, ...queryParams } = await searchParams;
+  const { date, classId } = await searchParams;
 
   const targetDate = date ? new Date(`${date}T08:12:00Z`) : new Date();
 
   const start = startOfDay(targetDate);
   const end = endOfDay(targetDate);
 
-  const { schoolId, accessLevel } = await getCurrentUser();
-  let query;
+  const { accessLevel } = await getCurrentUser();
 
-  // URL PARAMS CONDITION
-  if (queryParams) {
-    for (const [key, value] of Object.entries(queryParams)) {
-      if (value !== undefined) {
-        switch (key) {
-          case "teacherId":
-            query = {};
-            break;
-          case "classId":
-            query = {};
-            break;
-          default:
-            break;
-        }
-      }
-    }
-  }
+  const { client } = await createUrqlServerClient()
+  const { data } = await client.query<GetClassesAttendanceQuery, GetClassesAttendanceQueryVariables>(GET_CLASSES_ATTENDANCE, { attendanceFilter: { startDate: start, endDate: end, classId } })
 
-  switch (accessLevel) {
-    case "manager":
-    case "administration":
-      break;
-    case "teacher":
-      query = {
-        // class: {}
-      };
-      break;
-    default:
-      break;
-  }
-
-  const data = await prisma.class.findMany({
-    where: {
-      schoolId,
-      ...query,
-    },
-    select: {
-      id: true,
-      name: true,
-      _count: {
-        select: {
-          attendances: {
-            where: {
-              schoolId,
-              date: { gte: start, lte: end },
-              status: "PRESENT",
-            },
-          },
-          students: true,
-        },
-      },
-    },
-    orderBy: { name: "asc" },
-  });
-
-  const formattedData = data.map((item) => ({
+  const formattedData = data?.classes?.map((item) => ({
     ...item,
     date,
   }));
@@ -83,9 +43,9 @@ const ClassAttendanceListPage = async ({ searchParams }: SearchParams) => {
 
       <DataTable
         columns={attendanceColumn}
-        data={formattedData}
+        data={formattedData ?? []}
         accessLevel={accessLevel!}
-        title={`Attendance Records for ${date}`}
+        title={`Attendance Records for ${date ?? "-"}`}
         tableFor="attendance"
         filters={{ selectCount: false }}
       />

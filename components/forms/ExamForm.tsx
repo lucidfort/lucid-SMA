@@ -1,6 +1,6 @@
 "use client";
 
-import { examSchema, ExamSchema } from "@/lib/zod/validation";
+import { examSchema, ExamSchema } from "@/lib/validation";
 import { FormProps } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";

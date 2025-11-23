@@ -26,7 +26,7 @@ type Table =
   | "attendance"
   | "event"
   | "announcement"
-  | "fee"
+  | "invoice"
   | "transaction"
   | "grade"
   | "program"
@@ -136,13 +136,22 @@ declare interface TabItemProps {
   className?: string;
 }
 
+type PaystackTransactionStatus =
+  | "success"
+  | "failed"
+  | "abandoned"
+  | "pending"
+  | "reversed"
+  | "refund"
+  | "timeout";
+
 declare interface PaystackVerifyResponse {
   status: boolean;
   message: string;
   data?: {
     id: number;
     domain: string;
-    status: string;
+    status: PaystackTransactionStatus;
     reference: string;
     amount: number;
     message: string | null;
@@ -156,41 +165,11 @@ declare interface PaystackVerifyResponse {
     log: any;
     fees: number;
     fees_split: any;
-    authorization: {
-      authorization_code: string;
-      bin: string;
-      last4: string;
-      exp_month: string;
-      exp_year: string;
-      channel: string;
-      card_type: string;
-      bank: string;
-      country_code: string;
-      brand: string;
-      reusable: boolean;
-      signature: string;
-      account_name: string | null;
-    };
-    customer: {
-      id: number;
-      first_name: string | null;
-      last_name: string | null;
-      email: string;
-      customer_code: string;
-      phone: string | null;
-      metadata: Record<string, any>;
-      risk_action: string;
-      international_format_phone: string | null;
-    };
     plan: any;
     split: any;
-    order_id: any;
     paidAt: string;
     createdAt: string;
-    requested_amount: number;
     pos_transaction_data: any;
-    source: any;
-    fees_breakdown: any;
   };
 }
 
@@ -207,18 +186,7 @@ declare interface DataTableProps {
     selectCount?: boolean;
   };
   relatedData?: any;
-}
-
-declare interface TermSelectorProps {
-  terms: {
-    id: string;
-    term: number;
-    isCurrent: boolean;
-    academicYear: {
-      year: string;
-    };
-  }[];
-  selectedTermId: string;
+  paginate?: boolean;
 }
 
 declare interface CreateSchoolInput {
@@ -252,5 +220,5 @@ declare interface UserAuthInput {
   firstName: string;
   lastName: string;
   accessLevel: string;
-  schoolId?: string;
+  schoolId: string;
 }

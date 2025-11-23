@@ -2,84 +2,124 @@
 
 import { Loader2, UserCheck, UserX } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader } from "./ui/card";
-import { toast } from "sonner";
-import { AttendanceStatus } from "@prisma/client";
-import { markStudentAttendance } from "@/lib/actions";
+import { Student, useMarkStudentAttendanceMutation } from "@/lib/generated/graphql/client";
+import Table from "./Table";
+import { handleGraphqlClientErrors } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 interface AttendanceMarkerProps {
-  lessonId?: string;
-  classId?: string;
+  classId: string;
   date: Date;
-  students: { id: string; name: string; surname: string }[];
-  attendanceState: { status: AttendanceStatus; studentId: string }[];
+  students: { id: string; name: string; surname: string; sex: string }[];
+  attendanceState: { present: boolean; studentId: string }[];
 }
 
 const AttendanceMarker = ({
-  lessonId,
   classId,
   date,
   students,
   attendanceState,
 }: AttendanceMarkerProps) => {
+  const router = useRouter()
   const [attendance, setAttendance] = useState(attendanceState);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [mutationResult, markAttendance] = useMarkStudentAttendanceMutation()
 
   const handleAttendanceChange = (
     studentId: string,
-    status: AttendanceStatus,
+    present: boolean,
   ) => {
     setAttendance((prev) => {
       const student = prev.find((att) => att.studentId === studentId);
 
       if (student) {
         return prev.map((att) =>
-          att.studentId === studentId ? { ...att, status } : att,
+          att.studentId === studentId ? { ...att, present } : att,
         );
       } else {
-        return [...prev, { studentId, status }];
+        return [...prev, { studentId, present }];
       }
     });
   };
 
   const attendanceStats = {
-    present: attendance.filter(({ status }) => status === "PRESENT").length,
-    absent: attendance.filter(({ status }) => status === "ABSENT").length,
-    late: attendance.filter(({ status }) => status === "LATE").length,
+    present: attendance.filter(({ present }) => present).length,
+    absent: attendance.filter(({ present }) => !present).length,
     total: students.length,
   };
 
   const updateAttendance = async () => {
-    try {
-      setIsSubmitting(true);
+    if (attendance === attendanceState) return;
 
-      if (attendance === attendanceState) return;
-
-      const att = await markStudentAttendance({
-        lessonId,
-        classId,
-        date,
-        records: attendance,
-      });
-
-      if (att.error) {
-        if (typeof att.error === "string") {
-          toast.error(att.error);
-        } else {
-          toast.error(`Failed to mark attendance`);
-        }
-
-        return;
+    const response = await markAttendance({
+      input: {
+        classId, date, records: attendance
       }
+    })
 
-      toast.success("Attendance successfully saved!");
-    } catch (error) {
-      console.error("Failed to update attendance:", error);
-    } finally {
-      setIsSubmitting(false);
+    const result = response.data?.markStudentAttendance
+
+    if (result?.__typename === "MutationMarkStudentAttendanceSuccess") {
+      toast.success("Attendance updated!");
+    } else {
+      const error = handleGraphqlClientErrors(result)
+      toast.error(error)
+      router.refresh()
     }
   };
+
+  const columns = [
+    {
+      header: "Name",
+      accessor: "name",
+      className: "min-w-56 lg:min-w-40",
+      cell: (item: Student) => <span>{item.name} {item.surname}</span>
+    },
+    {
+      header: "Sex",
+      accessor: "sex",
+      cell: (item: Student) => <span>{item.sex[0]}</span>
+    },
+    {
+      header: "",
+      accessor: "action",
+      cell: (item: Student) => (
+        <div className="flex gap-2">
+          <Button
+            size="sm"
+            variant={
+              attendance.find((a) => a.studentId === item.id)
+                ?.present
+                ? "default"
+                : "outline"
+            }
+            onClick={() => handleAttendanceChange(item.id, true)}
+            className="text-xs"
+          >
+            Present
+          </Button>
+          <Button
+            size="sm"
+            variant={
+              attendance.find((a) => a.studentId === item.id)
+                ?.present === false
+                ? "destructive"
+                : "outline"
+            }
+            onClick={() => handleAttendanceChange(item.id, false)}
+            className="text-xs"
+          >
+            Absent
+          </Button>
+        </div>
+      )
+    }
+  ]
+
+  console.log(mutationResult)
 
   return (
     <Card className="h-fit flex-1">
@@ -96,55 +136,14 @@ const AttendanceMarker = ({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {students.map((student) => (
-            <div
-              key={student.id}
-              className="flex items-center justify-between rounded-lg border p-3"
-            >
-              <div>
-                <p className="font-medium">
-                  {student.name} {student.surname}
-                </p>
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  variant={
-                    attendance.find((a) => a.studentId === student.id)
-                      ?.status === "PRESENT"
-                      ? "default"
-                      : "outline"
-                  }
-                  onClick={() => handleAttendanceChange(student.id, "PRESENT")}
-                  className="text-xs"
-                >
-                  Present
-                </Button>
-                <Button
-                  size="sm"
-                  variant={
-                    attendance.find((a) => a.studentId === student.id)
-                      ?.status === "ABSENT"
-                      ? "destructive"
-                      : "outline"
-                  }
-                  onClick={() => handleAttendanceChange(student.id, "ABSENT")}
-                  className="text-xs"
-                >
-                  Absent
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
+        <Table columns={columns} data={students} />
 
         <div className="mt-4 flex items-end justify-end">
           <Button
-            disabled={attendance === attendanceState || isSubmitting}
+            disabled={attendance === attendanceState || mutationResult.fetching}
             onClick={updateAttendance}
           >
-            {isSubmitting ? (
+            {mutationResult.fetching ? (
               <Loader2 size={12} className="animate-spin" />
             ) : (
               "Submit"

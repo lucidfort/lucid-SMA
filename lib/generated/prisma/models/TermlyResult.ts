@@ -612,6 +612,14 @@ export type TermlyResultUncheckedUpdateManyWithoutStudentNestedInput = {
   deleteMany?: Prisma.TermlyResultScalarWhereInput | Prisma.TermlyResultScalarWhereInput[]
 }
 
+export type FloatFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type NullableIntFieldUpdateOperationsInput = {
   set?: number | null
   increment?: number

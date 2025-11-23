@@ -10,7 +10,8 @@ type AttendanceList = {
   id: string;
   name: string;
   date: Date;
-  _count: { attendances: number; students: number };
+  attendancePresentCount: number;
+  studentCount: number
 };
 
 export const attendanceColumn: ColumnDef<AttendanceList>[] = [
@@ -24,7 +25,7 @@ export const attendanceColumn: ColumnDef<AttendanceList>[] = [
     header: "Present",
     cell: ({ row: { original } }) => (
       <Badge variant="secondary" className="text-xs">
-        {`${original._count.attendances} / ${original._count.students}`} present
+        {`${original.attendancePresentCount} / ${original.studentCount}`} present
       </Badge>
     ),
   },

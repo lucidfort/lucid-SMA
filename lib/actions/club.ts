@@ -1,9 +1,9 @@
 "use server";
 
 import { handleServerErrors } from "@/lib/utils";
-import { ClubSchema } from "@/lib/zod/validation";
+import { ClubSchema } from "@/lib/validation";
 import prisma from "../prisma";
-import { getCurrentUser, handleGraphqlServerErrors } from "../serverUtils";
+import { getCurrentUser, handleGraphqlServerErrors } from "../server/utils";
 import { NotFoundError } from "@/lib/pothos/errors";
 
 export const createClubAction = async (data: Omit<ClubSchema, "id">) => {

@@ -1,8 +1,8 @@
 "use server";
 
 import { handleServerErrors } from "../utils";
-import { GradeSchema } from "../zod/validation";
-import { getCurrentUser, handleGraphqlServerErrors } from "@/lib/serverUtils";
+import { GradeSchema } from "../validation";
+import { getCurrentUser, handleGraphqlServerErrors } from "@/lib/server/utils";
 import prisma from "../prisma";
 import { AppError } from "@/lib/pothos/errors";
 

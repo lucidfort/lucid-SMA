@@ -1,4 +1,9 @@
 import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
@@ -7,19 +12,14 @@ import {
   SidebarHeader,
   SidebarLink,
   SidebarMenu,
-  SidebarMenuItem,
+  SidebarMenuItem
 } from "@/components/ui/sidebar";
 import { menuItems } from "@/constants";
 import { RoleAccessLevel } from "@/types";
+import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import SignOutButton from "./SignOutButton";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { ChevronDown } from "lucide-react";
-import { School } from "@/lib/generated/prisma/client";
+import { School } from "@/lib/generated/graphql/server";
 
 type SchoolDetails = Pick<School, "name" | "motto" | "slug" | "logo">;
 
@@ -49,85 +49,87 @@ const Menu = async ({
         </div>
       </SidebarHeader>
       <SidebarContent>
-        {menuItems.map(({ title, items }) => (
-          <SidebarGroup key={title}>
-            <SidebarGroupLabel>{title}</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu className="space-y-3">
-                {items.map((item) => {
-                  if (item.visible.includes(accessLevel)) {
-                    if (item.grouped) {
-                      return (
-                        <Collapsible
-                          key={item.label}
-                          className="group/collapsible"
-                        >
-                          <SidebarGroup className="p-0">
-                            <SidebarGroupLabel>
-                              <CollapsibleTrigger className="flex w-full flex-row items-center justify-between">
-                                <div className="flex items-center gap-2 text-lg sm:text-base">
-                                  <Image
-                                    src={item.icon}
-                                    alt={item.label}
-                                    width={20}
-                                    height={20}
-                                    title={item.label}
-                                  />
-                                  {item.label}
-                                </div>
-                                <ChevronDown className="transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                              </CollapsibleTrigger>
-                            </SidebarGroupLabel>
-                            <CollapsibleContent>
-                              <SidebarGroupContent className="ml-2">
-                                <SidebarMenu>
-                                  {item.links.map((link) => (
-                                    <SidebarMenuItem key={link.label}>
-                                      <SidebarLink href={link.href}>
-                                        <span>{link.label}</span>
-                                      </SidebarLink>
-                                    </SidebarMenuItem>
-                                  ))}
-                                </SidebarMenu>
-                              </SidebarGroupContent>
-                            </CollapsibleContent>
-                          </SidebarGroup>
-                        </Collapsible>
-                      );
-                    }
+        {menuItems.map(({ title, items, visible }) => (
+          <div key={title}>
+            {visible.includes(accessLevel) && (
+              <SidebarGroup key={title}>
+                <SidebarGroupLabel>{title}</SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu className="space-y-3">
+                    {items.map((item) => {
+                      if (item.visible.includes(accessLevel)) {
+                        if (item.grouped) {
+                          return (
+                            <Collapsible
+                              key={item.label}
+                              className="group/collapsible"
+                            >
+                              <SidebarGroup className="p-0">
+                                <SidebarGroupLabel>
+                                  <CollapsibleTrigger className="flex w-full flex-row items-center justify-between">
+                                    <div className="flex items-center gap-2 text-lg sm:text-base">
+                                      <Image
+                                        src={item.icon}
+                                        alt={item.label}
+                                        width={20}
+                                        height={20}
+                                        title={item.label}
+                                      />
+                                      {item.label}
+                                    </div>
+                                    <ChevronDown className="transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                                  </CollapsibleTrigger>
+                                </SidebarGroupLabel>
+                                <CollapsibleContent>
+                                  <SidebarGroupContent className="ml-2">
+                                    <SidebarMenu>
+                                      {item.links.map((link) => (
+                                        <SidebarMenuItem key={link.label}>
+                                          <SidebarLink href={link.href}>
+                                            <span>{link.label}</span>
+                                          </SidebarLink>
+                                        </SidebarMenuItem>
+                                      ))}
+                                    </SidebarMenu>
+                                  </SidebarGroupContent>
+                                </CollapsibleContent>
+                              </SidebarGroup>
+                            </Collapsible>
+                          );
+                        }
 
-                    return (
-                      <SidebarMenuItem key={item.label}>
-                        <SidebarLink
-                          href={
-                            item.label === "Home"
-                              ? `/${accessLevel}`
-                              : item.href!
-                          }
-                        >
-                          <Image
-                            src={item.icon}
-                            alt={item.label}
-                            width={20}
-                            height={20}
-                            title={item.label}
-                          />
-                          <span>{item.label}</span>
-                        </SidebarLink>
-                      </SidebarMenuItem>
-                    );
-                  }
-                })}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+                        return (
+                          <SidebarMenuItem key={item.label}>
+                            <SidebarLink
+                              href={
+                                item.label === "Home"
+                                  ? `/${accessLevel}`
+                                  : item.href!
+                              }
+                            >
+                              <Image
+                                src={item.icon}
+                                alt={item.label}
+                                width={20}
+                                height={20}
+                                title={item.label}
+                              />
+                              <span>{item.label}</span>
+                            </SidebarLink>
+                          </SidebarMenuItem>
+                        );
+                      }
+                    })}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            )}
+          </div>
         ))}
 
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SignOutButton />
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <SidebarMenuItem className="flex-center w-full pl-2.5">
+          <SignOutButton />
+        </SidebarMenuItem>
       </SidebarContent>
     </Sidebar>
   );

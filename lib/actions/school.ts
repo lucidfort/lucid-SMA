@@ -1,12 +1,11 @@
 "use server";
 
-import prisma from "@/lib/prisma";
-import { clerkClient } from "@clerk/nextjs/server";
-import { CreateSchoolInput, UserAuthInput } from "@/types";
-import { ProgramSchema, TermSchema } from "@/lib/zod/validation";
-import { getCurrentUser, handleGraphqlServerErrors } from "@/lib/serverUtils";
-import { ProgramType } from "@/lib/generated/prisma/enums";
 import { AppError, UniqueConstraintError } from "@/lib/pothos/errors";
+import prisma from "@/lib/prisma";
+import { getCurrentUser, handleGraphqlServerErrors } from "@/lib/server/utils";
+import { TermSchema } from "@/lib/validation";
+import { CreateSchoolInput, UserAuthInput } from "@/types";
+import { clerkClient } from "@clerk/nextjs/server";
 
 export async function createSchoolAction(args: CreateSchoolInput) {
   try {
@@ -24,6 +23,7 @@ export async function createSchoolAction(args: CreateSchoolInput) {
       firstName: managerArgs.name,
       lastName: managerArgs.surname,
       accessLevel: "manager",
+      schoolId: "",
     });
 
     return await prisma.$transaction(async (tx) => {
@@ -73,33 +73,6 @@ export async function createSchoolAction(args: CreateSchoolInput) {
   } catch (e) {
     handleGraphqlServerErrors(e);
     console.log(e);
-  }
-}
-
-export async function createProgramAction(args: ProgramSchema) {
-  const { schoolId } = await getCurrentUser();
-
-  try {
-    return await prisma.$transaction(async (tx) => {
-      const program = await tx.program.create({
-        data: {
-          name: args.name as ProgramType,
-          schoolId: schoolId!,
-        },
-      });
-
-      await tx.grade.createMany({
-        data: args.grades.map((grade) => ({
-          schoolId: schoolId!,
-          programId: program.id,
-          name: grade,
-        })),
-      });
-
-      return program;
-    });
-  } catch (e) {
-    handleGraphqlServerErrors(e);
   }
 }
 

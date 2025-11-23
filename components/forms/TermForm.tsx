@@ -1,6 +1,6 @@
 "use client";
 
-import { termSchema, TermSchema } from "@/lib/zod/validation";
+import { termSchema, TermSchema } from "@/lib/validation";
 import { FormProps } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
@@ -105,6 +105,15 @@ const TermForm = ({ type, data, setOpen, relatedData }: FormProps) => {
               name="academicYearId"
             >
               <SelectContent>
+                {academicYears?.length === 0 && (
+                  <SelectItem
+                    value="0"
+                    disabled
+                    className="max-w-[18rem] text-wrap"
+                  >
+                    No Academic Year Found. Register one if you haven&apos;t yet
+                  </SelectItem>
+                )}
                 {academicYears?.map(({ id, year, isCurrent }) => (
                   <SelectItem key={id} value={id!}>
                     {year} {isCurrent ? "- Current" : ""}

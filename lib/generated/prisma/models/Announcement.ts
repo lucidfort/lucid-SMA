@@ -27,13 +27,11 @@ export type AnnouncementMinAggregateOutputType = {
   id: string | null
   title: string | null
   content: string | null
-  isPublished: boolean | null
-  draftedAt: Date | null
   publishedAt: Date | null
   updatedAt: Date | null
+  staffOnly: boolean | null
   schoolId: string | null
   termId: string | null
-  classId: string | null
   gradeId: string | null
 }
 
@@ -41,13 +39,11 @@ export type AnnouncementMaxAggregateOutputType = {
   id: string | null
   title: string | null
   content: string | null
-  isPublished: boolean | null
-  draftedAt: Date | null
   publishedAt: Date | null
   updatedAt: Date | null
+  staffOnly: boolean | null
   schoolId: string | null
   termId: string | null
-  classId: string | null
   gradeId: string | null
 }
 
@@ -55,13 +51,11 @@ export type AnnouncementCountAggregateOutputType = {
   id: number
   title: number
   content: number
-  isPublished: number
-  draftedAt: number
   publishedAt: number
   updatedAt: number
+  staffOnly: number
   schoolId: number
   termId: number
-  classId: number
   gradeId: number
   _all: number
 }
@@ -71,13 +65,11 @@ export type AnnouncementMinAggregateInputType = {
   id?: true
   title?: true
   content?: true
-  isPublished?: true
-  draftedAt?: true
   publishedAt?: true
   updatedAt?: true
+  staffOnly?: true
   schoolId?: true
   termId?: true
-  classId?: true
   gradeId?: true
 }
 
@@ -85,13 +77,11 @@ export type AnnouncementMaxAggregateInputType = {
   id?: true
   title?: true
   content?: true
-  isPublished?: true
-  draftedAt?: true
   publishedAt?: true
   updatedAt?: true
+  staffOnly?: true
   schoolId?: true
   termId?: true
-  classId?: true
   gradeId?: true
 }
 
@@ -99,13 +89,11 @@ export type AnnouncementCountAggregateInputType = {
   id?: true
   title?: true
   content?: true
-  isPublished?: true
-  draftedAt?: true
   publishedAt?: true
   updatedAt?: true
+  staffOnly?: true
   schoolId?: true
   termId?: true
-  classId?: true
   gradeId?: true
   _all?: true
 }
@@ -186,13 +174,11 @@ export type AnnouncementGroupByOutputType = {
   id: string
   title: string
   content: string
-  isPublished: boolean
-  draftedAt: Date
-  publishedAt: Date | null
+  publishedAt: Date
   updatedAt: Date
+  staffOnly: boolean | null
   schoolId: string
   termId: string
-  classId: string | null
   gradeId: string | null
   _count: AnnouncementCountAggregateOutputType | null
   _min: AnnouncementMinAggregateOutputType | null
@@ -221,17 +207,14 @@ export type AnnouncementWhereInput = {
   id?: Prisma.StringFilter<"Announcement"> | string
   title?: Prisma.StringFilter<"Announcement"> | string
   content?: Prisma.StringFilter<"Announcement"> | string
-  isPublished?: Prisma.BoolFilter<"Announcement"> | boolean
-  draftedAt?: Prisma.DateTimeFilter<"Announcement"> | Date | string
-  publishedAt?: Prisma.DateTimeNullableFilter<"Announcement"> | Date | string | null
+  publishedAt?: Prisma.DateTimeFilter<"Announcement"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Announcement"> | Date | string
+  staffOnly?: Prisma.BoolNullableFilter<"Announcement"> | boolean | null
   schoolId?: Prisma.StringFilter<"Announcement"> | string
   termId?: Prisma.StringFilter<"Announcement"> | string
-  classId?: Prisma.StringNullableFilter<"Announcement"> | string | null
   gradeId?: Prisma.StringNullableFilter<"Announcement"> | string | null
   school?: Prisma.XOR<Prisma.SchoolScalarRelationFilter, Prisma.SchoolWhereInput>
   term?: Prisma.XOR<Prisma.TermScalarRelationFilter, Prisma.TermWhereInput>
-  class?: Prisma.XOR<Prisma.ClassNullableScalarRelationFilter, Prisma.ClassWhereInput> | null
   grade?: Prisma.XOR<Prisma.GradeNullableScalarRelationFilter, Prisma.GradeWhereInput> | null
 }
 
@@ -239,17 +222,14 @@ export type AnnouncementOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  isPublished?: Prisma.SortOrder
-  draftedAt?: Prisma.SortOrder
-  publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  publishedAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  staffOnly?: Prisma.SortOrderInput | Prisma.SortOrder
   schoolId?: Prisma.SortOrder
   termId?: Prisma.SortOrder
-  classId?: Prisma.SortOrderInput | Prisma.SortOrder
   gradeId?: Prisma.SortOrderInput | Prisma.SortOrder
   school?: Prisma.SchoolOrderByWithRelationInput
   term?: Prisma.TermOrderByWithRelationInput
-  class?: Prisma.ClassOrderByWithRelationInput
   grade?: Prisma.GradeOrderByWithRelationInput
 }
 
@@ -260,17 +240,14 @@ export type AnnouncementWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.AnnouncementWhereInput | Prisma.AnnouncementWhereInput[]
   title?: Prisma.StringFilter<"Announcement"> | string
   content?: Prisma.StringFilter<"Announcement"> | string
-  isPublished?: Prisma.BoolFilter<"Announcement"> | boolean
-  draftedAt?: Prisma.DateTimeFilter<"Announcement"> | Date | string
-  publishedAt?: Prisma.DateTimeNullableFilter<"Announcement"> | Date | string | null
+  publishedAt?: Prisma.DateTimeFilter<"Announcement"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Announcement"> | Date | string
+  staffOnly?: Prisma.BoolNullableFilter<"Announcement"> | boolean | null
   schoolId?: Prisma.StringFilter<"Announcement"> | string
   termId?: Prisma.StringFilter<"Announcement"> | string
-  classId?: Prisma.StringNullableFilter<"Announcement"> | string | null
   gradeId?: Prisma.StringNullableFilter<"Announcement"> | string | null
   school?: Prisma.XOR<Prisma.SchoolScalarRelationFilter, Prisma.SchoolWhereInput>
   term?: Prisma.XOR<Prisma.TermScalarRelationFilter, Prisma.TermWhereInput>
-  class?: Prisma.XOR<Prisma.ClassNullableScalarRelationFilter, Prisma.ClassWhereInput> | null
   grade?: Prisma.XOR<Prisma.GradeNullableScalarRelationFilter, Prisma.GradeWhereInput> | null
 }, "id">
 
@@ -278,13 +255,11 @@ export type AnnouncementOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  isPublished?: Prisma.SortOrder
-  draftedAt?: Prisma.SortOrder
-  publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  publishedAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  staffOnly?: Prisma.SortOrderInput | Prisma.SortOrder
   schoolId?: Prisma.SortOrder
   termId?: Prisma.SortOrder
-  classId?: Prisma.SortOrderInput | Prisma.SortOrder
   gradeId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.AnnouncementCountOrderByAggregateInput
   _max?: Prisma.AnnouncementMaxOrderByAggregateInput
@@ -298,13 +273,11 @@ export type AnnouncementScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Announcement"> | string
   title?: Prisma.StringWithAggregatesFilter<"Announcement"> | string
   content?: Prisma.StringWithAggregatesFilter<"Announcement"> | string
-  isPublished?: Prisma.BoolWithAggregatesFilter<"Announcement"> | boolean
-  draftedAt?: Prisma.DateTimeWithAggregatesFilter<"Announcement"> | Date | string
-  publishedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Announcement"> | Date | string | null
+  publishedAt?: Prisma.DateTimeWithAggregatesFilter<"Announcement"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Announcement"> | Date | string
+  staffOnly?: Prisma.BoolNullableWithAggregatesFilter<"Announcement"> | boolean | null
   schoolId?: Prisma.StringWithAggregatesFilter<"Announcement"> | string
   termId?: Prisma.StringWithAggregatesFilter<"Announcement"> | string
-  classId?: Prisma.StringNullableWithAggregatesFilter<"Announcement"> | string | null
   gradeId?: Prisma.StringNullableWithAggregatesFilter<"Announcement"> | string | null
 }
 
@@ -312,13 +285,11 @@ export type AnnouncementCreateInput = {
   id?: string
   title: string
   content: string
-  isPublished?: boolean
-  draftedAt?: Date | string
-  publishedAt?: Date | string | null
+  publishedAt?: Date | string
   updatedAt?: Date | string
+  staffOnly?: boolean | null
   school: Prisma.SchoolCreateNestedOneWithoutAnnouncementsInput
   term: Prisma.TermCreateNestedOneWithoutAnnouncementsInput
-  class?: Prisma.ClassCreateNestedOneWithoutAnnouncementsInput
   grade?: Prisma.GradeCreateNestedOneWithoutAnnouncementsInput
 }
 
@@ -326,13 +297,11 @@ export type AnnouncementUncheckedCreateInput = {
   id?: string
   title: string
   content: string
-  isPublished?: boolean
-  draftedAt?: Date | string
-  publishedAt?: Date | string | null
+  publishedAt?: Date | string
   updatedAt?: Date | string
+  staffOnly?: boolean | null
   schoolId: string
   termId: string
-  classId?: string | null
   gradeId?: string | null
 }
 
@@ -340,13 +309,11 @@ export type AnnouncementUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  draftedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  staffOnly?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   school?: Prisma.SchoolUpdateOneRequiredWithoutAnnouncementsNestedInput
   term?: Prisma.TermUpdateOneRequiredWithoutAnnouncementsNestedInput
-  class?: Prisma.ClassUpdateOneWithoutAnnouncementsNestedInput
   grade?: Prisma.GradeUpdateOneWithoutAnnouncementsNestedInput
 }
 
@@ -354,13 +321,11 @@ export type AnnouncementUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  draftedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  staffOnly?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   termId?: Prisma.StringFieldUpdateOperationsInput | string
-  classId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gradeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -368,13 +333,11 @@ export type AnnouncementCreateManyInput = {
   id?: string
   title: string
   content: string
-  isPublished?: boolean
-  draftedAt?: Date | string
-  publishedAt?: Date | string | null
+  publishedAt?: Date | string
   updatedAt?: Date | string
+  staffOnly?: boolean | null
   schoolId: string
   termId: string
-  classId?: string | null
   gradeId?: string | null
 }
 
@@ -382,23 +345,20 @@ export type AnnouncementUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  draftedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  staffOnly?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
 }
 
 export type AnnouncementUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  draftedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  staffOnly?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   termId?: Prisma.StringFieldUpdateOperationsInput | string
-  classId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gradeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -416,13 +376,11 @@ export type AnnouncementCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  isPublished?: Prisma.SortOrder
-  draftedAt?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  staffOnly?: Prisma.SortOrder
   schoolId?: Prisma.SortOrder
   termId?: Prisma.SortOrder
-  classId?: Prisma.SortOrder
   gradeId?: Prisma.SortOrder
 }
 
@@ -430,13 +388,11 @@ export type AnnouncementMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  isPublished?: Prisma.SortOrder
-  draftedAt?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  staffOnly?: Prisma.SortOrder
   schoolId?: Prisma.SortOrder
   termId?: Prisma.SortOrder
-  classId?: Prisma.SortOrder
   gradeId?: Prisma.SortOrder
 }
 
@@ -444,13 +400,11 @@ export type AnnouncementMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  isPublished?: Prisma.SortOrder
-  draftedAt?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  staffOnly?: Prisma.SortOrder
   schoolId?: Prisma.SortOrder
   termId?: Prisma.SortOrder
-  classId?: Prisma.SortOrder
   gradeId?: Prisma.SortOrder
 }
 
@@ -580,58 +534,18 @@ export type AnnouncementUncheckedUpdateManyWithoutGradeNestedInput = {
   deleteMany?: Prisma.AnnouncementScalarWhereInput | Prisma.AnnouncementScalarWhereInput[]
 }
 
-export type AnnouncementCreateNestedManyWithoutClassInput = {
-  create?: Prisma.XOR<Prisma.AnnouncementCreateWithoutClassInput, Prisma.AnnouncementUncheckedCreateWithoutClassInput> | Prisma.AnnouncementCreateWithoutClassInput[] | Prisma.AnnouncementUncheckedCreateWithoutClassInput[]
-  connectOrCreate?: Prisma.AnnouncementCreateOrConnectWithoutClassInput | Prisma.AnnouncementCreateOrConnectWithoutClassInput[]
-  createMany?: Prisma.AnnouncementCreateManyClassInputEnvelope
-  connect?: Prisma.AnnouncementWhereUniqueInput | Prisma.AnnouncementWhereUniqueInput[]
-}
-
-export type AnnouncementUncheckedCreateNestedManyWithoutClassInput = {
-  create?: Prisma.XOR<Prisma.AnnouncementCreateWithoutClassInput, Prisma.AnnouncementUncheckedCreateWithoutClassInput> | Prisma.AnnouncementCreateWithoutClassInput[] | Prisma.AnnouncementUncheckedCreateWithoutClassInput[]
-  connectOrCreate?: Prisma.AnnouncementCreateOrConnectWithoutClassInput | Prisma.AnnouncementCreateOrConnectWithoutClassInput[]
-  createMany?: Prisma.AnnouncementCreateManyClassInputEnvelope
-  connect?: Prisma.AnnouncementWhereUniqueInput | Prisma.AnnouncementWhereUniqueInput[]
-}
-
-export type AnnouncementUpdateManyWithoutClassNestedInput = {
-  create?: Prisma.XOR<Prisma.AnnouncementCreateWithoutClassInput, Prisma.AnnouncementUncheckedCreateWithoutClassInput> | Prisma.AnnouncementCreateWithoutClassInput[] | Prisma.AnnouncementUncheckedCreateWithoutClassInput[]
-  connectOrCreate?: Prisma.AnnouncementCreateOrConnectWithoutClassInput | Prisma.AnnouncementCreateOrConnectWithoutClassInput[]
-  upsert?: Prisma.AnnouncementUpsertWithWhereUniqueWithoutClassInput | Prisma.AnnouncementUpsertWithWhereUniqueWithoutClassInput[]
-  createMany?: Prisma.AnnouncementCreateManyClassInputEnvelope
-  set?: Prisma.AnnouncementWhereUniqueInput | Prisma.AnnouncementWhereUniqueInput[]
-  disconnect?: Prisma.AnnouncementWhereUniqueInput | Prisma.AnnouncementWhereUniqueInput[]
-  delete?: Prisma.AnnouncementWhereUniqueInput | Prisma.AnnouncementWhereUniqueInput[]
-  connect?: Prisma.AnnouncementWhereUniqueInput | Prisma.AnnouncementWhereUniqueInput[]
-  update?: Prisma.AnnouncementUpdateWithWhereUniqueWithoutClassInput | Prisma.AnnouncementUpdateWithWhereUniqueWithoutClassInput[]
-  updateMany?: Prisma.AnnouncementUpdateManyWithWhereWithoutClassInput | Prisma.AnnouncementUpdateManyWithWhereWithoutClassInput[]
-  deleteMany?: Prisma.AnnouncementScalarWhereInput | Prisma.AnnouncementScalarWhereInput[]
-}
-
-export type AnnouncementUncheckedUpdateManyWithoutClassNestedInput = {
-  create?: Prisma.XOR<Prisma.AnnouncementCreateWithoutClassInput, Prisma.AnnouncementUncheckedCreateWithoutClassInput> | Prisma.AnnouncementCreateWithoutClassInput[] | Prisma.AnnouncementUncheckedCreateWithoutClassInput[]
-  connectOrCreate?: Prisma.AnnouncementCreateOrConnectWithoutClassInput | Prisma.AnnouncementCreateOrConnectWithoutClassInput[]
-  upsert?: Prisma.AnnouncementUpsertWithWhereUniqueWithoutClassInput | Prisma.AnnouncementUpsertWithWhereUniqueWithoutClassInput[]
-  createMany?: Prisma.AnnouncementCreateManyClassInputEnvelope
-  set?: Prisma.AnnouncementWhereUniqueInput | Prisma.AnnouncementWhereUniqueInput[]
-  disconnect?: Prisma.AnnouncementWhereUniqueInput | Prisma.AnnouncementWhereUniqueInput[]
-  delete?: Prisma.AnnouncementWhereUniqueInput | Prisma.AnnouncementWhereUniqueInput[]
-  connect?: Prisma.AnnouncementWhereUniqueInput | Prisma.AnnouncementWhereUniqueInput[]
-  update?: Prisma.AnnouncementUpdateWithWhereUniqueWithoutClassInput | Prisma.AnnouncementUpdateWithWhereUniqueWithoutClassInput[]
-  updateMany?: Prisma.AnnouncementUpdateManyWithWhereWithoutClassInput | Prisma.AnnouncementUpdateManyWithWhereWithoutClassInput[]
-  deleteMany?: Prisma.AnnouncementScalarWhereInput | Prisma.AnnouncementScalarWhereInput[]
+export type NullableBoolFieldUpdateOperationsInput = {
+  set?: boolean | null
 }
 
 export type AnnouncementCreateWithoutSchoolInput = {
   id?: string
   title: string
   content: string
-  isPublished?: boolean
-  draftedAt?: Date | string
-  publishedAt?: Date | string | null
+  publishedAt?: Date | string
   updatedAt?: Date | string
+  staffOnly?: boolean | null
   term: Prisma.TermCreateNestedOneWithoutAnnouncementsInput
-  class?: Prisma.ClassCreateNestedOneWithoutAnnouncementsInput
   grade?: Prisma.GradeCreateNestedOneWithoutAnnouncementsInput
 }
 
@@ -639,12 +553,10 @@ export type AnnouncementUncheckedCreateWithoutSchoolInput = {
   id?: string
   title: string
   content: string
-  isPublished?: boolean
-  draftedAt?: Date | string
-  publishedAt?: Date | string | null
+  publishedAt?: Date | string
   updatedAt?: Date | string
+  staffOnly?: boolean | null
   termId: string
-  classId?: string | null
   gradeId?: string | null
 }
 
@@ -681,13 +593,11 @@ export type AnnouncementScalarWhereInput = {
   id?: Prisma.StringFilter<"Announcement"> | string
   title?: Prisma.StringFilter<"Announcement"> | string
   content?: Prisma.StringFilter<"Announcement"> | string
-  isPublished?: Prisma.BoolFilter<"Announcement"> | boolean
-  draftedAt?: Prisma.DateTimeFilter<"Announcement"> | Date | string
-  publishedAt?: Prisma.DateTimeNullableFilter<"Announcement"> | Date | string | null
+  publishedAt?: Prisma.DateTimeFilter<"Announcement"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Announcement"> | Date | string
+  staffOnly?: Prisma.BoolNullableFilter<"Announcement"> | boolean | null
   schoolId?: Prisma.StringFilter<"Announcement"> | string
   termId?: Prisma.StringFilter<"Announcement"> | string
-  classId?: Prisma.StringNullableFilter<"Announcement"> | string | null
   gradeId?: Prisma.StringNullableFilter<"Announcement"> | string | null
 }
 
@@ -695,12 +605,10 @@ export type AnnouncementCreateWithoutTermInput = {
   id?: string
   title: string
   content: string
-  isPublished?: boolean
-  draftedAt?: Date | string
-  publishedAt?: Date | string | null
+  publishedAt?: Date | string
   updatedAt?: Date | string
+  staffOnly?: boolean | null
   school: Prisma.SchoolCreateNestedOneWithoutAnnouncementsInput
-  class?: Prisma.ClassCreateNestedOneWithoutAnnouncementsInput
   grade?: Prisma.GradeCreateNestedOneWithoutAnnouncementsInput
 }
 
@@ -708,12 +616,10 @@ export type AnnouncementUncheckedCreateWithoutTermInput = {
   id?: string
   title: string
   content: string
-  isPublished?: boolean
-  draftedAt?: Date | string
-  publishedAt?: Date | string | null
+  publishedAt?: Date | string
   updatedAt?: Date | string
+  staffOnly?: boolean | null
   schoolId: string
-  classId?: string | null
   gradeId?: string | null
 }
 
@@ -747,26 +653,22 @@ export type AnnouncementCreateWithoutGradeInput = {
   id?: string
   title: string
   content: string
-  isPublished?: boolean
-  draftedAt?: Date | string
-  publishedAt?: Date | string | null
+  publishedAt?: Date | string
   updatedAt?: Date | string
+  staffOnly?: boolean | null
   school: Prisma.SchoolCreateNestedOneWithoutAnnouncementsInput
   term: Prisma.TermCreateNestedOneWithoutAnnouncementsInput
-  class?: Prisma.ClassCreateNestedOneWithoutAnnouncementsInput
 }
 
 export type AnnouncementUncheckedCreateWithoutGradeInput = {
   id?: string
   title: string
   content: string
-  isPublished?: boolean
-  draftedAt?: Date | string
-  publishedAt?: Date | string | null
+  publishedAt?: Date | string
   updatedAt?: Date | string
+  staffOnly?: boolean | null
   schoolId: string
   termId: string
-  classId?: string | null
 }
 
 export type AnnouncementCreateOrConnectWithoutGradeInput = {
@@ -795,68 +697,14 @@ export type AnnouncementUpdateManyWithWhereWithoutGradeInput = {
   data: Prisma.XOR<Prisma.AnnouncementUpdateManyMutationInput, Prisma.AnnouncementUncheckedUpdateManyWithoutGradeInput>
 }
 
-export type AnnouncementCreateWithoutClassInput = {
-  id?: string
-  title: string
-  content: string
-  isPublished?: boolean
-  draftedAt?: Date | string
-  publishedAt?: Date | string | null
-  updatedAt?: Date | string
-  school: Prisma.SchoolCreateNestedOneWithoutAnnouncementsInput
-  term: Prisma.TermCreateNestedOneWithoutAnnouncementsInput
-  grade?: Prisma.GradeCreateNestedOneWithoutAnnouncementsInput
-}
-
-export type AnnouncementUncheckedCreateWithoutClassInput = {
-  id?: string
-  title: string
-  content: string
-  isPublished?: boolean
-  draftedAt?: Date | string
-  publishedAt?: Date | string | null
-  updatedAt?: Date | string
-  schoolId: string
-  termId: string
-  gradeId?: string | null
-}
-
-export type AnnouncementCreateOrConnectWithoutClassInput = {
-  where: Prisma.AnnouncementWhereUniqueInput
-  create: Prisma.XOR<Prisma.AnnouncementCreateWithoutClassInput, Prisma.AnnouncementUncheckedCreateWithoutClassInput>
-}
-
-export type AnnouncementCreateManyClassInputEnvelope = {
-  data: Prisma.AnnouncementCreateManyClassInput | Prisma.AnnouncementCreateManyClassInput[]
-  skipDuplicates?: boolean
-}
-
-export type AnnouncementUpsertWithWhereUniqueWithoutClassInput = {
-  where: Prisma.AnnouncementWhereUniqueInput
-  update: Prisma.XOR<Prisma.AnnouncementUpdateWithoutClassInput, Prisma.AnnouncementUncheckedUpdateWithoutClassInput>
-  create: Prisma.XOR<Prisma.AnnouncementCreateWithoutClassInput, Prisma.AnnouncementUncheckedCreateWithoutClassInput>
-}
-
-export type AnnouncementUpdateWithWhereUniqueWithoutClassInput = {
-  where: Prisma.AnnouncementWhereUniqueInput
-  data: Prisma.XOR<Prisma.AnnouncementUpdateWithoutClassInput, Prisma.AnnouncementUncheckedUpdateWithoutClassInput>
-}
-
-export type AnnouncementUpdateManyWithWhereWithoutClassInput = {
-  where: Prisma.AnnouncementScalarWhereInput
-  data: Prisma.XOR<Prisma.AnnouncementUpdateManyMutationInput, Prisma.AnnouncementUncheckedUpdateManyWithoutClassInput>
-}
-
 export type AnnouncementCreateManySchoolInput = {
   id?: string
   title: string
   content: string
-  isPublished?: boolean
-  draftedAt?: Date | string
-  publishedAt?: Date | string | null
+  publishedAt?: Date | string
   updatedAt?: Date | string
+  staffOnly?: boolean | null
   termId: string
-  classId?: string | null
   gradeId?: string | null
 }
 
@@ -864,12 +712,10 @@ export type AnnouncementUpdateWithoutSchoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  draftedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  staffOnly?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   term?: Prisma.TermUpdateOneRequiredWithoutAnnouncementsNestedInput
-  class?: Prisma.ClassUpdateOneWithoutAnnouncementsNestedInput
   grade?: Prisma.GradeUpdateOneWithoutAnnouncementsNestedInput
 }
 
@@ -877,12 +723,10 @@ export type AnnouncementUncheckedUpdateWithoutSchoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  draftedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  staffOnly?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   termId?: Prisma.StringFieldUpdateOperationsInput | string
-  classId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gradeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -890,12 +734,10 @@ export type AnnouncementUncheckedUpdateManyWithoutSchoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  draftedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  staffOnly?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   termId?: Prisma.StringFieldUpdateOperationsInput | string
-  classId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gradeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -903,12 +745,10 @@ export type AnnouncementCreateManyTermInput = {
   id?: string
   title: string
   content: string
-  isPublished?: boolean
-  draftedAt?: Date | string
-  publishedAt?: Date | string | null
+  publishedAt?: Date | string
   updatedAt?: Date | string
+  staffOnly?: boolean | null
   schoolId: string
-  classId?: string | null
   gradeId?: string | null
 }
 
@@ -916,12 +756,10 @@ export type AnnouncementUpdateWithoutTermInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  draftedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  staffOnly?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   school?: Prisma.SchoolUpdateOneRequiredWithoutAnnouncementsNestedInput
-  class?: Prisma.ClassUpdateOneWithoutAnnouncementsNestedInput
   grade?: Prisma.GradeUpdateOneWithoutAnnouncementsNestedInput
 }
 
@@ -929,12 +767,10 @@ export type AnnouncementUncheckedUpdateWithoutTermInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  draftedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  staffOnly?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
-  classId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gradeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -942,12 +778,10 @@ export type AnnouncementUncheckedUpdateManyWithoutTermInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  draftedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  staffOnly?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
-  classId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gradeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -955,104 +789,44 @@ export type AnnouncementCreateManyGradeInput = {
   id?: string
   title: string
   content: string
-  isPublished?: boolean
-  draftedAt?: Date | string
-  publishedAt?: Date | string | null
+  publishedAt?: Date | string
   updatedAt?: Date | string
+  staffOnly?: boolean | null
   schoolId: string
   termId: string
-  classId?: string | null
 }
 
 export type AnnouncementUpdateWithoutGradeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  draftedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  staffOnly?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   school?: Prisma.SchoolUpdateOneRequiredWithoutAnnouncementsNestedInput
   term?: Prisma.TermUpdateOneRequiredWithoutAnnouncementsNestedInput
-  class?: Prisma.ClassUpdateOneWithoutAnnouncementsNestedInput
 }
 
 export type AnnouncementUncheckedUpdateWithoutGradeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  draftedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  staffOnly?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   termId?: Prisma.StringFieldUpdateOperationsInput | string
-  classId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AnnouncementUncheckedUpdateManyWithoutGradeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  draftedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  staffOnly?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   termId?: Prisma.StringFieldUpdateOperationsInput | string
-  classId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-}
-
-export type AnnouncementCreateManyClassInput = {
-  id?: string
-  title: string
-  content: string
-  isPublished?: boolean
-  draftedAt?: Date | string
-  publishedAt?: Date | string | null
-  updatedAt?: Date | string
-  schoolId: string
-  termId: string
-  gradeId?: string | null
-}
-
-export type AnnouncementUpdateWithoutClassInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  draftedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  school?: Prisma.SchoolUpdateOneRequiredWithoutAnnouncementsNestedInput
-  term?: Prisma.TermUpdateOneRequiredWithoutAnnouncementsNestedInput
-  grade?: Prisma.GradeUpdateOneWithoutAnnouncementsNestedInput
-}
-
-export type AnnouncementUncheckedUpdateWithoutClassInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  draftedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  schoolId?: Prisma.StringFieldUpdateOperationsInput | string
-  termId?: Prisma.StringFieldUpdateOperationsInput | string
-  gradeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-}
-
-export type AnnouncementUncheckedUpdateManyWithoutClassInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  draftedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  schoolId?: Prisma.StringFieldUpdateOperationsInput | string
-  termId?: Prisma.StringFieldUpdateOperationsInput | string
-  gradeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -1061,17 +835,14 @@ export type AnnouncementSelect<ExtArgs extends runtime.Types.Extensions.Internal
   id?: boolean
   title?: boolean
   content?: boolean
-  isPublished?: boolean
-  draftedAt?: boolean
   publishedAt?: boolean
   updatedAt?: boolean
+  staffOnly?: boolean
   schoolId?: boolean
   termId?: boolean
-  classId?: boolean
   gradeId?: boolean
   school?: boolean | Prisma.SchoolDefaultArgs<ExtArgs>
   term?: boolean | Prisma.TermDefaultArgs<ExtArgs>
-  class?: boolean | Prisma.Announcement$classArgs<ExtArgs>
   grade?: boolean | Prisma.Announcement$gradeArgs<ExtArgs>
 }, ExtArgs["result"]["announcement"]>
 
@@ -1079,17 +850,14 @@ export type AnnouncementSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   id?: boolean
   title?: boolean
   content?: boolean
-  isPublished?: boolean
-  draftedAt?: boolean
   publishedAt?: boolean
   updatedAt?: boolean
+  staffOnly?: boolean
   schoolId?: boolean
   termId?: boolean
-  classId?: boolean
   gradeId?: boolean
   school?: boolean | Prisma.SchoolDefaultArgs<ExtArgs>
   term?: boolean | Prisma.TermDefaultArgs<ExtArgs>
-  class?: boolean | Prisma.Announcement$classArgs<ExtArgs>
   grade?: boolean | Prisma.Announcement$gradeArgs<ExtArgs>
 }, ExtArgs["result"]["announcement"]>
 
@@ -1097,17 +865,14 @@ export type AnnouncementSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   id?: boolean
   title?: boolean
   content?: boolean
-  isPublished?: boolean
-  draftedAt?: boolean
   publishedAt?: boolean
   updatedAt?: boolean
+  staffOnly?: boolean
   schoolId?: boolean
   termId?: boolean
-  classId?: boolean
   gradeId?: boolean
   school?: boolean | Prisma.SchoolDefaultArgs<ExtArgs>
   term?: boolean | Prisma.TermDefaultArgs<ExtArgs>
-  class?: boolean | Prisma.Announcement$classArgs<ExtArgs>
   grade?: boolean | Prisma.Announcement$gradeArgs<ExtArgs>
 }, ExtArgs["result"]["announcement"]>
 
@@ -1115,33 +880,28 @@ export type AnnouncementSelectScalar = {
   id?: boolean
   title?: boolean
   content?: boolean
-  isPublished?: boolean
-  draftedAt?: boolean
   publishedAt?: boolean
   updatedAt?: boolean
+  staffOnly?: boolean
   schoolId?: boolean
   termId?: boolean
-  classId?: boolean
   gradeId?: boolean
 }
 
-export type AnnouncementOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "content" | "isPublished" | "draftedAt" | "publishedAt" | "updatedAt" | "schoolId" | "termId" | "classId" | "gradeId", ExtArgs["result"]["announcement"]>
+export type AnnouncementOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "content" | "publishedAt" | "updatedAt" | "staffOnly" | "schoolId" | "termId" | "gradeId", ExtArgs["result"]["announcement"]>
 export type AnnouncementInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   school?: boolean | Prisma.SchoolDefaultArgs<ExtArgs>
   term?: boolean | Prisma.TermDefaultArgs<ExtArgs>
-  class?: boolean | Prisma.Announcement$classArgs<ExtArgs>
   grade?: boolean | Prisma.Announcement$gradeArgs<ExtArgs>
 }
 export type AnnouncementIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   school?: boolean | Prisma.SchoolDefaultArgs<ExtArgs>
   term?: boolean | Prisma.TermDefaultArgs<ExtArgs>
-  class?: boolean | Prisma.Announcement$classArgs<ExtArgs>
   grade?: boolean | Prisma.Announcement$gradeArgs<ExtArgs>
 }
 export type AnnouncementIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   school?: boolean | Prisma.SchoolDefaultArgs<ExtArgs>
   term?: boolean | Prisma.TermDefaultArgs<ExtArgs>
-  class?: boolean | Prisma.Announcement$classArgs<ExtArgs>
   grade?: boolean | Prisma.Announcement$gradeArgs<ExtArgs>
 }
 
@@ -1150,20 +910,17 @@ export type $AnnouncementPayload<ExtArgs extends runtime.Types.Extensions.Intern
   objects: {
     school: Prisma.$SchoolPayload<ExtArgs>
     term: Prisma.$TermPayload<ExtArgs>
-    class: Prisma.$ClassPayload<ExtArgs> | null
     grade: Prisma.$GradePayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     title: string
     content: string
-    isPublished: boolean
-    draftedAt: Date
-    publishedAt: Date | null
+    publishedAt: Date
     updatedAt: Date
+    staffOnly: boolean | null
     schoolId: string
     termId: string
-    classId: string | null
     gradeId: string | null
   }, ExtArgs["result"]["announcement"]>
   composites: {}
@@ -1561,7 +1318,6 @@ export interface Prisma__AnnouncementClient<T, Null = never, ExtArgs extends run
   readonly [Symbol.toStringTag]: "PrismaPromise"
   school<T extends Prisma.SchoolDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SchoolDefaultArgs<ExtArgs>>): Prisma.Prisma__SchoolClient<runtime.Types.Result.GetResult<Prisma.$SchoolPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   term<T extends Prisma.TermDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TermDefaultArgs<ExtArgs>>): Prisma.Prisma__TermClient<runtime.Types.Result.GetResult<Prisma.$TermPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  class<T extends Prisma.Announcement$classArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Announcement$classArgs<ExtArgs>>): Prisma.Prisma__ClassClient<runtime.Types.Result.GetResult<Prisma.$ClassPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   grade<T extends Prisma.Announcement$gradeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Announcement$gradeArgs<ExtArgs>>): Prisma.Prisma__GradeClient<runtime.Types.Result.GetResult<Prisma.$GradePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1595,13 +1351,11 @@ export interface AnnouncementFieldRefs {
   readonly id: Prisma.FieldRef<"Announcement", 'String'>
   readonly title: Prisma.FieldRef<"Announcement", 'String'>
   readonly content: Prisma.FieldRef<"Announcement", 'String'>
-  readonly isPublished: Prisma.FieldRef<"Announcement", 'Boolean'>
-  readonly draftedAt: Prisma.FieldRef<"Announcement", 'DateTime'>
   readonly publishedAt: Prisma.FieldRef<"Announcement", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Announcement", 'DateTime'>
+  readonly staffOnly: Prisma.FieldRef<"Announcement", 'Boolean'>
   readonly schoolId: Prisma.FieldRef<"Announcement", 'String'>
   readonly termId: Prisma.FieldRef<"Announcement", 'String'>
-  readonly classId: Prisma.FieldRef<"Announcement", 'String'>
   readonly gradeId: Prisma.FieldRef<"Announcement", 'String'>
 }
     
@@ -1996,25 +1750,6 @@ export type AnnouncementDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Limit how many Announcements to delete.
    */
   limit?: number
-}
-
-/**
- * Announcement.class
- */
-export type Announcement$classArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Class
-   */
-  select?: Prisma.ClassSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Class
-   */
-  omit?: Prisma.ClassOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ClassInclude<ExtArgs> | null
-  where?: Prisma.ClassWhereInput
 }
 
 /**

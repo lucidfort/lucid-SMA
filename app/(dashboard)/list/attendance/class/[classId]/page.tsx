@@ -1,51 +1,47 @@
 import AttendanceMarker from "@/components/AttendanceMarker";
+import { GetClassAttendanceQuery, GetClassAttendanceQueryVariables } from "@/lib/generated/graphql/server";
 import { SearchParams } from "@/types";
-import prisma from "@/lib/prisma";
-import { getCurrentUser } from "@/lib/serverUtils";
-import { redirect } from "next/navigation";
 import { endOfDay, format, startOfDay } from "date-fns";
+import { redirect } from "next/navigation";
+import { gql } from "@urql/core";
+import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
 
-const Page = async ({ params, searchParams }: SearchParams) => {
+const GET_CLASS_ATTENDANCE = gql(`
+  query GetClassAttendance($id: ID!, $attendanceFilter: AttendanceFilter!) {
+    class(id: $id) {
+      id 
+      name
+      attendances(attendanceFilter: $attendanceFilter) {
+        id
+        present
+        studentId
+        updatedAt
+      }
+      students {
+        id
+        name
+        surname
+        sex
+      }
+    }
+  }
+`)
+
+const ClassAttendanceInfo = async ({ params, searchParams }: SearchParams) => {
   const { classId } = await params;
   const { date } = await searchParams;
-  const { schoolId } = await getCurrentUser();
 
   const targetDate = date ? new Date(`${date}T08:12:00Z`) : new Date();
 
   const start = startOfDay(targetDate);
   const end = endOfDay(targetDate);
 
-  const data = await prisma.class.findUnique({
-    where: {
-      schoolId,
-      id: classId,
-    },
-    select: {
-      name: true,
-      attendances: {
-        where: {
-          schoolId,
-          date: { gte: start, lte: end },
-        },
-        select: {
-          status: true,
-          studentId: true,
-          updatedAt: true,
-        },
-      },
-      students: {
-        select: {
-          id: true,
-          name: true,
-          surname: true,
-        },
-      },
-    },
-  });
+  const { client } = await createUrqlServerClient()
+  const { data } = await client.query<GetClassAttendanceQuery, GetClassAttendanceQueryVariables>(GET_CLASS_ATTENDANCE, { id: classId, attendanceFilter: { startDate: start, endDate: end } })
 
-  if (!data) redirect("/list/attendance/class");
+  if (!data?.class) redirect("/list/attendance/class");
 
-  const lastUpdated = data.attendances[0].updatedAt;
+  const lastUpdated = data.class.attendances[0]?.updatedAt;
 
   return (
     <div className="m-4 mt-0 flex-1 space-y-7 rounded-md bg-white p-4">
@@ -61,11 +57,11 @@ const Page = async ({ params, searchParams }: SearchParams) => {
         <AttendanceMarker
           classId={classId}
           date={start}
-          students={data.students}
-          attendanceState={data.attendances}
+          students={data.class.students}
+          attendanceState={data.class.attendances}
         />
       </div>
     </div>
   );
 };
-export default Page;
+export default ClassAttendanceInfo;

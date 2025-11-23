@@ -6,14 +6,15 @@ import {
   deleteClassAction,
   deleteEventAction,
   deleteExamAction,
-  deleteFee,
+  deleteInvoiceAction,
   deleteGradeAction,
   deleteClubAction,
-  deleteParent,
-  deleteResult,
+  deleteParentAction,
+  deleteResultAction,
   deleteStaffAction,
-  deleteStudent,
+  deleteStudentAction,
   deleteSubjectAction,
+  deleteProgramAction,
 } from "@/lib/actions";
 import { Table } from "@/types";
 import { Loader2 } from "lucide-react";
@@ -43,22 +44,22 @@ const deleteActionMap = {
   grade: deleteGradeAction,
   class: deleteClassAction,
   staff: deleteStaffAction,
-  student: deleteStudent,
+  student: deleteStudentAction,
   exam: deleteExamAction,
   assignment: deleteAssignmentAction,
   club: deleteClubAction,
-  parent: deleteParent,
-  result: deleteResult,
+  parent: deleteParentAction,
+  result: deleteResultAction,
   event: deleteEventAction,
   announcement: deleteAnnouncementAction,
   attendance: deleteSubjectAction,
-  fee: deleteFee,
-  program: deleteFee,
+  invoice: deleteInvoiceAction,
+  program: deleteProgramAction,
   // TRANSACTION DOESN'T HAVE A DELETE ACTION SINCE YOU SHOULDN'T DELETE A TRANSACTION HISTORY. THIS IS JUST TO AVOID TYPESCRIPT ERRORS, IT WON'T DO ANYTHING
-  transaction: deleteFee,
-  timetable: deleteFee,
-  term: deleteFee,
-  "academic-year": deleteFee,
+  transaction: deleteInvoiceAction,
+  timetable: deleteInvoiceAction,
+  term: deleteInvoiceAction,
+  "academic-year": deleteInvoiceAction,
 };
 
 const DeleteModal = ({
@@ -68,6 +69,7 @@ const DeleteModal = ({
   children,
 }: DeleteModalProps) => {
   const router = useRouter();
+  const [open, setOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -82,7 +84,7 @@ const DeleteModal = ({
         toast.success(`${table} deleted successfully.`);
         router.refresh();
 
-        // setOpen(false);
+        setOpen(false);
       } else {
         setError(
           typeof result?.error == "string"
@@ -99,7 +101,7 @@ const DeleteModal = ({
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={(val) => setOpen(val)}>
       <DialogTrigger>
         {children}
 

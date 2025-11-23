@@ -1,41 +1,63 @@
-import { Transaction } from "@prisma/client";
+"use client"
 
-interface TransactionList extends Transaction {
-    student: { name: string; surname: string };
-    fee: { description: string; }
-}
+import { InvoicePayment } from "@/lib/generated/graphql/client";
+import { ColumnDef } from "@tanstack/react-table";
+import { Badge } from "../ui/badge";
+import { format } from "date-fns"
 
-export const transactionsColumn = () => [
+export const transactionsColumn: ColumnDef<InvoicePayment>[] = [
     {
-        accessor: "student",
-        header: 'Student',
-        className: "min-w-44",
-        cell: (item: TransactionList) => <div className="min-w-44" >{item?.student?.name ? `${item.student.name} ${item.student.surname}` : '-'}</div>
+        accessorKey: "reference",
+        header: 'Students',
+        cell: ({ row: { original } }) => <span>{original.reference}</span>
     },
     {
-        accessor: "amount",
+        accessorKey: "invoice.number",
+        header: 'Invoice Number',
+        cell: ({ row: { original } }) => <span>{original.invoice.number}</span>
+    },
+    {
+        accessorFn: (row) => row.students.map(student => `${student.name} ${student.surname}`).join(", "),
+        header: 'Students',
+        cell: ({ row: { original } }) => <div>{original.students.map(student => `${student.name} ${student.surname}`).join(", ") || "-"}</div>
+    },
+    {
+        accessorKey: "amount",
         header: "Amount",
-        cell: (item: TransactionList) => <div>₦{item?.amount}</div>
+        cell: ({ row: { original } }) => <div>₦{original.amountPaid}</div>
     },
     {
-        accessor: "description",
-        header: "Description",
-        className: "min-w-52",
-        cell: (item: TransactionList) => <div className="min-w-52">{item?.fee.description}</div>
+        accessorKey: "status",
+        header: "Status",
+        cell: ({ row: { original } }) => <Badge>₦{original.status}</Badge>
     },
     {
-        accessor: "date",
-        header: "Date",
-        className: 'min-w-56',
-        cell: (item: TransactionList) => <div className="min-w-52">{new Intl.DateTimeFormat("en-NG").format(item?.date)}, {item.date.toLocaleTimeString('en-NG', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true,
-        })}</div>
+        accessorKey: "createdAt",
+        header: "Creation Date",
+        cell: ({ row: { original } }) => {
+            const date = new Date(original.createdAt)
+            return (
+                <div>
+                    {new Intl.DateTimeFormat("en-NG").format(date)}, {date.toLocaleTimeString('en-NG', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true,
+                    })}
+                </div>
+            )
+        }
     },
     {
-        accessor: "reference",
-        header: 'Reference',
-        cell: (item: TransactionList) => <div>{item?.reference}</div>
-    }
+        accessorKey: "paidAt",
+        header: "Payment Date",
+        cell: ({ row: { original: { paidAt } } }) => {
+            const formatted = paidAt ? format(new Date(paidAt), "MMMM d, yyyy - h:mm a") : "-"
+
+            return (
+                <div>
+                    {formatted}
+                </div>
+            )
+        }
+    },
 ]

@@ -1,15 +1,17 @@
-import { builder } from "../builder";
 import prisma from "@/lib/prisma";
-import { DateTimeResolver } from "graphql-scalars";
+import { builder, Sex } from "../builder";
+
 import {
   createAcademicYearAction,
   createProgramAction,
   createSchoolAction,
   createTermAction,
 } from "@/lib/actions";
+import { UserSex } from "@/lib/generated/prisma/enums";
 import { AppError, UniqueConstraintError } from "@/lib/pothos/errors";
-
-builder.addScalarType("DateTime", DateTimeResolver);
+import { AttendanceFilter } from "./attendance";
+import { Prisma } from "@/lib/generated/prisma/client";
+import { RoleAccessLevel } from "@/types";
 
 const ProgramEnum = builder.enumType("ProgramName", {
   values: ["CRECHE", "NURSERY", "PRIMARY", "SECONDARY"] as const,
@@ -78,6 +80,22 @@ const SchoolInput = builder.inputType("SchoolInput", {
   }),
 });
 
+const StudentSexCountRef = builder.objectRef<{ sex: UserSex; _count: number }>(
+  "StudentSexCount",
+);
+
+builder.objectType(StudentSexCountRef, {
+  fields: (t) => ({
+    sex: t.field({
+      type: Sex,
+      resolve: (parent) => parent.sex,
+    }),
+    _count: t.int({
+      resolve: (parent) => parent._count,
+    }),
+  }),
+});
+
 builder.prismaObject("School", {
   fields: (t) => ({
     id: t.exposeID("id", { nullable: false }),
@@ -88,6 +106,104 @@ builder.prismaObject("School", {
     motto: t.exposeString("motto"),
     logo: t.exposeString("logo"),
     programs: t.relation("programs"),
+    classes: t.relation("classes"),
+    currentTerm: t.relation("terms", {
+      query: {
+        where: { isCurrent: true },
+      },
+    }),
+    studentAttendances: t.relation("studentAttendances", {
+      authScopes: {
+        manager: true,
+        teacher: true,
+        admin: true,
+      },
+      args: {
+        attendanceFilter: t.arg({
+          type: AttendanceFilter,
+          required: true,
+        }),
+      },
+      query: (args, ctx) => {
+        const { termId, startDate, endDate } = args.attendanceFilter;
+
+        return {
+          where: {
+            schoolId: ctx.schoolId!,
+            termId: termId ? termId : ctx.currentTerm!,
+            date: {
+              ...(startDate && { gte: startDate }),
+              ...(endDate && { lte: endDate }),
+            },
+          },
+          orderBy: { date: "desc" },
+        };
+      },
+    }),
+    activeStudentsCount: t.relationCount("students", {
+      where: { activeState: { in: ["ACTIVE", "SUSPENDED"] } },
+    }),
+    activeStaffCount: t.relationCount("staffs", {
+      where: {
+        isActive: true,
+      },
+    }),
+    studentSexDistribution: t.field({
+      type: [StudentSexCountRef],
+      nullable: false,
+      resolve: async (school) => {
+        const data = (await prisma.student.groupBy({
+          where: { schoolId: school.id },
+          by: ["sex"],
+          _count: true,
+        })) as { _count: number; sex: UserSex }[];
+
+        return data.map((item) => ({
+          sex: item.sex,
+          _count: item._count,
+        }));
+      },
+    }),
+    announcementsCount: t.relationCount("announcements", {
+      args: {
+        rangeFrom: t.arg({ type: "DateTime", required: true }),
+      },
+      where: (args, context) => {
+        const { userId, accessLevel, schoolId, currentTerm } = context;
+
+        const roleConditions = {
+          teacher: { supervisors: { some: { clerkUserId: userId! } } },
+          parent: {
+            students: {
+              some: {
+                parentStudents: {
+                  some: { parent: { clerkUserId: userId! } },
+                },
+              },
+            },
+          },
+        };
+        return {
+          schoolId: schoolId!,
+          OR: [
+            { gradeId: null },
+            {
+              grade: {
+                classes: {
+                  some: {
+                    ...roleConditions[
+                      accessLevel as keyof typeof roleConditions
+                    ],
+                  },
+                },
+              },
+            },
+          ],
+          termId: currentTerm!,
+          publishedAt: { gte: args.rangeFrom },
+        };
+      },
+    }),
   }),
 });
 
@@ -121,26 +237,15 @@ builder.prismaObject("Term", {
   }),
 });
 
-builder.prismaObject("Student", {
-  fields: (t) => ({
-    id: t.exposeID("id", { nullable: false }),
-    name: t.exposeString("name", { nullable: false }),
-    surname: t.exposeString("surname", { nullable: false }),
-    img: t.exposeString("img"),
-    sex: t.exposeString("sex", { nullable: false }),
-    registrationNumber: t.exposeString("registrationNumber", {
-      nullable: false,
-    }),
-    activeState: t.exposeString("activeState", { nullable: false }),
-  }),
-});
-
 builder.mutationType({
   fields: (t) => ({
     createSchool: t.prismaField({
       type: "School",
       args: {
         input: t.arg({ type: SchoolInput, required: true }),
+      },
+      authScopes: {
+        public: true,
       },
       errors: { types: [AppError, UniqueConstraintError] },
       resolve: async (_query, _parent, args) => {
@@ -153,6 +258,11 @@ builder.mutationType({
       args: {
         input: t.arg({ type: ProgramInput, required: true }),
       },
+      authScopes: {
+        authenticated: true,
+        manager: true,
+        admin: true,
+      },
       errors: { types: [AppError] },
       resolve: async (_query, _parent, args) => {
         return createProgramAction(args.input);
@@ -164,6 +274,11 @@ builder.mutationType({
       args: {
         input: t.arg({ type: AcademicYearInput, required: true }),
       },
+      authScopes: {
+        authenticated: true,
+        manager: true,
+        admin: true,
+      },
       errors: { types: [AppError, UniqueConstraintError] },
       resolve: async (_query, _parent, args) =>
         await createAcademicYearAction(args.input),
@@ -173,6 +288,11 @@ builder.mutationType({
       type: "Term",
       args: {
         input: t.arg({ type: TermInput, required: true }),
+      },
+      authScopes: {
+        authenticated: true,
+        manager: true,
+        admin: true,
       },
       errors: { types: [AppError, UniqueConstraintError] },
       resolve: async (_query, _parent, args) =>
@@ -188,8 +308,40 @@ builder.queryType({
       args: {
         id: t.arg.id({ required: true }),
       },
-      resolve: async (query, _, args) =>
-        await prisma.school.findUnique({ where: { id: args.id }, ...query }),
+      resolve: async (query, _, args, context) => {
+        const { accessLevel, userId } = context;
+        let where: Prisma.SchoolWhereInput;
+
+        switch (accessLevel as RoleAccessLevel) {
+          case "parent":
+            where = { parents: { some: { clerkUserId: userId } } };
+            break;
+          case "manager":
+            where = { managers: { some: { clerkUserId: userId } } };
+            break;
+          case "finance":
+          case "academics":
+          case "administration":
+          case "teacher":
+            where = { staffs: { some: { clerkUserId: userId } } };
+            break;
+          default:
+            where = {
+              OR: [
+                { parents: { some: { clerkUserId: userId } } },
+                { staffs: { some: { clerkUserId: userId } } },
+              ],
+            };
+        }
+
+        return await prisma.school.findFirst({
+          ...query,
+          where: {
+            id: args.id,
+            ...where,
+          },
+        });
+      },
     }),
 
     schools: t.prismaField({
@@ -203,26 +355,6 @@ builder.queryType({
         prisma.program.findMany({
           ...query,
           where: { schoolId: ctx.schoolId! },
-        }),
-    }),
-
-    students: t.prismaField({
-      type: ["Student"],
-      args: {
-        searchTerm: t.arg.string({ required: false }),
-      },
-      resolve: async (query, _parent, args, ctx) =>
-        prisma.student.findMany({
-          ...query,
-          where: {
-            schoolId: ctx.schoolId!,
-            ...(args.searchTerm && {
-              OR: [
-                { name: { contains: args.searchTerm, mode: "insensitive" } },
-                { surname: { contains: args.searchTerm, mode: "insensitive" } },
-              ],
-            }),
-          },
         }),
     }),
 

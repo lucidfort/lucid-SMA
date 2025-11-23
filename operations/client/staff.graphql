@@ -1,0 +1,50 @@
+query GetStaffs($filter: StaffFilterInput!) {
+  staffs(filter: $filter) {
+    id
+    name
+    surname
+  }
+}
+mutation CreateStaff($input: StaffInput!) {
+  createStaff(input: $input) {
+    __typename
+
+    ... on MutationCreateStaffSuccess {
+      data {
+        id
+      }
+    }
+
+    ... on UniqueConstraintError {
+      __typename
+      message
+    }
+
+    ... on AppError {
+      __typename
+      message
+    }
+  }
+}
+
+mutation UpdateStaff($input: StaffInput!) {
+  updateStaff(input: $input) {
+    __typename
+
+    ... on MutationUpdateStaffSuccess {
+      data {
+        id
+      }
+    }
+
+    ... on UniqueConstraintError {
+      __typename
+      message
+    }
+
+    ... on AppError {
+      __typename
+      message
+    }
+  }
+}

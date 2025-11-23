@@ -1,15 +1,28 @@
 import Menu from "@/components/Menu";
 import Navbar from "@/components/Navbar";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { getCurrentUser, getSchool } from "@/lib/serverUtils";
+import {
+  GetSchoolQuery,
+  GetSchoolQueryVariables,
+} from "@/lib/generated/graphql/server";
+import { getCurrentUser } from "@/lib/server/utils";
+import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
+import { GET_SCHOOL } from "@/operations/server/shared";
 import { Metadata } from "next";
-import { notFound, redirect } from "next/navigation";
-import { ReactNode } from "react";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { ReactNode } from "react";
+import NotificationSubscriber from "@/components/NotificationSubscriber";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { schoolId } = await getCurrentUser();
-  const school = await getSchool(schoolId || "");
+
+  const { client } = await createUrqlServerClient();
+  const { data } = await client.query<GetSchoolQuery, GetSchoolQueryVariables>(
+    GET_SCHOOL,
+    { id: schoolId || "" },
+  );
+  const school = data?.school;
 
   if (!school)
     return {
@@ -43,18 +56,25 @@ export default async function DashboardLayout({
   children: ReactNode;
 }>) {
   const { accessLevel, currentUserId, schoolId } = await getCurrentUser();
-  if (!accessLevel || !currentUserId) redirect("/sign-in");
-
-  const school = await getSchool(schoolId!);
-  if (!school) notFound();
+  if (!accessLevel || !currentUserId || !schoolId) redirect("/sign-in");
 
   const cookieStore = await cookies();
+
+  const { client } = await createUrqlServerClient();
+  const { data } = await client.query<GetSchoolQuery, GetSchoolQueryVariables>(
+    GET_SCHOOL,
+    { id: schoolId },
+  );
+
+  const school = data?.school;
+  if (!school) redirect("/sign-in");
+
   const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
 
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
       <main className="flex w-full">
-        <Menu accessLevel={accessLevel} school={school} />
+        <Menu accessLevel={accessLevel} school={school!} />
 
         <div className="flex w-full flex-col overflow-x-hidden bg-[#F7F8FA]">
           <Navbar
@@ -64,6 +84,8 @@ export default async function DashboardLayout({
           />
 
           <div className="flex-1 p-4">{children}</div>
+
+          <NotificationSubscriber />
           {/*<TermProvider currentTerm={currentTerm}>*/}
           {/*</TermProvider>*/}
         </div>

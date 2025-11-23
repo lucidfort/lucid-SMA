@@ -1,7 +1,7 @@
 "use server";
 
-import { ClassSchema } from "../zod/validation";
-import { getCurrentUser, handleGraphqlServerErrors } from "@/lib/serverUtils";
+import { ClassSchema } from "../validation";
+import { getCurrentUser, handleGraphqlServerErrors } from "@/lib/server/utils";
 import prisma from "../prisma";
 import { Class } from "@/lib/generated/prisma/client";
 

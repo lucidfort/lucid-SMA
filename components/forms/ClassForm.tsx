@@ -1,6 +1,6 @@
 "use client";
 
-import { classSchema, ClassSchema } from "@/lib/zod/validation";
+import { classSchema, ClassSchema } from "@/lib/validation";
 import { FormProps } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -85,14 +85,6 @@ const ClassForm = ({ type, data, setOpen }: FormProps) => {
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <InputField
-            control={form.control}
-            fieldType={FormFieldType.INPUT}
-            label="Name"
-            name="name"
-            placeholder="A B or Gold"
-          />
-
-          <InputField
             label="Grade"
             control={form.control}
             name="gradeId"
@@ -100,7 +92,7 @@ const ClassForm = ({ type, data, setOpen }: FormProps) => {
             fieldType={FormFieldType.SELECT}
           >
             <SelectContent>
-              <SelectItem value="0" disabled={true}>
+              <SelectItem value="0">
                 {gradesResult.fetching
                   ? "Loading"
                   : grades?.length === 0
@@ -114,6 +106,14 @@ const ClassForm = ({ type, data, setOpen }: FormProps) => {
               ))}
             </SelectContent>
           </InputField>
+
+          <InputField
+            control={form.control}
+            fieldType={FormFieldType.INPUT}
+            label="Name"
+            name="name"
+            placeholder="A B or Gold"
+          />
 
           <InputField
             label="Capacity"

@@ -1,17 +1,15 @@
 "use server";
 
-import { handleServerErrors } from "../utils";
-import { SubjectSchema } from "../zod/validation";
-import { getCurrentUser, handleGraphqlServerErrors } from "@/lib/serverUtils";
-import prisma from "../prisma";
 import { AppError } from "@/lib/pothos/errors";
+import { getCurrentUser, handleGraphqlServerErrors } from "@/lib/server/utils";
+import { SubjectInput } from "../generated/graphql/server";
+import prisma from "../prisma";
+import { handleServerErrors } from "../utils";
 
-export const createSubjectAction = async ({
-  name,
-  teachers,
-}: SubjectSchema) => {
+export const createSubjectAction = async (data: SubjectInput) => {
   try {
     const { accessLevel, schoolId } = await getCurrentUser();
+    const { name, teachers } = data;
 
     if (accessLevel !== "manager")
       throw new AppError("Unauthorized", "UNAUTHORIZED");
@@ -38,7 +36,7 @@ export const createSubjectAction = async ({
   }
 };
 
-export const updateSubjectAction = async (data: SubjectSchema) => {
+export const updateSubjectAction = async (data: SubjectInput) => {
   try {
     const { accessLevel, schoolId } = await getCurrentUser();
 
@@ -55,7 +53,13 @@ export const updateSubjectAction = async (data: SubjectSchema) => {
         ...(data.teachers.length > 0 && {
           teacherSubjectAssignments: {
             connectOrCreate: data.teachers.map((teacherId) => ({
-              where: { id: data.relationId! },
+              where: {
+                schoolId_teacherId_subjectId: {
+                  schoolId: schoolId!,
+                  teacherId,
+                  subjectId: data.id!,
+                },
+              },
               create: {
                 schoolId: schoolId!,
                 subjectId: data.id!,

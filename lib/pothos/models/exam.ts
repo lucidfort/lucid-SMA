@@ -32,7 +32,10 @@ const ExamInput = builder.inputType("ExamInput", {
 const ExamFilter = builder.inputType("ExamFilter", {
   fields: (t) => ({
     teacherId: t.id({ required: false }),
+    gradeId: t.id({ required: false }),
     classId: t.id({ required: false }),
+    termId: t.id({ required: false }),
+    subjectId: t.id({ required: false }),
   }),
 });
 
@@ -42,7 +45,7 @@ builder.prismaObject("Exam", {
     date: t.expose("date", { type: "DateTime", nullable: false }),
     startTime: t.exposeString("startTime", { nullable: false }),
     endTime: t.exposeString("endTime"),
-    maxScore: t.exposeInt("maxScore"),
+    maxScore: t.exposeInt("maxScore", { nullable: false }),
     type: t.expose("type", { type: ExamType, nullable: false }),
     subject: t.relation("subject", { nullable: false }),
     grade: t.relation("grade", { nullable: false }),

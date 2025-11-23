@@ -1,0 +1,43 @@
+query GetClasses($filter: ClassFilterInput) {
+  classes(filter: $filter) {
+    id
+    name
+  }
+}
+
+mutation CreateClass($input: ClassInput!) {
+  createClass(input: $input) {
+    __typename
+
+    ... on MutationCreateClassSuccess {
+      data {
+        id
+        name
+      }
+    }
+
+    ... on UniqueConstraintError {
+      __typename
+      message
+    }
+  }
+}
+
+mutation UpdateClass($input: ClassInput!) {
+  updateClass(input: $input) {
+    __typename
+
+    ... on MutationUpdateClassSuccess {
+      data {
+        id
+        name
+      }
+    }
+
+    ... on AppError {
+      __typename
+      message
+      code
+    }
+  }
+}

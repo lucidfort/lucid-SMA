@@ -1,18 +1,17 @@
+import {
+  assignPeriodSlotAction,
+  assignTimetableAction,
+  createClassAction,
+  updateClassAction,
+} from "@/lib/actions";
 import { builder } from "@/lib/pothos/builder";
 import {
   AppError,
   ForeignKeyError,
   UniqueConstraintError,
 } from "@/lib/pothos/errors";
-import {
-  assignPeriodSlotAction,
-  assignTimetableAction,
-  createClassAction,
-  createGradeAction,
-  updateClassAction,
-  updateGradeAction,
-} from "@/lib/actions";
 import prisma from "@/lib/prisma";
+import { AttendanceFilter } from "./attendance";
 
 const ClassInput = builder.inputType("ClassInput", {
   fields: (t) => ({
@@ -21,14 +20,6 @@ const ClassInput = builder.inputType("ClassInput", {
     capacity: t.int({ required: true }),
     gradeId: t.string({ required: true }),
     supervisors: t.stringList(),
-  }),
-});
-
-const GradeInput = builder.inputType("GradeInput", {
-  fields: (t) => ({
-    id: t.id(),
-    name: t.string({ required: true }),
-    programId: t.string({ required: true }),
   }),
 });
 
@@ -49,18 +40,10 @@ const TimetablePeriodInput = builder.inputType("TimetablePeriodInput", {
   }),
 });
 
-const ClassWhereInput = builder.inputType("ClassWhereInput", {
+const ClassFilterInput = builder.inputType("ClassFilterInput", {
   fields: (t) => ({
     programId: t.id({ required: false }),
     gradeId: t.id({ required: false }),
-    name: t.string({ required: false }),
-    supervisorId: t.string({ required: false }),
-  }),
-});
-
-const GradeWhereInput = builder.inputType("GradeWhereInput", {
-  fields: (t) => ({
-    programId: t.id({ required: false }),
     name: t.string({ required: false }),
     supervisorId: t.string({ required: false }),
   }),
@@ -70,20 +53,71 @@ builder.prismaObject("Class", {
   fields: (t) => ({
     id: t.exposeID("id", { nullable: false }),
     name: t.exposeString("name", { nullable: false }),
-    capacity: t.int({ resolve: (class_) => class_.capacity, nullable: false }),
+    capacity: t.exposeInt("capacity", { nullable: false }),
+    gradeId: t.exposeString("gradeId", { nullable: false }),
     grade: t.relation("grade", { nullable: false }),
     supervisors: t.relation("supervisors", { nullable: false }),
     students: t.relation("students", { nullable: false }),
     studentCount: t.relationCount("students"),
-  }),
-});
+    attendancePresentCount: t.int({
+      nullable: false,
+      authScopes: {
+        manager: true,
+        teacher: true,
+        admin: true,
+      },
+      args: {
+        attendanceFilter: t.arg({
+          type: AttendanceFilter,
+          required: true,
+        }),
+      },
+      resolve: async (parent, args, ctx) => {
+        const { termId, startDate, endDate } = args.attendanceFilter;
 
-builder.prismaObject("Grade", {
-  fields: (t) => ({
-    id: t.exposeID("id", { nullable: false }),
-    name: t.exposeString("name", { nullable: false }),
-    program: t.relation("program", { nullable: false }),
-    classes: t.relation("classes", { nullable: false }),
+        return await prisma.studentAttendance.count({
+          where: {
+            classId: parent.id,
+            schoolId: ctx.schoolId!,
+            termId: termId ?? ctx.currentTerm!,
+            present: true,
+            date: {
+              gte: startDate,
+              ...(endDate && { lte: endDate }),
+            },
+          },
+        });
+      },
+    }),
+    attendances: t.relation("attendances", {
+      nullable: false,
+      authScopes: {
+        manager: true,
+        teacher: true,
+        admin: true,
+      },
+      args: {
+        attendanceFilter: t.arg({
+          type: AttendanceFilter,
+          required: true,
+        }),
+      },
+      query: (args, ctx) => {
+        const { termId, startDate, endDate } = args.attendanceFilter;
+
+        return {
+          where: {
+            schoolId: ctx.schoolId!,
+            termId: termId ? termId : ctx.currentTerm!,
+            date: {
+              ...(startDate && { gte: startDate }),
+              ...(endDate && { lte: endDate }),
+            },
+          },
+          orderBy: { date: "desc" },
+        };
+      },
+    }),
   }),
 });
 
@@ -126,7 +160,9 @@ builder.queryType({
   fields: (t) => ({
     class: t.prismaField({
       type: "Class",
-      args: { id: t.arg.id({ required: true }) },
+      args: {
+        id: t.arg.id({ required: true }),
+      },
       resolve: async (query, _parent, args, context) => {
         return await prisma.class.findUnique({
           where: { id: args.id, schoolId: context.schoolId! },
@@ -138,10 +174,16 @@ builder.queryType({
     classes: t.prismaField({
       type: ["Class"],
       args: {
-        where: t.arg({ type: ClassWhereInput, required: false }),
+        filter: t.arg({ type: ClassFilterInput, required: false }),
+      },
+      directives: {
+        rateLimit: {
+          limit: 30,
+          duration: 3600,
+        },
       },
       resolve: async (query, _parent, args, context) => {
-        const { gradeId, programId, supervisorId } = args?.where ?? {};
+        const { gradeId, programId, supervisorId } = args?.filter ?? {};
 
         return await prisma.class.findMany({
           where: {
@@ -153,46 +195,7 @@ builder.queryType({
             }),
           },
           ...query,
-        });
-      },
-    }),
-
-    grades: t.prismaField({
-      type: ["Grade"],
-      args: {
-        where: t.arg({ type: GradeWhereInput, required: false }),
-      },
-      resolve: async (query, _parent, args, ctx) => {
-        const { programId, supervisorId } = args?.where ?? {};
-
-        return prisma.grade.findMany({
-          ...query,
-          where: {
-            schoolId: ctx.schoolId!,
-            ...(programId && { programId }),
-            ...(supervisorId && {
-              classes: {
-                some: {
-                  supervisors: {
-                    some: {
-                      id: supervisorId,
-                    },
-                  },
-                },
-              },
-            }),
-          },
-        });
-      },
-    }),
-
-    grade: t.prismaField({
-      type: "Grade",
-      args: { id: t.arg.id({ required: true }) },
-      resolve: async (query, _parent, args, context) => {
-        return await prisma.grade.findUnique({
-          where: { id: args.id, schoolId: context.schoolId! },
-          ...query,
+          orderBy: [{ grade: { name: "asc" } }, { name: "asc" }],
         });
       },
     }),
@@ -234,26 +237,6 @@ builder.mutationType({
       errors: { types: [AppError, UniqueConstraintError, ForeignKeyError] },
       resolve: async (_query, _parent, args) =>
         await updateClassAction(args.input),
-    }),
-
-    createGrade: t.prismaField({
-      type: "Grade",
-      args: {
-        input: t.arg({ type: GradeInput, required: true }),
-      },
-      errors: { types: [AppError, UniqueConstraintError] },
-      resolve: async (_query, _parent, args) =>
-        await createGradeAction(args.input),
-    }),
-
-    updateGrade: t.prismaField({
-      type: "Grade",
-      args: {
-        input: t.arg({ type: GradeInput, required: true }),
-      },
-      errors: { types: [AppError, UniqueConstraintError] },
-      resolve: async (_query, _parent, args) =>
-        await updateGradeAction(args.input),
     }),
 
     updateTimetableAssignment: t.prismaField({

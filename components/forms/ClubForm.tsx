@@ -1,6 +1,6 @@
 "use client";
 
-import { ClubSchema, clubSchema } from "@/lib/zod/validation";
+import { ClubSchema, clubSchema } from "@/lib/validation";
 import { FormProps } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";

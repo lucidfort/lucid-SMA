@@ -1,11 +1,12 @@
 import { clubsColumn } from "@/components/tables/clubsColumn";
-import { createServerClient, getCurrentUser } from "@/lib/serverUtils";
+import { getCurrentUser } from "@/lib/server/utils";
 import { DataTable } from "@/components/tables/data-table";
 import { gql } from "@urql/core";
 import {
   GetClubsQuery,
   GetClubsQueryVariables,
 } from "@/lib/generated/graphql/server";
+import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
 
 const GET_CLUBS = gql(`
   query GetClubs($filter: ClubFilter) {
@@ -21,7 +22,7 @@ const GET_CLUBS = gql(`
 const ClubsListPage = async () => {
   const { accessLevel } = await getCurrentUser();
 
-  const { client } = await createServerClient();
+  const { client } = await createUrqlServerClient();
   const { data } = await client
     .query<GetClubsQuery, GetClubsQueryVariables>(GET_CLUBS, {})
     .toPromise();

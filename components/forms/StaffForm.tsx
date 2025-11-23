@@ -1,38 +1,59 @@
 "use client";
 
-import { staffSchema, StaffSchema } from "@/lib/zod/validation";
-import { FormProps } from "@/types";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import InputField, { FormFieldType } from "../InputField";
 import FileUploader from "@/components/FileUploader";
-import { Form } from "../ui/form";
-import { SelectContent, SelectItem } from "../ui/select";
-import { staffDefaultValues } from "@/lib/zod/defaultValues";
 import {
   AccessLevel,
   ContractType,
+  CreateStaffMutation,
   Sex,
+  UpdateStaffMutation,
   useCreateStaffMutation,
   useGetClassesQuery,
   useGetGradesQuery,
   useGetProgramsQuery,
+  useGetSchoolQuery,
   useGetSubjectsQuery,
+  useUpdateStaffMutation,
 } from "@/lib/generated/graphql/client";
-import { toast } from "sonner";
 import { handleGraphqlClientErrors } from "@/lib/utils";
+import { staffSchema, StaffSchema } from "@/lib/validation";
+import { FormProps } from "@/types";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import InputField, { FormFieldType } from "../InputField";
+import { Form } from "../ui/form";
+import { SelectContent, SelectItem } from "../ui/select";
 
-// TODO: Create Slug
-
-const StaffForm = ({ type, data, setOpen }: FormProps) => {
+const StaffForm = ({ type, data, setOpen, relatedData }: FormProps) => {
   const router = useRouter();
 
   const form = useForm<StaffSchema>({
-    resolver: zodResolver(staffSchema("learnatffs")),
-    defaultValues: staffDefaultValues(data),
+    resolver: zodResolver(staffSchema),
+    defaultValues: {
+      employeeId: data?.employeeId ?? "",
+      name: data?.name ?? "",
+      surname: data?.surname ?? "",
+      email: data?.email ?? "",
+      phone: data?.phone ?? "",
+      address: data?.address ?? "",
+      birthday: data?.birthday ?? new Date(),
+      sex: data?.sex ?? "MALE",
+      contractType: data?.contractType ?? "PERMANENT",
+      accessLevel: data?.accessLevel ?? "RESTRICTED",
+      role: data?.role ?? "",
+      isActive: true,
+      programId: data?.class.grade.program.id ?? null,
+      gradeId: data.class.grade.id ?? null,
+      classId: data?.class.id ?? null,
+    },
+  });
+
+  const [schoolResult] = useGetSchoolQuery({
+    variables: { id: relatedData?.schoolId },
   });
 
   const accessLevel = form.watch("accessLevel");
@@ -46,44 +67,36 @@ const StaffForm = ({ type, data, setOpen }: FormProps) => {
     (program) => program.id === programId,
   )?.name;
 
-  const [gradesResult, reexecuteGrades] = useGetGradesQuery({
-    variables: { where: { programId } },
+  const [gradesResult] = useGetGradesQuery({
     pause: !programId || accessLevel !== "TEACHER",
+    variables: { where: { programId } },
   });
 
-  // PRIMARY | NURSERY
-  const gradeId = form.watch("gradeId");
-  const [classesResult, reexecuteClasses] = useGetClassesQuery({
-    pause:
-      accessLevel !== "TEACHER" || selectedProgram === "SECONDARY" || !gradeId,
-    variables: { where: { gradeId } },
-  });
-
-  // SECONDARY
   const [subjectsResult] = useGetSubjectsQuery({
     pause: accessLevel !== "TEACHER" || selectedProgram !== "SECONDARY",
   });
 
-  const [mutationResult, createStaff] = useCreateStaffMutation();
+  // PRIMARY | NURSERY
+  const gradeId = form.watch("gradeId");
+  const [classesResult] = useGetClassesQuery({
+    pause:
+      accessLevel !== "TEACHER" || selectedProgram === "SECONDARY" || !gradeId,
+    variables: { filter: { gradeId } },
+  });
+
+  const [createResult, createStaff] = useCreateStaffMutation();
+  const [updateResult, updateStaff] = useUpdateStaffMutation();
 
   useEffect(() => {
-    if (selectedProgram) {
-      if (selectedProgram === "SECONDARY") {
-        reexecuteGrades();
-      } else {
-        reexecuteClasses();
-      }
-    }
-  }, [selectedProgram, reexecuteGrades, reexecuteClasses]);
-
-  useEffect(() => {
-    form.resetField(selectedProgram === "SECONDARY" ? "classId" : "grades");
+    form.resetField(
+      selectedProgram === "SECONDARY" ? "classId" : "assignments",
+    );
   }, [selectedProgram, form]);
 
   const onSubmit = form.handleSubmit(async (values) => {
     const formData = {
-      ...(type === "update" && { id: data.id, oldImg: "" }),
       ...values,
+      ...(type === "update" ? { id: data.id, oldImg: "" } : {}),
       employeeId: values.employeeId.trim().toLowerCase(),
       accessLevel: values.accessLevel as AccessLevel,
       contractType: values.contractType as ContractType,
@@ -93,19 +106,37 @@ const StaffForm = ({ type, data, setOpen }: FormProps) => {
     delete formData.programId;
     delete formData.gradeId;
 
-    const response = await createStaff({ input: formData });
-    console.log(response);
+    const response =
+      type === "create"
+        ? await createStaff({ input: formData })
+        : await updateStaff({ input: formData });
 
-    const typeName = response.data?.createStaff?.__typename;
-    if (typeName === "MutationCreateStaffSuccess") {
+    const mutationResult =
+      type === "create"
+        ? (response.data as CreateStaffMutation)?.createStaff
+        : (response.data as UpdateStaffMutation)?.updateStaff;
+
+    if (!mutationResult) {
+      toast.error("Something went wrong");
+      return;
+    }
+
+    if (
+      mutationResult.__typename === "MutationCreateStaffSuccess" ||
+      mutationResult.__typename === "MutationUpdateStaffSuccess"
+    ) {
       toast.success(`Staff ${type}d successfully!`);
       setOpen(false);
       router.refresh();
     } else {
-      const error = handleGraphqlClientErrors(typeName);
+      const error = handleGraphqlClientErrors(mutationResult);
       toast.error(error ?? "Something went wrong");
     }
   });
+
+  const slug = schoolResult.data?.school?.slug;
+
+  const isLoading = createResult.fetching || updateResult.fetching;
 
   return (
     <Form {...form}>
@@ -154,12 +185,6 @@ const StaffForm = ({ type, data, setOpen }: FormProps) => {
             type="date"
             control={form.control}
             fieldType={FormFieldType.DATE_PICKER}
-            // inputProps={{
-            //   min: new Date(new Date().setFullYear(new Date().getFullYear() - 60))
-            //     .toISOString()
-            //     .split("T")[0],
-            //   max: new Date().toISOString().split("T")[0],
-            // }}
           />
 
           {/* SEX */}
@@ -189,10 +214,12 @@ const StaffForm = ({ type, data, setOpen }: FormProps) => {
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <InputField
+            label="Employee ID"
             control={form.control}
-            fieldType={FormFieldType.INPUT}
-            label="EmployeeID"
             name="employeeId"
+            placeholder="202"
+            prefix={slug}
+            fieldType={FormFieldType.INPUT}
           />
           <InputField
             control={form.control}
@@ -228,13 +255,6 @@ const StaffForm = ({ type, data, setOpen }: FormProps) => {
             label="Role"
             name="role"
             placeholder="eg: Mathematics Teacher"
-          />
-          <InputField
-            control={form.control}
-            fieldType={FormFieldType.INPUT}
-            label="Position"
-            name="position"
-            placeholder="eg: Headmistress"
           />
 
           <InputField
@@ -283,28 +303,40 @@ const StaffForm = ({ type, data, setOpen }: FormProps) => {
                   <>
                     <InputField
                       control={form.control}
+                      fieldType={FormFieldType.SELECT}
+                      label="Subject"
+                      name="assignments.subjectId"
+                      placeholder="Select Subject"
+                    >
+                      <SelectContent>
+                        {subjectsResult.fetching && (
+                          <div className="text-sm text-gray-600">Loading</div>
+                        )}
+                        {subjectsResult.data?.subjects?.length === 0 && (
+                          <div className="text-sm text-gray-600">
+                            No grade was found
+                          </div>
+                        )}
+
+                        {subjectsResult.data?.subjects?.map(({ id, name }) => (
+                          <SelectItem key={id} value={id!}>
+                            {name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </InputField>
+
+                    <InputField
+                      control={form.control}
                       fieldType={FormFieldType.MULTI_SELECT}
                       label="Grades"
-                      name="grades"
+                      name="assignments.gradeIds"
                       placeholder={
                         gradesResult.fetching
                           ? "Fetching grades..."
                           : "What grade will they teach?"
                       }
                       options={gradesResult.data?.grades ?? []}
-                    />
-
-                    <InputField
-                      control={form.control}
-                      fieldType={FormFieldType.MULTI_SELECT}
-                      label="Subjects To Handle"
-                      name="gradeId"
-                      placeholder={
-                        subjectsResult.fetching
-                          ? "Fetching subjects..."
-                          : "Subjects to handle"
-                      }
-                      options={subjectsResult?.data?.subjects ?? []}
                     />
                   </>
                 ) : (
@@ -322,7 +354,7 @@ const StaffForm = ({ type, data, setOpen }: FormProps) => {
                         )}
                         {gradesResult.data?.grades?.length === 0 && (
                           <div className="text-sm text-gray-600">
-                            No class was found
+                            No grade was found
                           </div>
                         )}
 
@@ -366,10 +398,10 @@ const StaffForm = ({ type, data, setOpen }: FormProps) => {
 
         <button
           type="submit"
-          disabled={!form.formState.isDirty || mutationResult.fetching}
+          disabled={!form.formState.isDirty || isLoading}
           className="form-submit_btn"
         >
-          {!mutationResult.fetching ? (
+          {!isLoading ? (
             type
           ) : (
             <Loader2 className="animate-spin text-lamaYellow" />

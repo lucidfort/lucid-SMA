@@ -1,16 +1,8 @@
-import { builder } from "../builder";
+import { createStaffAction, updateStaffAction } from "@/lib/actions";
+import { AppError, UniqueConstraintError } from "@/lib/pothos/errors";
 import prisma from "@/lib/prisma";
-import {
-  createStaffAction,
-  createStudentAction,
-  createSubjectAction,
-  updateSubjectAction,
-} from "@/lib/actions";
-import {
-  AppError,
-  ForeignKeyError,
-  UniqueConstraintError,
-} from "@/lib/pothos/errors";
+import { builder, Sex } from "../builder";
+import { AttendanceFilter } from "./attendance";
 
 const AccessLevel = builder.enumType("AccessLevel", {
   values: ["FINANCE", "ACADEMICS", "ADMINISTRATION", "TEACHER", "RESTRICTED"],
@@ -18,10 +10,6 @@ const AccessLevel = builder.enumType("AccessLevel", {
 
 const ContractType = builder.enumType("ContractType", {
   values: ["CONTRACT", "PART_TIME", "PERMANENT"],
-});
-
-const Sex = builder.enumType("Sex", {
-  values: ["MALE", "FEMALE", "OTHER"],
 });
 
 const StaffFilterInput = builder.inputType("StaffFilterInput", {
@@ -33,12 +21,10 @@ const StaffFilterInput = builder.inputType("StaffFilterInput", {
   }),
 });
 
-const SubjectInput = builder.inputType("SubjectInput", {
+const SubjectGradesInput = builder.inputType("SubjectGradesInput", {
   fields: (t) => ({
-    id: t.string(),
-    name: t.string({ required: true }),
-    relationId: t.string(),
-    teachers: t.stringList({ required: true }),
+    subjectId: t.string({ required: true }),
+    gradeIds: t.stringList({ required: true }),
   }),
 });
 
@@ -49,56 +35,22 @@ const StaffInput = builder.inputType("StaffInput", {
     employeeId: t.string({ required: true }),
     name: t.string({ required: true }),
     surname: t.string({ required: true }),
-    email: t.string(),
+    email: t.field({ type: "Email" }),
+    password: t.string(),
     phone: t.string({ required: true }),
-    password: t.string(),
     address: t.string({ required: true }),
-    birthday: t.field({ type: "DateTime", required: true }),
-    hireDate: t.field({ type: "DateTime" }),
-    sex: t.field({ type: Sex, required: true }),
     img: t.string(),
-    oldImg: t.string(),
-    accessLevel: t.field({ type: AccessLevel, required: true }),
+    birthday: t.field({ type: "DateTime", required: true }),
+    sex: t.field({ type: Sex, required: true }),
     contractType: t.field({ type: ContractType, required: true }),
+    accessLevel: t.field({ type: AccessLevel, required: true }),
     role: t.string({ required: true }),
+    isFormTeacher: t.boolean({ required: true, defaultValue: false }),
     isActive: t.boolean({ required: true, defaultValue: true }),
-    position: t.string(),
-    classId: t.string(),
-    subjects: t.stringList(),
-    grades: t.stringList(),
-  }),
-});
-
-const StudentInput = builder.inputType("StudentInput", {
-  fields: (t) => ({
-    surname: t.string({ required: true }),
-    name: t.string({ required: true }),
-    password: t.string(),
-    birthday: t.field({ type: "DateTime", required: true }),
-    address: t.string({ required: true }),
-    registrationNumber: t.string({ required: true }),
-    img: t.string(),
+    hireDate: t.field({ type: "DateTime" }),
     oldImg: t.string(),
-    sex: t.field({ type: Sex, required: true }),
-    primaryGuardian: t.string({ required: true }),
-    secondaryGuardian: t.string(),
-    primaryGuardianRelationship: t.string({ required: true }),
-    medicalCondition: t.string(),
-    secondaryGuardianRelationship: t.string(),
-    programId: t.string(),
-    gradeId: t.string(),
-    classId: t.string({ required: true }),
-  }),
-});
-
-builder.prismaObject("Parent", {
-  fields: (t) => ({
-    id: t.exposeID("id", { nullable: false }),
-    primaryId: t.exposeString("primaryId"),
-    clerkUserId: t.exposeString("clerkUserId"),
-    name: t.exposeString("name", { nullable: false }),
-    surname: t.exposeString("surname", { nullable: false }),
-    phone: t.exposeString("phone", { nullable: false }),
+    classId: t.string(),
+    assignments: t.field({ type: SubjectGradesInput }),
   }),
 });
 
@@ -109,30 +61,43 @@ builder.prismaObject("Staff", {
     name: t.exposeString("name", { nullable: false }),
     surname: t.exposeString("surname", { nullable: false }),
     role: t.exposeString("role", { nullable: false }),
+    sex: t.expose("sex", { type: Sex, nullable: false }),
     phone: t.exposeString("phone", { nullable: false }),
-    email: t.exposeString("email"),
+    email: t.expose("email", { type: "Email" }),
     address: t.exposeString("address", { nullable: false }),
     img: t.exposeString("img"),
     clerkUserId: t.exposeString("clerkUserId"),
     accessLevel: t.exposeString("accessLevel", { nullable: false }),
     subjects: t.relation("teacherSubjectAssignments"),
     class: t.relation("class"),
-  }),
-});
+    attendances: t.relation("attendances", {
+      nullable: false,
+      authScopes: {
+        manager: true,
+        admin: true,
+      },
+      args: {
+        attendanceFilter: t.arg({
+          type: AttendanceFilter,
+          required: true,
+        }),
+      },
+      query: (args, ctx) => {
+        const { termId, startDate, endDate } = args.attendanceFilter;
 
-builder.prismaObject("Subject", {
-  fields: (t) => ({
-    id: t.exposeID("id", { nullable: false }),
-    name: t.exposeString("name", { nullable: false }),
-    teachers: t.relation("teacherSubjectAssignments", { nullable: false }),
-  }),
-});
-
-builder.prismaObject("TeacherSubjectAssignment", {
-  fields: (t) => ({
-    id: t.exposeID("id", { nullable: false }),
-    subject: t.relation("subject", { nullable: false }),
-    teacher: t.relation("teacher", { nullable: false }),
+        return {
+          where: {
+            schoolId: ctx.schoolId!,
+            termId: termId ? termId : ctx.currentTerm!,
+            date: {
+              gte: startDate,
+              ...(endDate && { lte: endDate }),
+            },
+          },
+          orderBy: { date: "desc" },
+        };
+      },
+    }),
   }),
 });
 
@@ -142,13 +107,13 @@ builder.queryType({
       type: ["Staff"],
       args: {
         filter: t.arg({ type: StaffFilterInput, required: false }),
+        // attendanceFilter: t.arg
       },
       resolve: async (query, _parent, args, ctx) => {
         const { isFormTeacher, isActive, accessLevel, classId } =
           args?.filter ?? {};
 
         return prisma.staff.findMany({
-          ...query,
           where: {
             schoolId: ctx.schoolId!,
             isActive,
@@ -156,6 +121,7 @@ builder.queryType({
             ...(accessLevel && { accessLevel }),
             ...(isFormTeacher && { isFormTeacher }),
           },
+          ...query,
         });
       },
     }),
@@ -178,53 +144,6 @@ builder.queryType({
         });
       },
     }),
-
-    parents: t.prismaField({
-      type: ["Parent"],
-      args: {
-        searchTerm: t.arg.string({ required: false }),
-      },
-      resolve: async (query, _parent, args, ctx) =>
-        prisma.parent.findMany({
-          ...query,
-          where: {
-            schoolId: ctx.schoolId!,
-            ...(args.searchTerm && {
-              OR: [
-                { name: { contains: args.searchTerm, mode: "insensitive" } },
-                { surname: { contains: args.searchTerm, mode: "insensitive" } },
-              ],
-            }),
-          },
-        }),
-    }),
-
-    parent: t.prismaField({
-      type: "Parent",
-      args: {
-        id: t.arg.id({ required: true }),
-      },
-      resolve: async (query, _parent, args, ctx) =>
-        prisma.parent.findUnique({
-          ...query,
-          where: {
-            id: args.id,
-            schoolId: ctx.schoolId!,
-          },
-        }),
-    }),
-
-    subjects: t.prismaField({
-      type: ["Subject"],
-      args: {
-        teacherId: t.arg.id({ required: false }),
-      },
-      resolve: async (query, _parent, args, ctx) =>
-        prisma.subject.findMany({
-          ...query,
-          where: { schoolId: ctx.schoolId! },
-        }),
-    }),
   }),
 });
 
@@ -234,42 +153,18 @@ builder.mutationType({
       type: "Staff",
       args: { input: t.arg({ type: StaffInput, required: true }) },
       errors: { types: [AppError, UniqueConstraintError] },
-      resolve: async (_query, _parent, args) => {
-        return await createStaffAction(args.input);
+      resolve: async (_query, _parent, args, context) => {
+        return await createStaffAction({ ...args.input, slug: context.slug! });
       },
     }),
 
-    createStudent: t.prismaField({
-      type: "Student",
-      args: {
-        input: t.arg({ type: StudentInput, required: true }),
-      },
-      errors: { types: [AppError, UniqueConstraintError, ForeignKeyError] },
-      resolve: async (_query, _parent, args) => {
-        const formattedInput = {
-          ...args.input,
-          primaryGuardian: { id: args.input.primaryGuardian, name: "" },
-          secondaryGuardian: { id: args.input.secondaryGuardian, name: "" },
-        };
-
-        return await createStudentAction(formattedInput);
-      },
-    }),
-
-    createSubject: t.prismaField({
-      type: "Subject",
-      args: { input: t.arg({ type: SubjectInput, required: true }) },
+    updateStaff: t.prismaField({
+      type: "Staff",
+      args: { input: t.arg({ type: StaffInput, required: true }) },
       errors: { types: [AppError, UniqueConstraintError] },
-      resolve: async (_query, _parent, args) =>
-        await createSubjectAction(args.input),
-    }),
-
-    updateSubject: t.prismaField({
-      type: "Subject",
-      args: { input: t.arg({ type: SubjectInput, required: true }) },
-      errors: { types: [AppError, UniqueConstraintError] },
-      resolve: async (_query, _parent, args) =>
-        await updateSubjectAction(args.input),
+      resolve: async (_query, _parent, args, context) => {
+        return await updateStaffAction({ ...args.input, slug: context.slug! });
+      },
     }),
   }),
 });

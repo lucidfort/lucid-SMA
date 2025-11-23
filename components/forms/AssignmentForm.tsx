@@ -1,6 +1,6 @@
 "use client";
 
-import { assignmentSchema, AssignmentSchema } from "@/lib/zod/validation";
+import { assignmentSchema, AssignmentSchema } from "@/lib/validation";
 import { FormProps } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -48,7 +48,7 @@ const AssignmentForm = ({ type, data, setOpen }: FormProps) => {
   const gradeId = form.watch("gradeId");
   const [classesResult] = useGetClassesQuery({
     pause: !gradeId,
-    variables: { where: { gradeId } },
+    variables: { filter: { gradeId } },
   });
 
   const subjects = subjectsResult?.data?.subjects ?? [];

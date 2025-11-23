@@ -1,8 +1,5 @@
 "use client";
 
-import { FormModalProps } from "@/types";
-import dynamic from "next/dynamic";
-import { Dispatch, JSX, SetStateAction, useEffect, useState } from "react";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -12,8 +9,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { FormModalProps } from "@/types";
 import { X } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
+import { Dispatch, JSX, SetStateAction, useState } from "react";
 
 const StaffForm = dynamic(() => import("./forms/StaffForm"), {
   loading: () => <h1>Loading...</h1>,
@@ -54,10 +53,7 @@ const ResultForm = dynamic(() => import("./forms/ResultForm"), {
 const EventForm = dynamic(() => import("./forms/EventForm"), {
   loading: () => <h1>Loading...</h1>,
 });
-const TransactionForm = dynamic(() => import("./forms/TransactionForm"), {
-  loading: () => <h1>Loading...</h1>,
-});
-const FeeForm = dynamic(() => import("./forms/FeeForm"), {
+const InvoiceForm = dynamic(() => import("./forms/InvoiceForm"), {
   loading: () => <h1>Loading...</h1>,
 });
 const TimetableForm = dynamic(() => import("./forms/TimetableForm"), {
@@ -138,10 +134,9 @@ const forms: {
   announcement: (setOpen, type, data) => (
     <AnnouncementForm type={type} data={data} setOpen={setOpen} />
   ),
-  fee: (setOpen, type, data) => (
-    <FeeForm type={type} data={data} setOpen={setOpen} />
+  invoice: (setOpen, type, data) => (
+    <InvoiceForm type={type} data={data} setOpen={setOpen} />
   ),
-  transaction: (setOpen) => <TransactionForm setOpen={setOpen} />,
 };
 
 const FormModal = ({
@@ -152,21 +147,7 @@ const FormModal = ({
   relatedData,
   children,
 }: FormModalProps) => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
-
-  const formOpen = searchParams.get("form-open");
-  const [open, setOpen] = useState(!!formOpen);
-
-  useEffect(() => {
-    if (!open && formOpen) {
-      const params = new URLSearchParams(searchParams.toString());
-      params.delete("form-open");
-
-      router.replace(`${pathname}?${params.toString()}`);
-    }
-  }, [formOpen, open, pathname, router, searchParams]);
+  const [open, setOpen] = useState(false);
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
@@ -175,7 +156,7 @@ const FormModal = ({
           children
         ) : (
           <button
-            className="flex cursor-pointer items-center gap-1 px-2 text-sm font-medium capitalize"
+            className="flex cursor-pointer items-center gap-1 px-2 text-sm font-normal capitalize"
             aria-describedby={type}
           >
             {triggerTitle || type}

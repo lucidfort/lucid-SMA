@@ -18,7 +18,7 @@ import {
   School,
 } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { schoolSchema, SchoolSchema } from "@/lib/zod/validation";
+import { schoolSchema, SchoolSchema } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { schoolDefaultValues } from "@/lib/zod/defaultValues";
 import { Form } from "@/components/ui/form";

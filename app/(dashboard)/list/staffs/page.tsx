@@ -1,5 +1,5 @@
 import { staffColumn } from "@/components/tables/staffColumn";
-import { createServerClient, getCurrentUser } from "@/lib/serverUtils";
+import { getCurrentUser } from "@/lib/server/utils";
 import { SearchParams } from "@/types";
 import { DataTable } from "@/components/tables/data-table";
 import { gql } from "@urql/core";
@@ -8,21 +8,24 @@ import {
   GetStaffsQuery,
   GetStaffsQueryVariables,
 } from "@/lib/generated/graphql/server";
+import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
 
 const GET_STAFFS = gql(`
   query GetStaffs($filter: StaffFilterInput) {
     staffs(filter: $filter) {
       id
-        name
-        surname
-        role
-        phone
-        email
-        address
-        img
+      name
+      surname
+      employeeId
+      phone
+      email
+      address
+      img
       class {
+        id
         name
         grade {
+          id
           name
         }
       }
@@ -35,12 +38,12 @@ const StaffListPage = async ({ searchParams }: SearchParams) => {
 
   const { accessLevel } = await getCurrentUser();
 
-  const { client } = await createServerClient();
+  const { client } = await createUrqlServerClient();
   const { data } = await client
     .query<GetStaffsQuery, GetStaffsQueryVariables>(GET_STAFFS, {
       filter: {
         isActive: true,
-        ...(role && { accessLevel: role as AccessLevel }),
+        ...(role && { accessLevel: role.toUpperCase() as AccessLevel }),
         ...(classId && { classId }),
       },
     })

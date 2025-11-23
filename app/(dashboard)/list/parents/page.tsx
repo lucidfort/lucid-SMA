@@ -1,76 +1,47 @@
-import ListHeader from "@/components/ListHeader";
-import Pagination from "@/components/Pagination";
-import Table from "@/components/Table";
+import { DataTable } from "@/components/tables/data-table";
 import { parentsColumn } from "@/components/tables/parentsColumn";
-import { getCurrentUser } from "@/lib/serverUtils";
-import { ITEMS_PER_PAGE } from "@/lib/settings";
-import { SearchParams } from "@/types";
-import { Prisma } from "@prisma/client";
-import { prismaForSchool } from "@/lib/prisma";
+import {
+  GetParentsQuery,
+  GetParentsQueryVariables
+} from "@/lib/generated/graphql/server";
+import { getCurrentUser } from "@/lib/server/utils";
+import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
+import { gql } from "@urql/core";
 
-const ParentsListPage = async ({ searchParams }: SearchParams) => {
-  const { page, ...queryParams } = await searchParams;
-  const p = page ? parseInt(page) : 1;
-
-  const { role, schoolId } = await getCurrentUser();
-  const prisma = prismaForSchool(schoolId);
-
-  const query: Prisma.ParentWhereInput = {};
-
-  // URL PARAMS CONDITION
-  if (queryParams) {
-    for (const [key, value] of Object.entries(queryParams)) {
-      if (value !== undefined) {
-        switch (key) {
-          case "search":
-            query.name = { contains: value, mode: "insensitive" };
-            break;
-          default:
-            break;
-        }
-      }
+const GET_PARENTS = gql(`
+  query GetParents {
+    parents {
+      id
+        name
+        surname
+        phone
+        primaryId
+        email
+        address
+        childrenCount
     }
   }
+`);
 
-  const [data, count] = await prisma.$transaction([
-    prisma.parent.findMany({
-      where: query,
-      include: {
-        ParentStudent: {
-          select: {
-            student: {
-              select: {
-                id: true,
-                name: true,
-                surname: true,
-                class: {
-                  select: {
-                    grade: {
-                      select: {
-                        name: true,
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-      take: ITEMS_PER_PAGE,
-      skip: ITEMS_PER_PAGE * (p - 1),
-      orderBy: { createdAt: "desc" },
-    }),
-    prisma.parent.count({ where: query }),
-  ]);
+const ParentsList = async () => {
+  const { accessLevel } = await getCurrentUser();
+
+  const { client } = await createUrqlServerClient();
+  const { data } = await client
+    .query<GetParentsQuery, GetParentsQueryVariables>(GET_PARENTS, {})
+    .toPromise();
 
   return (
     <div className="m-4 mt-0 flex-1 rounded-md bg-white p-4">
-      <ListHeader role={role!} title="All Parents" table="parent" />
-      <Table columns={parentsColumn} data={data} role={role!} />
-      <Pagination count={count} page={p} />
+      <DataTable
+        columns={parentsColumn}
+        data={data?.parents ?? []}
+        title="Parents"
+        tableFor="parent"
+        accessLevel={accessLevel!}
+      />
     </div>
   );
 };
 
-export default ParentsListPage;
+export default ParentsList;

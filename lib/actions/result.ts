@@ -1,131 +1,65 @@
 "use server";
 
 import { handleServerErrors } from "@/lib/utils";
-import { ResultSchema } from "@/lib/zod/validation";
-import { CurrentState } from "@/types";
-import { getCurrentUser } from "../serverUtils";
+import { getCurrentUser, handleGraphqlServerErrors } from "../server/utils";
 import prisma from "../prisma";
+import { ResultInput } from "@/lib/generated/graphql/server";
+import { NotFoundError } from "@/lib/pothos/errors";
 
-type DataType = ResultSchema & {
-  type: string;
-  lessonId: number;
-};
+interface InputProps extends Omit<ResultInput, "type"> {
+  type: "EXAM" | "ASSIGNMENT";
+}
 
-export const createResult = async (
-  currentState: CurrentState,
-  data: DataType,
-) => {
+export const createResultAction = async (data: Omit<InputProps, "id">) => {
   try {
-    const { currentUserId, role } = await getCurrentUser();
-    if (role === "teacher") {
-      const teacherLesson = await prisma.lesson.findFirst({
-        where: {
-          teacherId: currentUserId!,
-          id: data.lessonId,
-        },
-      });
+    const { schoolId } = await getCurrentUser();
 
-      if (!teacherLesson) {
-        return {
-          success: false,
-          error: `This ${data.type} doesn't belong to your class`,
-        };
-      }
-    }
-
-    const resData = await prisma.result.create({
+    return await prisma.result.create({
       data: {
+        schoolId: schoolId!,
         score: data.score,
-        ...(data.type === "exam"
+        ...(data.type === "EXAM"
           ? { examId: data.testId }
           : { assignmentId: data.testId }),
         studentId: data.studentId,
       },
     });
-
-    if (!resData) throw Error;
-
-    return { success: true, error: false };
   } catch (err: any) {
-    console.log(err);
-    const serverErrors = handleServerErrors(err);
-
-    if (serverErrors?.error) {
-      return {
-        success: false,
-        error: serverErrors.error,
-      };
-    }
-    return { success: false, error: true };
+    handleGraphqlServerErrors(err);
   }
 };
 
-export const updateResult = async (
-  currentState: CurrentState,
-  data: DataType,
-) => {
+export const updateResultAction = async (data: InputProps) => {
+  if (!data.id) throw new NotFoundError("Result");
+
   try {
-    const { currentUserId, role } = await getCurrentUser();
-    if (role === "teacher") {
-      const teacherLesson = await prisma.lesson.findFirst({
-        where: {
-          teacherId: currentUserId!,
-          id: data.lessonId,
-        },
-      });
-
-      if (!teacherLesson) {
-        return {
-          success: false,
-          error: `This ${data.type} doesn't belong to your class`,
-        };
-      }
-    }
-
-    const resData = await prisma.result.update({
+    return await prisma.result.update({
       where: {
         id: data.id,
       },
       data: {
         score: data.score,
-        ...(data.type === "exam"
+        ...(data.type === "EXAM"
           ? { examId: data.testId }
           : { assignmentId: data.testId }),
         studentId: data.studentId,
       },
     });
-
-    if (!resData) throw Error;
-
-    return { success: true, error: false };
   } catch (err: any) {
-    console.log(err);
-    const serverErrors = handleServerErrors(err);
-
-    if (serverErrors?.error) {
-      return {
-        success: false,
-        error: serverErrors.error,
-      };
-    }
-    return { success: false, error: true };
+    handleGraphqlServerErrors(err);
   }
 };
 
-export const deleteResult = async (id: string) => {
+export const deleteResultAction = async (id: string) => {
   try {
-    const { role, currentUserId } = await getCurrentUser();
+    const { schoolId } = await getCurrentUser();
 
-    const resData = await prisma.result.delete({
+    await prisma.result.delete({
       where: {
-        id: parseInt(id),
-        ...(role === "teacher"
-          ? { lesson: { teacherId: currentUserId! } }
-          : {}),
+        id,
+        schoolId: schoolId!,
       },
     });
-
-    if (!resData) throw Error;
 
     return { success: true, error: false };
   } catch (err: any) {

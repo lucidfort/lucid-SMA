@@ -9,7 +9,7 @@ const SignOutButton = () => {
 
   return (
     <SidebarMenuButton
-      className="group ml-0.5 flex w-full items-center gap-4 rounded-t-xl"
+      className="group ml-0.5 flex w-full items-center gap-4 hover:bg-transparent"
       onClick={() => signOut({ redirectUrl: "/sign-in" })}
     >
       <div className="transform duration-300 ease-in-out group-hover:translate-x-1">

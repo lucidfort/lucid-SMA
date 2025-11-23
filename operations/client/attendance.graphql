@@ -1,0 +1,33 @@
+mutation MarkStudentAttendance($input: StudentAttendanceInput!) {
+  markStudentAttendance(input: $input) {
+    __typename
+
+    ... on MutationMarkStudentAttendanceSuccess {
+      data {
+        id
+      }
+    }
+
+    ... on AppError {
+      message
+      code
+    }
+  }
+}
+
+mutation MarkStaffAttendance($input: StaffAttendanceInput!) {
+  markStaffAttendance(input: $input) {
+    __typename
+
+    ... on MutationMarkStaffAttendanceSuccess {
+      data {
+        id
+      }
+    }
+
+    ... on AppError {
+      message
+      code
+    }
+  }
+}

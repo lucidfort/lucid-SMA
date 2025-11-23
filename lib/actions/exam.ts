@@ -1,21 +1,21 @@
 "use server";
 
 import prisma from "../prisma";
-import { getCurrentUser, handleGraphqlServerErrors } from "../serverUtils";
+import { getCurrentUser, handleGraphqlServerErrors } from "../server/utils";
 import { handleServerErrors } from "../utils";
-import { ExamSchema } from "../zod/validation";
+import { ExamSchema } from "../validation";
 import { NotFoundError } from "@/lib/pothos/errors";
 import { Prisma } from "@/lib/generated/prisma/client";
+import { ExamFilter } from "@/lib/generated/graphql/server";
 
 export async function getExamsAction({
+  gradeId,
   classId,
   teacherId,
+  subjectId,
+  termId,
   query,
-}: {
-  classId?: string;
-  teacherId?: string;
-  query: any;
-}) {
+}: ExamFilter & { query: any }) {
   const { currentUserId, accessLevel, schoolId } = await getCurrentUser();
 
   const baseWhere: Prisma.ExamWhereInput = {
@@ -48,16 +48,6 @@ export async function getExamsAction({
       };
     }
 
-    if (accessLevel === "student") {
-      return {
-        grade: {
-          classes: {
-            some: { students: { some: { clerkUserId: currentUserId } } },
-          },
-        },
-      };
-    }
-
     if (accessLevel === "parent") {
       return {
         grade: {
@@ -65,9 +55,11 @@ export async function getExamsAction({
             some: {
               students: {
                 some: {
-                  parentStudent: {
-                    parent: {
-                      clerkUserId: currentUserId,
+                  parentStudents: {
+                    some: {
+                      parent: {
+                        clerkUserId: currentUserId,
+                      },
                     },
                   },
                 },
@@ -107,6 +99,9 @@ export async function getExamsAction({
       },
       classId && { grade: { classes: { some: { id: classId } } } },
     ].filter(Boolean) as Prisma.ExamWhereInput[],
+    ...(gradeId && { gradeId }),
+    ...(subjectId && { subjectId }),
+    ...(termId && { termId }),
   };
 
   return await prisma.exam.findMany({

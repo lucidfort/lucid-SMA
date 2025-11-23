@@ -6,13 +6,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Calendar, Eye, Megaphone } from "lucide-react";
+import { Calendar, Megaphone } from "lucide-react";
+import { ReactNode } from "react";
 
 type MessageBoardProps = {
   type: "announcement" | "event";
   title: string;
   description: string;
   date: string;
+  trigger: ReactNode
 };
 
 const MessageBoard = ({
@@ -20,6 +22,7 @@ const MessageBoard = ({
   title,
   description,
   date,
+  trigger
 }: MessageBoardProps) => {
   const icon =
     type === "announcement" ? (
@@ -30,11 +33,11 @@ const MessageBoard = ({
 
   return (
     <Dialog>
-      <DialogTrigger className="flex-center rounded-full bg-lamaSky p-0.5">
-        <Eye className="h-5 w-5" />
+      <DialogTrigger>
+        {trigger}
       </DialogTrigger>
 
-      <DialogContent className="max-w-lg rounded-2xl bg-gradient-to-b from-white to-gray-200 shadow-xl">
+      <DialogContent className="max-w-md rounded-2xl bg-gradient-to-b from-white to-gray-200 shadow-xl">
         <DialogHeader className="flex flex-col gap-2">
           {icon}
 

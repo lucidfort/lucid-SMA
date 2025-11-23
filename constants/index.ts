@@ -13,7 +13,6 @@ export const menuItems = [
         icon: "/teacher.svg",
         label: "Staff",
         links: [
-          { label: "Add Staff", href: "/list/staffs?form-open=true" },
           { label: "All Staff", href: "/list/staffs" },
           { label: "Teachers", href: "/list/staffs?role=teacher" },
           { label: "Finance Execs", href: "/list/staffs?role=finance" },
@@ -26,7 +25,6 @@ export const menuItems = [
         icon: "/student.svg",
         label: "Students",
         links: [
-          { label: "Add Student", href: "/list/students?form-open=true" },
           {
             label: "Currently Enrolled",
             href: "/list/students?display=enrolled",
@@ -36,7 +34,7 @@ export const menuItems = [
             href: "/list/students?display=formerly-enrolled",
           },
         ],
-        visible: ["academics", "teacher", "manager"],
+        visible: ["academics", "teacher", "manager", "finance"],
       },
       {
         icon: "/parent.svg",
@@ -139,6 +137,7 @@ export const menuItems = [
         visible: ["manager", "teacher", "student"],
       },
     ],
+    visible: ["manager", "administration", "teacher", "academics", "finance"],
   },
   {
     title: "FINANCE",
@@ -168,6 +167,7 @@ export const menuItems = [
         visible: ["finance", "manager"],
       },
     ],
+    visible: ["finance", "manager"],
   },
   {
     title: "ACCOUNT",
@@ -185,6 +185,7 @@ export const menuItems = [
         visible: ["manager", "teacher", "student", "parent"],
       },
     ],
+    visible: ["manager", "administration"],
   },
 ];
 
@@ -214,11 +215,11 @@ export const relationships = [
 export const userSex = ["Male", "Female"];
 
 export const dayOfWeek = [
-  "MONDAY",
-  "TUESDAY",
-  "WEDNESDAY",
-  "THURSDAY",
-  "FRIDAY",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
 ];
 
 export const examTypes = ["Quiz", "Test", "Midterm", "Final", "Practical"];

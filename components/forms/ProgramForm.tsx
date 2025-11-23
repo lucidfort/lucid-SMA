@@ -11,7 +11,7 @@ import {
   useGetProgramsQuery,
 } from "@/lib/generated/graphql/client";
 import { useEffect } from "react";
-import { programSchema, ProgramSchema } from "@/lib/zod/validation";
+import { programSchema, ProgramSchema } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { handleGraphqlClientErrors } from "@/lib/utils";

@@ -2,11 +2,11 @@
 
 import prisma from "@/lib/prisma";
 import { handleServerErrors } from "../utils";
-import { EventSchema } from "../zod/validation";
-import { getCurrentUser, handleGraphqlServerErrors } from "@/lib/serverUtils";
+import { getCurrentUser, handleGraphqlServerErrors } from "@/lib/server/utils";
 import { AppError, NotFoundError } from "@/lib/pothos/errors";
+import { EventInput } from "@/lib/generated/graphql/server";
 
-export const createEventAction = async (data: EventSchema) => {
+export const createEventAction = async (data: EventInput) => {
   const { schoolId, accessLevel } = await getCurrentUser();
 
   if (!["manager", "administration"].includes(accessLevel!)) {
@@ -34,7 +34,7 @@ export const createEventAction = async (data: EventSchema) => {
   }
 };
 
-export const updateEventAction = async (data: EventSchema) => {
+export const updateEventAction = async (data: EventInput) => {
   const { schoolId } = await getCurrentUser();
   if (!data.id) {
     throw new NotFoundError("Event");

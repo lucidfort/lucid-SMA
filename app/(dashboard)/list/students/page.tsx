@@ -1,77 +1,57 @@
+import ErrorListener from "@/components/ErrorListener";
 import { DataTable } from "@/components/tables/data-table";
 import { studentsColumn } from "@/components/tables/studentsColumn";
-import prisma from "@/lib/prisma";
-import { getCurrentUser } from "@/lib/serverUtils";
-import { SearchParams } from "@/types";
-import { Prisma } from "@prisma/client";
+import {
+  GetStudentsQuery,
+  GetStudentsQueryVariables,
+} from "@/lib/generated/graphql/server";
+import { getCurrentUser } from "@/lib/server/utils";
+import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
+import { gql } from "@urql/core";
 
-const StudentsListPage = async ({ searchParams }: SearchParams) => {
-  const { ...queryParams } = await searchParams;
-
-  const { accessLevel, schoolId } = await getCurrentUser();
-  const query: Prisma.StudentWhereInput = {};
-
-  // URL PARAMS CONDITION
-  if (queryParams) {
-    for (const [key, value] of Object.entries(queryParams)) {
-      if (value !== undefined) {
-        switch (key) {
-          case "teacherId":
-            query.class = {
-              OR: [{ formTeacherId: value }, { classTeacherId: value }],
-            };
-            break;
-          case "display":
-            if (value === "enrolled") {
-              query.activeState = { in: ["ACTIVE", "SUSPENDED"] };
-            } else if (value === "formerly-enrolled") {
-              query.activeState = { notIn: ["ACTIVE", "SUSPENDED"] };
-            }
-            break;
-          default:
-            break;
+const GET_STUDENTS = gql(`
+  query GetStudents {
+    students {
+      id 
+      name 
+      surname 
+      registrationNumber
+      address
+      sex
+      img
+      class {
+        id
+        name
+        grade {
+          id
+          name
         }
       }
     }
   }
+`);
 
-  const data = await prisma.student.findMany({
-    where: {
-      schoolId,
-      activeState: { in: ["ACTIVE", "SUSPENDED"] },
-      ...query,
-    },
-    include: {
-      class: {
-        select: {
-          grade: {
-            select: {
-              name: true,
-            },
-          },
-        },
-      },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+const StudentsList = async () => {
+  const { accessLevel } = await getCurrentUser();
 
-  const tableTitle =
-    queryParams?.display === "formerly-enrolled"
-      ? "Formerly Enrolled Students"
-      : "Currently Enrolled Students";
+  const { client } = await createUrqlServerClient();
+  const { data, error } = await client
+    .query<GetStudentsQuery, GetStudentsQueryVariables>(GET_STUDENTS, {})
+    .toPromise();
 
   return (
     <div className="m-4 mt-0 flex-1 rounded-md bg-white p-4">
       <DataTable
-        title={tableTitle}
         columns={studentsColumn}
-        data={data}
+        data={data?.students ?? []}
+        title="Students"
+        tableFor="student"
         accessLevel={accessLevel!}
       />
+
+      <ErrorListener error={error?.graphQLErrors} />
     </div>
   );
 };
 
-export default StudentsListPage;
+export default StudentsList;

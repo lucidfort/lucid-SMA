@@ -1,9 +1,8 @@
 "use server";
 
-import { handleServerErrors } from "@/lib/utils";
-import { TimetableAssignmentSchema } from "@/lib/zod/validation";
-import { getCurrentUser } from "../serverUtils";
 import prisma from "@/lib/prisma";
+import { TimetableAssignmentSchema } from "@/lib/validation";
+import { getCurrentUser, handleGraphqlServerErrors } from "../server/utils";
 
 interface AssignmentDataType
   extends Omit<
@@ -44,8 +43,7 @@ export async function assignTimetableAction(data: AssignmentDataType) {
       },
     });
   } catch (e) {
-    console.log({ Error: e });
-    handleServerErrors(e);
+    handleGraphqlServerErrors(e);
   }
 }
 
@@ -96,6 +94,6 @@ export async function assignPeriodSlotAction(data: PeriodDataType) {
       return period;
     });
   } catch (e) {
-    handleServerErrors(e);
+    handleGraphqlServerErrors(e);
   }
 }

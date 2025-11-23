@@ -1,39 +1,79 @@
 "use client";
 
-import { ParentSchema, parentSchema } from "@/lib/zod/validation";
+import { Form } from "@/components/ui/form";
+import {
+  CreateParentMutation,
+  UpdateParentMutation,
+  useCreateParentMutation,
+  useUpdateParentMutation,
+} from "@/lib/generated/graphql/client";
+import { ParentSchema, parentSchema } from "@/lib/validation";
 import { FormProps } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import InputField, { FormFieldType } from "../InputField";
-import { Form } from "@/components/ui/form";
-import { SelectContent, SelectItem } from "@/components/ui/select";
-import { userSex } from "@/constants";
+import { toast } from "sonner";
+import { handleGraphqlClientErrors } from "@/lib/utils";
 
 const ParentForm = ({ type, data, setOpen }: FormProps) => {
   const router = useRouter();
 
   const form = useForm<ParentSchema>({
     resolver: zodResolver(parentSchema),
+    defaultValues: {
+      ...data,
+    },
   });
+
+  const [createResult, createParent] = useCreateParentMutation();
+  const [updateResult, updateParent] = useUpdateParentMutation();
 
   const onSubmit = form.handleSubmit(async (values) => {
     const formData = {
-      ...(type === "update" && { id: data.id }),
+      ...(type === "update" && {
+        id: data.id,
+        clerkUserId: data?.clerkUserId,
+      }),
       ...values,
     };
 
-    console.log(formData);
+    const res =
+      type === "create"
+        ? await createParent({ input: formData })
+        : await updateParent({ input: formData });
+
+    const mutationResult =
+      type === "create"
+        ? (res.data as CreateParentMutation)?.createParent
+        : (res.data as UpdateParentMutation)?.updateParent;
+
+    if (!mutationResult) {
+      toast.error("Something went wrong");
+      return;
+    }
+
+    if (
+      mutationResult.__typename === "MutationCreateParentSuccess" ||
+      mutationResult.__typename === "MutationUpdateParentSuccess"
+    ) {
+      toast.success(`Parent ${type}d successfully!`);
+      setOpen(false);
+      router.refresh();
+    } else {
+      const error = handleGraphqlClientErrors(mutationResult);
+      toast.error(error ?? "Something went wrong");
+    }
   });
 
-  const isLoading = false;
+  const isLoading = createResult.fetching || updateResult.fetching;
 
   return (
     <Form {...form}>
       <form className="flex flex-col gap-4" onSubmit={onSubmit}>
         <span className="text-xs font-medium text-gray-400">
-          Authentication Information
+          Authentication Information - Only for primary parents
         </span>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -43,13 +83,7 @@ const ParentForm = ({ type, data, setOpen }: FormProps) => {
             control={form.control}
             fieldType={FormFieldType.INPUT}
           />
-          <InputField
-            label="Email"
-            name="email"
-            type="email"
-            control={form.control}
-            fieldType={FormFieldType.INPUT}
-          />
+
           <InputField
             label="Password"
             name="password"
@@ -77,6 +111,13 @@ const ParentForm = ({ type, data, setOpen }: FormProps) => {
             fieldType={FormFieldType.INPUT}
           />
           <InputField
+            label="Email"
+            name="email"
+            type="email"
+            control={form.control}
+            fieldType={FormFieldType.INPUT}
+          />
+          <InputField
             label="Phone"
             name="phone"
             type="tel"
@@ -89,21 +130,6 @@ const ParentForm = ({ type, data, setOpen }: FormProps) => {
             control={form.control}
             fieldType={FormFieldType.INPUT}
           />
-
-          <InputField
-            control={form.control}
-            fieldType={FormFieldType.SELECT}
-            label="Gender"
-            name="sex"
-          >
-            <SelectContent>
-              {userSex.map((sex) => (
-                <SelectItem key={sex} value={sex.toUpperCase()}>
-                  {sex}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </InputField>
         </div>
 
         <button

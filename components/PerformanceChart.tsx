@@ -2,12 +2,13 @@
 
 import { Pie, PieChart, ResponsiveContainer } from "recharts";
 
-const data = [
-  { name: "Group A", value: 92, fill: "#C3EBFA" },
-  { name: "Group B", value: 8, fill: "#FAE27C" },
-];
+type PerformanceChartData = {
+  name: string;
+  value: number;
+  fill: string;
+}
 
-const PerformanceChart = () => {
+const PerformanceChart = ({ data }: { data: PerformanceChartData[] }) => {
   return (
     <ResponsiveContainer width="100%" height="100%">
       <PieChart>

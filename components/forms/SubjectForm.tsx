@@ -1,6 +1,6 @@
 "use client";
 
-import { subjectSchema, SubjectSchema } from "@/lib/zod/validation";
+import { subjectSchema, SubjectSchema } from "@/lib/validation";
 import { FormProps } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
@@ -33,22 +33,26 @@ const SubjectForm = ({ type, data, setOpen }: FormProps) => {
   const form = useForm<SubjectSchema>({
     resolver: zodResolver(subjectSchema),
     defaultValues: {
+      id: data?.id,
       name: data?.name ?? "",
       teachers:
-        data?.teachers.map((teacher: { id: string }) => teacher.id) ?? [],
+        data?.teachers.map(
+          ({ teacher }: { teacher: { id: string } }) => teacher.id,
+        ) ?? [],
     },
   });
 
   const onSubmit = form.handleSubmit(async (values) => {
-    const formData = {
-      ...(type === "update" && { id: data.id, relationId: data?.teachers?.id }),
-      ...values,
-    };
+    console.log(values);
+    if (type === "update" && !values.id) {
+      toast.warning("Subject was not found");
+      return;
+    }
 
     const response =
       type === "create"
-        ? await createSubject({ input: formData })
-        : await updateSubject({ input: formData });
+        ? await createSubject({ input: values })
+        : await updateSubject({ input: values });
 
     const mutationResult =
       type === "create"
@@ -90,7 +94,7 @@ const SubjectForm = ({ type, data, setOpen }: FormProps) => {
           Subject Information
         </span>
 
-        <div className="flex w-full flex-wrap justify-between gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <InputField
             label="Name"
             control={form.control}

@@ -1,11 +1,12 @@
 import { assignmentsColumn } from "@/components/tables/assignmentsColumn";
-import { createServerClient, getCurrentUser } from "@/lib/serverUtils";
+import { getCurrentUser } from "@/lib/server/utils";
 import { gql } from "@urql/core";
 import { DataTable } from "@/components/tables/data-table";
 import {
   GetAssignmentsQuery,
   GetAssignmentsQueryVariables,
 } from "@/lib/generated/graphql/server";
+import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
 
 const GET_ASSIGNMENTS = gql(`
   query GetAssignments($filter: AssignmentFilter) {
@@ -35,7 +36,7 @@ const GET_ASSIGNMENTS = gql(`
 const AssignmentsListPage = async () => {
   const { accessLevel } = await getCurrentUser();
 
-  const { client } = await createServerClient();
+  const { client } = await createUrqlServerClient();
 
   const { data } = await client
     .query<

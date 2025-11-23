@@ -1,29 +1,17 @@
 "use client";
 
+import DeleteModal from "@/components/DeleteModal";
+import DropdownOptions from "@/components/DropdownOptions";
 import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import DeleteModal from "@/components/DeleteModal";
+import { Program } from "@/lib/generated/graphql/client";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
-import DropdownOptions from "@/components/DropdownOptions";
-import { ProgramName } from "@/lib/generated/graphql/client";
 
-type ProgramsList = {
-  id: string;
-  name: ProgramName;
-  updatedAt: Date;
-  grades: {
-    id: string;
-    name: string;
-    classes: {
-      studentCount: number;
-    }[];
-  }[];
-};
 
-export const programsColumn: ColumnDef<ProgramsList>[] = [
+export const programsColumn: ColumnDef<Program>[] = [
   {
     accessorKey: "name",
     header: "Program",
@@ -41,12 +29,7 @@ export const programsColumn: ColumnDef<ProgramsList>[] = [
     header: "Active Students",
     cell: ({ row: { original } }) => {
       const studentCount = original.grades.reduce((acc, grade) => {
-        const classTotal = grade.classes.reduce(
-          (sum, cls) => sum + cls.studentCount,
-          0,
-        );
-
-        return acc + classTotal;
+        return acc + grade.studentCount;
       }, 0);
 
       return <span>{studentCount}</span>;

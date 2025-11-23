@@ -1,0 +1,38 @@
+mutation CreateResult($input: ResultInput!) {
+    createResult(input: $input) {
+        __typename
+
+        ... on MutationCreateResultSuccess {
+            data {
+                id
+            }
+        }
+
+        ... on AppError {
+            __typename
+            message
+        }
+    }
+}
+
+mutation UpdateResult($input: ResultInput!) {
+    updateResult(input: $input) {
+        __typename
+
+        ... on MutationUpdateResultSuccess {
+            data {
+                id
+            }
+        }
+
+        ... on AppError {
+            __typename
+            message
+        }
+
+        ... on NotFoundError {
+            __typename
+            message
+        }
+    }
+}

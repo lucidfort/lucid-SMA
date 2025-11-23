@@ -24,18 +24,24 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 import ListHeader from "@/components/ListHeader";
 import { DataTableProps } from "@/types";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export function DataTable({
   columns,
   data,
   accessLevel,
   filters,
+  paginate,
   ...props
 }: DataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const [globalFilter, setGlobalFilter] = useState<any>([]);
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const page = Number(searchParams.get("page")) ?? 1;
 
   const filteredColumns = columns.filter((col) => {
     return col.meta?.roles ? col.meta.roles.includes(accessLevel) : true;
@@ -151,7 +157,13 @@ export function DataTable({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => table.nextPage()}
+          onClick={() => {
+            table.nextPage();
+
+            if (paginate) {
+              router.push(`?page=${page - 1}`);
+            }
+          }}
           disabled={!table.getCanNextPage()}
         >
           Next

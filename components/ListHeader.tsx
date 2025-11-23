@@ -15,7 +15,8 @@ import TermSelector from "@/components/TermSelector";
 import FormModal from "@/components/FormModal";
 import { listCreationAccess } from "@/lib/settings";
 
-interface ListHeaderProps extends Omit<DataTableProps, "columns" | "data"> {
+interface ListHeaderProps
+  extends Omit<DataTableProps, "columns" | "data" | "paginate"> {
   table: Table<any>;
   globalFilter: any;
 }

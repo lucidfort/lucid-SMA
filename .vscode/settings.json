@@ -1,3 +1,10 @@
 {
-  "cSpell.words": ["Paystack", "sonner", "Verificator"]
+  "cSpell.words": [
+    "codegen",
+    "graphcache",
+    "Paystack",
+    "sonner",
+    "Urql",
+    "Verificator"
+  ]
 }

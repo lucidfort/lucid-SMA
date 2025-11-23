@@ -1,21 +1,20 @@
 "use server";
 
 import prisma from "../prisma";
-import { getCurrentUser, handleGraphqlServerErrors } from "../serverUtils";
+import { getCurrentUser, handleGraphqlServerErrors } from "../server/utils";
 import { handleServerErrors } from "../utils";
-import { AssignmentSchema } from "../zod/validation";
+import { AssignmentSchema } from "../validation";
 import { NotFoundError } from "@/lib/pothos/errors";
 import { Prisma } from "@/lib/generated/prisma/client";
+import { AssignmentFilter } from "@/lib/generated/graphql/server";
 
 export const getAssignmentsAction = async ({
   classId,
   teacherId,
+  subjectId,
+  termId,
   query,
-}: {
-  classId?: string;
-  teacherId?: string;
-  query: any;
-}) => {
+}: AssignmentFilter & { query: any }) => {
   const { currentUserId, accessLevel, schoolId } = await getCurrentUser();
 
   const baseWhere: Prisma.AssignmentWhereInput = {
@@ -93,8 +92,10 @@ export const getAssignmentsAction = async ({
           },
         ],
       },
-      classId && { classId: classId },
     ].filter(Boolean) as Prisma.AssignmentWhereInput[],
+    ...(classId && { classId }),
+    ...(subjectId && { subjectId }),
+    ...(termId && { termId }),
   };
 
   return await prisma.assignment.findMany({

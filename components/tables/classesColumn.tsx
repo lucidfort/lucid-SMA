@@ -8,28 +8,20 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import DeleteModal from "@/components/DeleteModal";
+import { Class } from "@/lib/generated/graphql/client";
 
-type ClassesList = {
-  id: string;
-  name: string;
-  capacity: number;
-  supervisor: { name: string; surname: string } | null;
-  grade: { name: string };
-  studentCount: number;
-};
-
-export const classesColumn: ColumnDef<ClassesList>[] = [
+export const classesColumn: ColumnDef<Class>[] = [
+  {
+    accessorFn: (row) => row.grade.name,
+    header: "Grade",
+    cell: ({ row: { original } }) => <span>{original.grade.name}</span>,
+  },
   {
     accessorKey: "name",
     header: "Class",
     cell: ({ row: { original } }) => (
       <span className="capitalize">{original.name}</span>
     ),
-  },
-  {
-    accessorFn: (row) => row.grade.name,
-    header: "Grade",
-    cell: ({ row: { original } }) => <span>{original.grade.name}</span>,
   },
   {
     accessorKey: "capacity",
@@ -42,11 +34,11 @@ export const classesColumn: ColumnDef<ClassesList>[] = [
     cell: ({ row: { original } }) => <span>{original?.studentCount}</span>,
   },
   {
-    accessorKey: "supervisor",
+    accessorFn: (row) => row.supervisors.map(s => `${s.name} ${s.surname}`).join(", ") || "supervisor",
     header: "Supervisor",
     cell: ({ row: { original } }) => (
       <span>
-        {original?.supervisor?.name} {original?.supervisor?.surname}
+        {original?.supervisors?.map(s => `${s.name} ${s.surname}`).join(", ") || "-"}
       </span>
     ),
   },

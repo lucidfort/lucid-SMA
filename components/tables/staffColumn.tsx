@@ -10,8 +10,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import DeleteModal from "@/components/DeleteModal";
 import DropdownOptions from "@/components/DropdownOptions";
-import { deactivateStaff } from "@/lib/actions/teacher";
+import { deactivateStaff } from "@/lib/actions/staff";
 import { Staff } from "@/lib/generated/graphql/client";
+import FormModal from "../FormModal";
 
 type TeacherList = Staff & {
   isActive: boolean;
@@ -60,9 +61,9 @@ export const staffColumn: ColumnDef<TeacherList>[] = [
     ),
   },
   {
-    header: "Role",
-    accessorKey: "role",
-    cell: ({ row: { original } }) => <span>{original.role}</span>,
+    header: "EmployeeId",
+    accessorKey: "employeeId",
+    cell: ({ row: { original } }) => <span>{original.employeeId}</span>,
   },
   {
     header: "Phone",
@@ -92,33 +93,36 @@ export const staffColumn: ColumnDef<TeacherList>[] = [
     id: "actions",
     cell: ({
       row: {
-        original: { id, clerkUserId, isActive },
+        original
       },
     }) => {
       return (
         <DropdownOptions>
           <DropdownMenuItem asChild>
-            <Link href={`/list/staffs/${id}`}>View</Link>
+            <Link href={`/list/staffs/${original.id}`} className="cursor-pointer">View</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <FormModal table="staff" type="update" data={original} />
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />
 
-          {clerkUserId && (
+          {original.clerkUserId && (
             <DropdownMenuItem
               onClick={async () =>
                 await deactivateStaff({
-                  clerkUserId: clerkUserId!,
-                  staffId: id,
-                  type: isActive ? "deactivate" : "activate",
+                  clerkUserId: original.clerkUserId!,
+                  staffId: original.id,
+                  type: original.isActive ? "deactivate" : "activate",
                 })
               }
             >
-              {isActive ? "Deactivate account" : "Activate account"}
+              {original.isActive ? "Deactivate account" : "Activate account"}
             </DropdownMenuItem>
           )}
 
           <DropdownMenuItem asChild>
-            <DeleteModal id={id} table="staff" triggerTitle="Delete" />
+            <DeleteModal id={original.id} table="staff" triggerTitle="Delete" />
           </DropdownMenuItem>
         </DropdownOptions>
       );

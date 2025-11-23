@@ -1,11 +1,12 @@
 import { subjectsColumn } from "@/components/tables/subjectsColumn";
-import { createServerClient, getCurrentUser } from "@/lib/serverUtils";
+import { getCurrentUser } from "@/lib/server/utils";
 import { DataTable } from "@/components/tables/data-table";
 import { gql } from "@urql/core";
 import {
   GetSubjectsQuery,
   GetSubjectsQueryVariables,
 } from "@/lib/generated/graphql/server";
+import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
 
 const GET_SUBJECTS = gql(`
     query GetSubjects{
@@ -14,10 +15,11 @@ const GET_SUBJECTS = gql(`
             name
             teachers {
               id
-                teacher {
-                    name 
-                    surname
-                }
+              teacher {
+                id
+                  name 
+                  surname
+              }
             }
         }
     }
@@ -26,7 +28,7 @@ const GET_SUBJECTS = gql(`
 const SubjectsListPage = async () => {
   const { accessLevel } = await getCurrentUser();
 
-  const { client } = await createServerClient();
+  const { client } = await createUrqlServerClient();
   const { data } = await client.query<
     GetSubjectsQuery,
     GetSubjectsQueryVariables

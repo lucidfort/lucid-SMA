@@ -137,11 +137,6 @@ export type TermlyResult = Prisma.TermlyResultModel
  */
 export type Invoice = Prisma.InvoiceModel
 /**
- * Model InvoiceLine
- * 
- */
-export type InvoiceLine = Prisma.InvoiceLineModel
-/**
  * Model InvoicePayment
  * 
  */

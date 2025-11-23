@@ -1,0 +1,48 @@
+query GetAssignments($filter: AssignmentFilter!) {
+  assignments(filter: $filter) {
+    id
+    maxScore
+    subject {
+      name
+    }
+  }
+}
+
+mutation CreateAssignment($input: AssignmentInput!) {
+  createAssignment(input: $input) {
+    __typename
+
+    ... on MutationCreateAssignmentSuccess {
+      data {
+        id
+      }
+    }
+
+    ... on AppError {
+      __typename
+      message
+    }
+  }
+}
+
+mutation UpdateAssignment($input: AssignmentInput!) {
+  updateAssignment(input: $input) {
+    __typename
+
+    ... on MutationUpdateAssignmentSuccess {
+      data {
+        id
+      }
+    }
+
+    ... on AppError {
+      __typename
+      message
+    }
+
+    ... on NotFoundError {
+      __typename
+      message
+    }
+  }
+}

@@ -161,7 +161,7 @@ export type StaffAttendanceGroupByArgs<ExtArgs extends runtime.Types.Extensions.
 export type StaffAttendanceGroupByOutputType = {
   id: string
   date: Date
-  clockInTime: Date
+  clockInTime: Date | null
   reasonForAbsence: string | null
   schoolId: string
   termId: string
@@ -192,7 +192,7 @@ export type StaffAttendanceWhereInput = {
   NOT?: Prisma.StaffAttendanceWhereInput | Prisma.StaffAttendanceWhereInput[]
   id?: Prisma.StringFilter<"StaffAttendance"> | string
   date?: Prisma.DateTimeFilter<"StaffAttendance"> | Date | string
-  clockInTime?: Prisma.DateTimeFilter<"StaffAttendance"> | Date | string
+  clockInTime?: Prisma.DateTimeNullableFilter<"StaffAttendance"> | Date | string | null
   reasonForAbsence?: Prisma.StringNullableFilter<"StaffAttendance"> | string | null
   schoolId?: Prisma.StringFilter<"StaffAttendance"> | string
   termId?: Prisma.StringFilter<"StaffAttendance"> | string
@@ -205,7 +205,7 @@ export type StaffAttendanceWhereInput = {
 export type StaffAttendanceOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   date?: Prisma.SortOrder
-  clockInTime?: Prisma.SortOrder
+  clockInTime?: Prisma.SortOrderInput | Prisma.SortOrder
   reasonForAbsence?: Prisma.SortOrderInput | Prisma.SortOrder
   schoolId?: Prisma.SortOrder
   termId?: Prisma.SortOrder
@@ -222,7 +222,7 @@ export type StaffAttendanceWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.StaffAttendanceWhereInput[]
   NOT?: Prisma.StaffAttendanceWhereInput | Prisma.StaffAttendanceWhereInput[]
   date?: Prisma.DateTimeFilter<"StaffAttendance"> | Date | string
-  clockInTime?: Prisma.DateTimeFilter<"StaffAttendance"> | Date | string
+  clockInTime?: Prisma.DateTimeNullableFilter<"StaffAttendance"> | Date | string | null
   reasonForAbsence?: Prisma.StringNullableFilter<"StaffAttendance"> | string | null
   schoolId?: Prisma.StringFilter<"StaffAttendance"> | string
   termId?: Prisma.StringFilter<"StaffAttendance"> | string
@@ -235,7 +235,7 @@ export type StaffAttendanceWhereUniqueInput = Prisma.AtLeast<{
 export type StaffAttendanceOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   date?: Prisma.SortOrder
-  clockInTime?: Prisma.SortOrder
+  clockInTime?: Prisma.SortOrderInput | Prisma.SortOrder
   reasonForAbsence?: Prisma.SortOrderInput | Prisma.SortOrder
   schoolId?: Prisma.SortOrder
   termId?: Prisma.SortOrder
@@ -251,7 +251,7 @@ export type StaffAttendanceScalarWhereWithAggregatesInput = {
   NOT?: Prisma.StaffAttendanceScalarWhereWithAggregatesInput | Prisma.StaffAttendanceScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"StaffAttendance"> | string
   date?: Prisma.DateTimeWithAggregatesFilter<"StaffAttendance"> | Date | string
-  clockInTime?: Prisma.DateTimeWithAggregatesFilter<"StaffAttendance"> | Date | string
+  clockInTime?: Prisma.DateTimeNullableWithAggregatesFilter<"StaffAttendance"> | Date | string | null
   reasonForAbsence?: Prisma.StringNullableWithAggregatesFilter<"StaffAttendance"> | string | null
   schoolId?: Prisma.StringWithAggregatesFilter<"StaffAttendance"> | string
   termId?: Prisma.StringWithAggregatesFilter<"StaffAttendance"> | string
@@ -261,7 +261,7 @@ export type StaffAttendanceScalarWhereWithAggregatesInput = {
 export type StaffAttendanceCreateInput = {
   id?: string
   date: Date | string
-  clockInTime?: Date | string
+  clockInTime?: Date | string | null
   reasonForAbsence?: string | null
   school: Prisma.SchoolCreateNestedOneWithoutStaffAttendancesInput
   term: Prisma.TermCreateNestedOneWithoutStaffAttendancesInput
@@ -271,7 +271,7 @@ export type StaffAttendanceCreateInput = {
 export type StaffAttendanceUncheckedCreateInput = {
   id?: string
   date: Date | string
-  clockInTime?: Date | string
+  clockInTime?: Date | string | null
   reasonForAbsence?: string | null
   schoolId: string
   termId: string
@@ -281,7 +281,7 @@ export type StaffAttendanceUncheckedCreateInput = {
 export type StaffAttendanceUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  clockInTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  clockInTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reasonForAbsence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   school?: Prisma.SchoolUpdateOneRequiredWithoutStaffAttendancesNestedInput
   term?: Prisma.TermUpdateOneRequiredWithoutStaffAttendancesNestedInput
@@ -291,7 +291,7 @@ export type StaffAttendanceUpdateInput = {
 export type StaffAttendanceUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  clockInTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  clockInTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reasonForAbsence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   termId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -301,7 +301,7 @@ export type StaffAttendanceUncheckedUpdateInput = {
 export type StaffAttendanceCreateManyInput = {
   id?: string
   date: Date | string
-  clockInTime?: Date | string
+  clockInTime?: Date | string | null
   reasonForAbsence?: string | null
   schoolId: string
   termId: string
@@ -311,14 +311,14 @@ export type StaffAttendanceCreateManyInput = {
 export type StaffAttendanceUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  clockInTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  clockInTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reasonForAbsence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type StaffAttendanceUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  clockInTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  clockInTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reasonForAbsence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   termId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -500,7 +500,7 @@ export type StaffAttendanceUncheckedUpdateManyWithoutStaffNestedInput = {
 export type StaffAttendanceCreateWithoutSchoolInput = {
   id?: string
   date: Date | string
-  clockInTime?: Date | string
+  clockInTime?: Date | string | null
   reasonForAbsence?: string | null
   term: Prisma.TermCreateNestedOneWithoutStaffAttendancesInput
   staff: Prisma.StaffCreateNestedOneWithoutAttendancesInput
@@ -509,7 +509,7 @@ export type StaffAttendanceCreateWithoutSchoolInput = {
 export type StaffAttendanceUncheckedCreateWithoutSchoolInput = {
   id?: string
   date: Date | string
-  clockInTime?: Date | string
+  clockInTime?: Date | string | null
   reasonForAbsence?: string | null
   termId: string
   staffId: string
@@ -547,7 +547,7 @@ export type StaffAttendanceScalarWhereInput = {
   NOT?: Prisma.StaffAttendanceScalarWhereInput | Prisma.StaffAttendanceScalarWhereInput[]
   id?: Prisma.StringFilter<"StaffAttendance"> | string
   date?: Prisma.DateTimeFilter<"StaffAttendance"> | Date | string
-  clockInTime?: Prisma.DateTimeFilter<"StaffAttendance"> | Date | string
+  clockInTime?: Prisma.DateTimeNullableFilter<"StaffAttendance"> | Date | string | null
   reasonForAbsence?: Prisma.StringNullableFilter<"StaffAttendance"> | string | null
   schoolId?: Prisma.StringFilter<"StaffAttendance"> | string
   termId?: Prisma.StringFilter<"StaffAttendance"> | string
@@ -557,7 +557,7 @@ export type StaffAttendanceScalarWhereInput = {
 export type StaffAttendanceCreateWithoutTermInput = {
   id?: string
   date: Date | string
-  clockInTime?: Date | string
+  clockInTime?: Date | string | null
   reasonForAbsence?: string | null
   school: Prisma.SchoolCreateNestedOneWithoutStaffAttendancesInput
   staff: Prisma.StaffCreateNestedOneWithoutAttendancesInput
@@ -566,7 +566,7 @@ export type StaffAttendanceCreateWithoutTermInput = {
 export type StaffAttendanceUncheckedCreateWithoutTermInput = {
   id?: string
   date: Date | string
-  clockInTime?: Date | string
+  clockInTime?: Date | string | null
   reasonForAbsence?: string | null
   schoolId: string
   staffId: string
@@ -601,7 +601,7 @@ export type StaffAttendanceUpdateManyWithWhereWithoutTermInput = {
 export type StaffAttendanceCreateWithoutStaffInput = {
   id?: string
   date: Date | string
-  clockInTime?: Date | string
+  clockInTime?: Date | string | null
   reasonForAbsence?: string | null
   school: Prisma.SchoolCreateNestedOneWithoutStaffAttendancesInput
   term: Prisma.TermCreateNestedOneWithoutStaffAttendancesInput
@@ -610,7 +610,7 @@ export type StaffAttendanceCreateWithoutStaffInput = {
 export type StaffAttendanceUncheckedCreateWithoutStaffInput = {
   id?: string
   date: Date | string
-  clockInTime?: Date | string
+  clockInTime?: Date | string | null
   reasonForAbsence?: string | null
   schoolId: string
   termId: string
@@ -645,7 +645,7 @@ export type StaffAttendanceUpdateManyWithWhereWithoutStaffInput = {
 export type StaffAttendanceCreateManySchoolInput = {
   id?: string
   date: Date | string
-  clockInTime?: Date | string
+  clockInTime?: Date | string | null
   reasonForAbsence?: string | null
   termId: string
   staffId: string
@@ -654,7 +654,7 @@ export type StaffAttendanceCreateManySchoolInput = {
 export type StaffAttendanceUpdateWithoutSchoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  clockInTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  clockInTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reasonForAbsence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   term?: Prisma.TermUpdateOneRequiredWithoutStaffAttendancesNestedInput
   staff?: Prisma.StaffUpdateOneRequiredWithoutAttendancesNestedInput
@@ -663,7 +663,7 @@ export type StaffAttendanceUpdateWithoutSchoolInput = {
 export type StaffAttendanceUncheckedUpdateWithoutSchoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  clockInTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  clockInTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reasonForAbsence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   termId?: Prisma.StringFieldUpdateOperationsInput | string
   staffId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -672,7 +672,7 @@ export type StaffAttendanceUncheckedUpdateWithoutSchoolInput = {
 export type StaffAttendanceUncheckedUpdateManyWithoutSchoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  clockInTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  clockInTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reasonForAbsence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   termId?: Prisma.StringFieldUpdateOperationsInput | string
   staffId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -681,7 +681,7 @@ export type StaffAttendanceUncheckedUpdateManyWithoutSchoolInput = {
 export type StaffAttendanceCreateManyTermInput = {
   id?: string
   date: Date | string
-  clockInTime?: Date | string
+  clockInTime?: Date | string | null
   reasonForAbsence?: string | null
   schoolId: string
   staffId: string
@@ -690,7 +690,7 @@ export type StaffAttendanceCreateManyTermInput = {
 export type StaffAttendanceUpdateWithoutTermInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  clockInTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  clockInTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reasonForAbsence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   school?: Prisma.SchoolUpdateOneRequiredWithoutStaffAttendancesNestedInput
   staff?: Prisma.StaffUpdateOneRequiredWithoutAttendancesNestedInput
@@ -699,7 +699,7 @@ export type StaffAttendanceUpdateWithoutTermInput = {
 export type StaffAttendanceUncheckedUpdateWithoutTermInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  clockInTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  clockInTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reasonForAbsence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   staffId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -708,7 +708,7 @@ export type StaffAttendanceUncheckedUpdateWithoutTermInput = {
 export type StaffAttendanceUncheckedUpdateManyWithoutTermInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  clockInTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  clockInTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reasonForAbsence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   staffId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -717,7 +717,7 @@ export type StaffAttendanceUncheckedUpdateManyWithoutTermInput = {
 export type StaffAttendanceCreateManyStaffInput = {
   id?: string
   date: Date | string
-  clockInTime?: Date | string
+  clockInTime?: Date | string | null
   reasonForAbsence?: string | null
   schoolId: string
   termId: string
@@ -726,7 +726,7 @@ export type StaffAttendanceCreateManyStaffInput = {
 export type StaffAttendanceUpdateWithoutStaffInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  clockInTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  clockInTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reasonForAbsence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   school?: Prisma.SchoolUpdateOneRequiredWithoutStaffAttendancesNestedInput
   term?: Prisma.TermUpdateOneRequiredWithoutStaffAttendancesNestedInput
@@ -735,7 +735,7 @@ export type StaffAttendanceUpdateWithoutStaffInput = {
 export type StaffAttendanceUncheckedUpdateWithoutStaffInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  clockInTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  clockInTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reasonForAbsence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   termId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -744,7 +744,7 @@ export type StaffAttendanceUncheckedUpdateWithoutStaffInput = {
 export type StaffAttendanceUncheckedUpdateManyWithoutStaffInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  clockInTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  clockInTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reasonForAbsence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   termId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -828,7 +828,7 @@ export type $StaffAttendancePayload<ExtArgs extends runtime.Types.Extensions.Int
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     date: Date
-    clockInTime: Date
+    clockInTime: Date | null
     reasonForAbsence: string | null
     schoolId: string
     termId: string

@@ -37,7 +37,6 @@ export type ResultMinAggregateOutputType = {
   id: string | null
   score: number | null
   grade: string | null
-  remarks: string | null
   uploadedAt: Date | null
   schoolId: string | null
   studentId: string | null
@@ -50,7 +49,6 @@ export type ResultMaxAggregateOutputType = {
   id: string | null
   score: number | null
   grade: string | null
-  remarks: string | null
   uploadedAt: Date | null
   schoolId: string | null
   studentId: string | null
@@ -63,7 +61,6 @@ export type ResultCountAggregateOutputType = {
   id: number
   score: number
   grade: number
-  remarks: number
   uploadedAt: number
   schoolId: number
   studentId: number
@@ -86,7 +83,6 @@ export type ResultMinAggregateInputType = {
   id?: true
   score?: true
   grade?: true
-  remarks?: true
   uploadedAt?: true
   schoolId?: true
   studentId?: true
@@ -99,7 +95,6 @@ export type ResultMaxAggregateInputType = {
   id?: true
   score?: true
   grade?: true
-  remarks?: true
   uploadedAt?: true
   schoolId?: true
   studentId?: true
@@ -112,7 +107,6 @@ export type ResultCountAggregateInputType = {
   id?: true
   score?: true
   grade?: true
-  remarks?: true
   uploadedAt?: true
   schoolId?: true
   studentId?: true
@@ -212,7 +206,6 @@ export type ResultGroupByOutputType = {
   id: string
   score: number
   grade: string | null
-  remarks: string | null
   uploadedAt: Date
   schoolId: string
   studentId: string
@@ -246,9 +239,8 @@ export type ResultWhereInput = {
   OR?: Prisma.ResultWhereInput[]
   NOT?: Prisma.ResultWhereInput | Prisma.ResultWhereInput[]
   id?: Prisma.StringFilter<"Result"> | string
-  score?: Prisma.FloatFilter<"Result"> | number
+  score?: Prisma.IntFilter<"Result"> | number
   grade?: Prisma.StringNullableFilter<"Result"> | string | null
-  remarks?: Prisma.StringNullableFilter<"Result"> | string | null
   uploadedAt?: Prisma.DateTimeFilter<"Result"> | Date | string
   schoolId?: Prisma.StringFilter<"Result"> | string
   studentId?: Prisma.StringFilter<"Result"> | string
@@ -265,7 +257,6 @@ export type ResultOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   score?: Prisma.SortOrder
   grade?: Prisma.SortOrderInput | Prisma.SortOrder
-  remarks?: Prisma.SortOrderInput | Prisma.SortOrder
   uploadedAt?: Prisma.SortOrder
   schoolId?: Prisma.SortOrder
   studentId?: Prisma.SortOrder
@@ -285,9 +276,8 @@ export type ResultWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.ResultWhereInput | Prisma.ResultWhereInput[]
   OR?: Prisma.ResultWhereInput[]
   NOT?: Prisma.ResultWhereInput | Prisma.ResultWhereInput[]
-  score?: Prisma.FloatFilter<"Result"> | number
+  score?: Prisma.IntFilter<"Result"> | number
   grade?: Prisma.StringNullableFilter<"Result"> | string | null
-  remarks?: Prisma.StringNullableFilter<"Result"> | string | null
   uploadedAt?: Prisma.DateTimeFilter<"Result"> | Date | string
   schoolId?: Prisma.StringFilter<"Result"> | string
   studentId?: Prisma.StringFilter<"Result"> | string
@@ -304,7 +294,6 @@ export type ResultOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   score?: Prisma.SortOrder
   grade?: Prisma.SortOrderInput | Prisma.SortOrder
-  remarks?: Prisma.SortOrderInput | Prisma.SortOrder
   uploadedAt?: Prisma.SortOrder
   schoolId?: Prisma.SortOrder
   studentId?: Prisma.SortOrder
@@ -323,9 +312,8 @@ export type ResultScalarWhereWithAggregatesInput = {
   OR?: Prisma.ResultScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ResultScalarWhereWithAggregatesInput | Prisma.ResultScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Result"> | string
-  score?: Prisma.FloatWithAggregatesFilter<"Result"> | number
+  score?: Prisma.IntWithAggregatesFilter<"Result"> | number
   grade?: Prisma.StringNullableWithAggregatesFilter<"Result"> | string | null
-  remarks?: Prisma.StringNullableWithAggregatesFilter<"Result"> | string | null
   uploadedAt?: Prisma.DateTimeWithAggregatesFilter<"Result"> | Date | string
   schoolId?: Prisma.StringWithAggregatesFilter<"Result"> | string
   studentId?: Prisma.StringWithAggregatesFilter<"Result"> | string
@@ -338,7 +326,6 @@ export type ResultCreateInput = {
   id?: string
   score: number
   grade?: string | null
-  remarks?: string | null
   uploadedAt?: Date | string
   updatedAt?: Date | string
   school: Prisma.SchoolCreateNestedOneWithoutResultsInput
@@ -351,7 +338,6 @@ export type ResultUncheckedCreateInput = {
   id?: string
   score: number
   grade?: string | null
-  remarks?: string | null
   uploadedAt?: Date | string
   schoolId: string
   studentId: string
@@ -362,9 +348,8 @@ export type ResultUncheckedCreateInput = {
 
 export type ResultUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  score?: Prisma.FloatFieldUpdateOperationsInput | number
+  score?: Prisma.IntFieldUpdateOperationsInput | number
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  remarks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   school?: Prisma.SchoolUpdateOneRequiredWithoutResultsNestedInput
@@ -375,9 +360,8 @@ export type ResultUpdateInput = {
 
 export type ResultUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  score?: Prisma.FloatFieldUpdateOperationsInput | number
+  score?: Prisma.IntFieldUpdateOperationsInput | number
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  remarks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   studentId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -390,7 +374,6 @@ export type ResultCreateManyInput = {
   id?: string
   score: number
   grade?: string | null
-  remarks?: string | null
   uploadedAt?: Date | string
   schoolId: string
   studentId: string
@@ -401,18 +384,16 @@ export type ResultCreateManyInput = {
 
 export type ResultUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  score?: Prisma.FloatFieldUpdateOperationsInput | number
+  score?: Prisma.IntFieldUpdateOperationsInput | number
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  remarks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ResultUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  score?: Prisma.FloatFieldUpdateOperationsInput | number
+  score?: Prisma.IntFieldUpdateOperationsInput | number
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  remarks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   studentId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -445,7 +426,6 @@ export type ResultCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   score?: Prisma.SortOrder
   grade?: Prisma.SortOrder
-  remarks?: Prisma.SortOrder
   uploadedAt?: Prisma.SortOrder
   schoolId?: Prisma.SortOrder
   studentId?: Prisma.SortOrder
@@ -462,7 +442,6 @@ export type ResultMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   score?: Prisma.SortOrder
   grade?: Prisma.SortOrder
-  remarks?: Prisma.SortOrder
   uploadedAt?: Prisma.SortOrder
   schoolId?: Prisma.SortOrder
   studentId?: Prisma.SortOrder
@@ -475,7 +454,6 @@ export type ResultMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   score?: Prisma.SortOrder
   grade?: Prisma.SortOrder
-  remarks?: Prisma.SortOrder
   uploadedAt?: Prisma.SortOrder
   schoolId?: Prisma.SortOrder
   studentId?: Prisma.SortOrder
@@ -656,19 +634,10 @@ export type ResultUncheckedUpdateManyWithoutAssignmentNestedInput = {
   deleteMany?: Prisma.ResultScalarWhereInput | Prisma.ResultScalarWhereInput[]
 }
 
-export type FloatFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type ResultCreateWithoutSchoolInput = {
   id?: string
   score: number
   grade?: string | null
-  remarks?: string | null
   uploadedAt?: Date | string
   updatedAt?: Date | string
   student: Prisma.StudentCreateNestedOneWithoutResultsInput
@@ -680,7 +649,6 @@ export type ResultUncheckedCreateWithoutSchoolInput = {
   id?: string
   score: number
   grade?: string | null
-  remarks?: string | null
   uploadedAt?: Date | string
   studentId: string
   examId?: string | null
@@ -719,9 +687,8 @@ export type ResultScalarWhereInput = {
   OR?: Prisma.ResultScalarWhereInput[]
   NOT?: Prisma.ResultScalarWhereInput | Prisma.ResultScalarWhereInput[]
   id?: Prisma.StringFilter<"Result"> | string
-  score?: Prisma.FloatFilter<"Result"> | number
+  score?: Prisma.IntFilter<"Result"> | number
   grade?: Prisma.StringNullableFilter<"Result"> | string | null
-  remarks?: Prisma.StringNullableFilter<"Result"> | string | null
   uploadedAt?: Prisma.DateTimeFilter<"Result"> | Date | string
   schoolId?: Prisma.StringFilter<"Result"> | string
   studentId?: Prisma.StringFilter<"Result"> | string
@@ -734,7 +701,6 @@ export type ResultCreateWithoutStudentInput = {
   id?: string
   score: number
   grade?: string | null
-  remarks?: string | null
   uploadedAt?: Date | string
   updatedAt?: Date | string
   school: Prisma.SchoolCreateNestedOneWithoutResultsInput
@@ -746,7 +712,6 @@ export type ResultUncheckedCreateWithoutStudentInput = {
   id?: string
   score: number
   grade?: string | null
-  remarks?: string | null
   uploadedAt?: Date | string
   schoolId: string
   examId?: string | null
@@ -784,7 +749,6 @@ export type ResultCreateWithoutExamInput = {
   id?: string
   score: number
   grade?: string | null
-  remarks?: string | null
   uploadedAt?: Date | string
   updatedAt?: Date | string
   school: Prisma.SchoolCreateNestedOneWithoutResultsInput
@@ -796,7 +760,6 @@ export type ResultUncheckedCreateWithoutExamInput = {
   id?: string
   score: number
   grade?: string | null
-  remarks?: string | null
   uploadedAt?: Date | string
   schoolId: string
   studentId: string
@@ -834,7 +797,6 @@ export type ResultCreateWithoutAssignmentInput = {
   id?: string
   score: number
   grade?: string | null
-  remarks?: string | null
   uploadedAt?: Date | string
   updatedAt?: Date | string
   school: Prisma.SchoolCreateNestedOneWithoutResultsInput
@@ -846,7 +808,6 @@ export type ResultUncheckedCreateWithoutAssignmentInput = {
   id?: string
   score: number
   grade?: string | null
-  remarks?: string | null
   uploadedAt?: Date | string
   schoolId: string
   studentId: string
@@ -884,7 +845,6 @@ export type ResultCreateManySchoolInput = {
   id?: string
   score: number
   grade?: string | null
-  remarks?: string | null
   uploadedAt?: Date | string
   studentId: string
   examId?: string | null
@@ -894,9 +854,8 @@ export type ResultCreateManySchoolInput = {
 
 export type ResultUpdateWithoutSchoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  score?: Prisma.FloatFieldUpdateOperationsInput | number
+  score?: Prisma.IntFieldUpdateOperationsInput | number
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  remarks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   student?: Prisma.StudentUpdateOneRequiredWithoutResultsNestedInput
@@ -906,9 +865,8 @@ export type ResultUpdateWithoutSchoolInput = {
 
 export type ResultUncheckedUpdateWithoutSchoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  score?: Prisma.FloatFieldUpdateOperationsInput | number
+  score?: Prisma.IntFieldUpdateOperationsInput | number
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  remarks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   studentId?: Prisma.StringFieldUpdateOperationsInput | string
   examId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -918,9 +876,8 @@ export type ResultUncheckedUpdateWithoutSchoolInput = {
 
 export type ResultUncheckedUpdateManyWithoutSchoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  score?: Prisma.FloatFieldUpdateOperationsInput | number
+  score?: Prisma.IntFieldUpdateOperationsInput | number
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  remarks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   studentId?: Prisma.StringFieldUpdateOperationsInput | string
   examId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -932,7 +889,6 @@ export type ResultCreateManyStudentInput = {
   id?: string
   score: number
   grade?: string | null
-  remarks?: string | null
   uploadedAt?: Date | string
   schoolId: string
   examId?: string | null
@@ -942,9 +898,8 @@ export type ResultCreateManyStudentInput = {
 
 export type ResultUpdateWithoutStudentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  score?: Prisma.FloatFieldUpdateOperationsInput | number
+  score?: Prisma.IntFieldUpdateOperationsInput | number
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  remarks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   school?: Prisma.SchoolUpdateOneRequiredWithoutResultsNestedInput
@@ -954,9 +909,8 @@ export type ResultUpdateWithoutStudentInput = {
 
 export type ResultUncheckedUpdateWithoutStudentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  score?: Prisma.FloatFieldUpdateOperationsInput | number
+  score?: Prisma.IntFieldUpdateOperationsInput | number
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  remarks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   examId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -966,9 +920,8 @@ export type ResultUncheckedUpdateWithoutStudentInput = {
 
 export type ResultUncheckedUpdateManyWithoutStudentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  score?: Prisma.FloatFieldUpdateOperationsInput | number
+  score?: Prisma.IntFieldUpdateOperationsInput | number
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  remarks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   examId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -980,7 +933,6 @@ export type ResultCreateManyExamInput = {
   id?: string
   score: number
   grade?: string | null
-  remarks?: string | null
   uploadedAt?: Date | string
   schoolId: string
   studentId: string
@@ -990,9 +942,8 @@ export type ResultCreateManyExamInput = {
 
 export type ResultUpdateWithoutExamInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  score?: Prisma.FloatFieldUpdateOperationsInput | number
+  score?: Prisma.IntFieldUpdateOperationsInput | number
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  remarks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   school?: Prisma.SchoolUpdateOneRequiredWithoutResultsNestedInput
@@ -1002,9 +953,8 @@ export type ResultUpdateWithoutExamInput = {
 
 export type ResultUncheckedUpdateWithoutExamInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  score?: Prisma.FloatFieldUpdateOperationsInput | number
+  score?: Prisma.IntFieldUpdateOperationsInput | number
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  remarks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   studentId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1014,9 +964,8 @@ export type ResultUncheckedUpdateWithoutExamInput = {
 
 export type ResultUncheckedUpdateManyWithoutExamInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  score?: Prisma.FloatFieldUpdateOperationsInput | number
+  score?: Prisma.IntFieldUpdateOperationsInput | number
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  remarks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   studentId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1028,7 +977,6 @@ export type ResultCreateManyAssignmentInput = {
   id?: string
   score: number
   grade?: string | null
-  remarks?: string | null
   uploadedAt?: Date | string
   schoolId: string
   studentId: string
@@ -1038,9 +986,8 @@ export type ResultCreateManyAssignmentInput = {
 
 export type ResultUpdateWithoutAssignmentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  score?: Prisma.FloatFieldUpdateOperationsInput | number
+  score?: Prisma.IntFieldUpdateOperationsInput | number
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  remarks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   school?: Prisma.SchoolUpdateOneRequiredWithoutResultsNestedInput
@@ -1050,9 +997,8 @@ export type ResultUpdateWithoutAssignmentInput = {
 
 export type ResultUncheckedUpdateWithoutAssignmentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  score?: Prisma.FloatFieldUpdateOperationsInput | number
+  score?: Prisma.IntFieldUpdateOperationsInput | number
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  remarks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   studentId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1062,9 +1008,8 @@ export type ResultUncheckedUpdateWithoutAssignmentInput = {
 
 export type ResultUncheckedUpdateManyWithoutAssignmentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  score?: Prisma.FloatFieldUpdateOperationsInput | number
+  score?: Prisma.IntFieldUpdateOperationsInput | number
   grade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  remarks?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   studentId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1078,7 +1023,6 @@ export type ResultSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   id?: boolean
   score?: boolean
   grade?: boolean
-  remarks?: boolean
   uploadedAt?: boolean
   schoolId?: boolean
   studentId?: boolean
@@ -1095,7 +1039,6 @@ export type ResultSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   id?: boolean
   score?: boolean
   grade?: boolean
-  remarks?: boolean
   uploadedAt?: boolean
   schoolId?: boolean
   studentId?: boolean
@@ -1112,7 +1055,6 @@ export type ResultSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   id?: boolean
   score?: boolean
   grade?: boolean
-  remarks?: boolean
   uploadedAt?: boolean
   schoolId?: boolean
   studentId?: boolean
@@ -1129,7 +1071,6 @@ export type ResultSelectScalar = {
   id?: boolean
   score?: boolean
   grade?: boolean
-  remarks?: boolean
   uploadedAt?: boolean
   schoolId?: boolean
   studentId?: boolean
@@ -1138,7 +1079,7 @@ export type ResultSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ResultOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "score" | "grade" | "remarks" | "uploadedAt" | "schoolId" | "studentId" | "examId" | "assignmentId" | "updatedAt", ExtArgs["result"]["result"]>
+export type ResultOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "score" | "grade" | "uploadedAt" | "schoolId" | "studentId" | "examId" | "assignmentId" | "updatedAt", ExtArgs["result"]["result"]>
 export type ResultInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   school?: boolean | Prisma.SchoolDefaultArgs<ExtArgs>
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
@@ -1170,7 +1111,6 @@ export type $ResultPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     id: string
     score: number
     grade: string | null
-    remarks: string | null
     uploadedAt: Date
     schoolId: string
     studentId: string
@@ -1605,9 +1545,8 @@ export interface Prisma__ResultClient<T, Null = never, ExtArgs extends runtime.T
  */
 export interface ResultFieldRefs {
   readonly id: Prisma.FieldRef<"Result", 'String'>
-  readonly score: Prisma.FieldRef<"Result", 'Float'>
+  readonly score: Prisma.FieldRef<"Result", 'Int'>
   readonly grade: Prisma.FieldRef<"Result", 'String'>
-  readonly remarks: Prisma.FieldRef<"Result", 'String'>
   readonly uploadedAt: Prisma.FieldRef<"Result", 'DateTime'>
   readonly schoolId: Prisma.FieldRef<"Result", 'String'>
   readonly studentId: Prisma.FieldRef<"Result", 'String'>

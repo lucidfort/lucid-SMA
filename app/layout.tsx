@@ -1,12 +1,10 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import { ClerkProvider } from "@clerk/nextjs";
-import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { UrqlProvider } from "@/lib/urql/provider";
+import { ClerkProvider } from "@clerk/nextjs";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import { ReactNode } from "react";
-import Script from "next/script";
-import { createServerClient } from "@/lib/serverUtils";
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,28 +19,18 @@ export default async function RootLayout({
 }: {
   children: ReactNode;
 }) {
-  const { ssr } = await createServerClient();
-
-  const urqlData = ssr.extractData();
-
   return (
     <>
       <ClerkProvider>
         <html lang="en">
           <body className={`${inter.className} antialiased`}>
-            <UrqlProvider urqlState={urqlData}>
+            <UrqlProvider>
               {children}
               <Toaster />
             </UrqlProvider>
           </body>
         </html>
       </ClerkProvider>
-
-      <Script
-        id="urql-data"
-        type="application/json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(urqlData) }}
-      />
     </>
   );
 }

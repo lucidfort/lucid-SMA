@@ -175,3 +175,16 @@ export function generateAcademicYears(yearsBack = 3) {
     return `${from}/${from + 1}`;
   });
 }
+
+export function generateUuid(length = 5) {
+  const alphabet =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const bytes = crypto.getRandomValues(new Uint8Array(length));
+  let id = "";
+
+  for (let i = 0; i < length; i++) {
+    id += alphabet[bytes[i] % alphabet.length];
+  }
+
+  return id;
+}

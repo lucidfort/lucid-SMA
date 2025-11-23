@@ -1,19 +1,23 @@
 "use client"
 
-import { UserRole } from "@/types"
+import { RoleAccessLevel } from "@/types"
 import { CheckCircle, Loader2, XCircle } from "lucide-react"
-import moment from "moment"
 import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog"
+import { format } from "date-fns"
+import { useVerifyPaymentStatusMutation } from "@/lib/generated/graphql/client"
+import { handleGraphqlClientErrors } from "@/lib/utils"
+import { toast } from "sonner"
 
-const PaymentVerification = ({ reference, userRole }: { reference: string; userRole: UserRole }) => {
+const PaymentVerification = ({ reference, userRole }: { reference: string; userRole: RoleAccessLevel }) => {
     const router = useRouter()
 
     const [verificationStatus, setVerificationStatus] = useState<"loading" | "success" | "failed" | null>(null)
-    const [transactionData, setTransactionData] = useState<any>(null)
     const [open, setOpen] = useState(false)
     const hasRunRef = useRef(false)
+
+    const [verificationResult, verifyPayment] = useVerifyPaymentStatusMutation()
 
     useEffect(() => {
         if (typeof window === 'undefined') return;
@@ -22,25 +26,26 @@ const PaymentVerification = ({ reference, userRole }: { reference: string; userR
         if (reference) {
             hasRunRef.current = true
             setOpen(true)
-            verifyPayment(reference)
+            handleVerification()
         }
     }, [reference])
 
-    const verifyPayment = async (ref: string) => {
-        setVerificationStatus("loading")
-
+    const handleVerification = async () => {
         try {
-            const response = await fetch(`/api/paystack/verify?reference=${ref}`)
-            const data = await response.json()
+            const response = await verifyPayment({ reference })
+            const mutationResult = response.data?.verifyPaymentStatus
 
-            if (data.status && data.data?.status === "success") {
+            if (mutationResult?.__typename === "MutationVerifyPaymentStatusSuccess") {
                 setVerificationStatus("success")
-                setTransactionData(data.data)
             } else {
                 setVerificationStatus("failed")
             }
         } catch (error) {
             console.error("Verification error:", error)
+
+            const message = handleGraphqlClientErrors(error)
+            toast.error(message)
+
             setVerificationStatus("failed")
         }
     }
@@ -50,14 +55,15 @@ const PaymentVerification = ({ reference, userRole }: { reference: string; userR
 
         if (!open) {
             setVerificationStatus(null)
-            setTransactionData(null)
-            router.replace(userRole === "admin"
+            router.replace(userRole === "manager"
                 ? '/list/transactions'
                 : '/list/fees',
                 { scroll: false }
             )
         }
     }
+
+    const transactionData = verificationResult.data?.verifyPaymentStatus?.__typename === "MutationVerifyPaymentStatusSuccess" ? verificationResult.data.verifyPaymentStatus.data : null
 
     const transactionDetails = [
         {
@@ -66,19 +72,21 @@ const PaymentVerification = ({ reference, userRole }: { reference: string; userR
         },
         {
             label: 'Amount',
-            value: `₦${transactionData?.amount / 100}`
+            value: `₦${(transactionData?.amountPaid || 0)}`
         },
         {
             label: 'Email',
-            value: transactionData?.customer.email
+            value: transactionData?.payerEmail
         },
         {
             label: 'Student',
-            value: `${transactionData?.metadata.first_name} ${transactionData?.metadata.last_name}`
+            value: transactionData?.students.map(student => `${student.name} ${student.surname}`).join(", ")
         },
         {
             label: 'Date',
-            value: moment(transactionData?.paidAt).format('MMMM D, YYYY - h:mm A')
+            value: transactionData?.paidAt
+                ? format(new Date(transactionData.paidAt), "MMMM d, yyyy - h:mm: a")
+                : ""
         }
     ]
 

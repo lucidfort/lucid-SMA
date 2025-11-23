@@ -1,34 +1,33 @@
 import Announcements from "@/components/Announcements";
 import AttendanceChartContainer from "@/components/AttendanceChartContainer";
+import DeleteModal from "@/components/DeleteModal";
+import DropdownOptions from "@/components/DropdownOptions";
 import EventList from "@/components/EventList";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  createServerClient,
-  getCurrentUser,
-  getSchool,
-} from "@/lib/serverUtils";
-import { SearchParams } from "@/types";
-import Link from "next/link";
-import { redirect } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import FeeSummary from "@/components/FeeSummary";
 import FormModal from "@/components/FormModal";
+import { classStudentsColumn } from "@/components/tables/classStudentsColumn";
+import { DataTable } from "@/components/tables/data-table";
+import TimetableBoard from "@/components/TimetableBoard";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import DeleteModal from "@/components/DeleteModal";
-import DropdownOptions from "@/components/DropdownOptions";
 import {
   GetClassQuery,
   GetClassQueryVariables,
 } from "@/lib/generated/graphql/server";
+import { getCurrentUser } from "@/lib/server/utils";
+import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
+import { SearchParams } from "@/types";
 import { gql } from "@urql/core";
-import { DataTable } from "@/components/tables/data-table";
-import { classStudentsColumn } from "@/components/tables/classStudentsColumn";
-import TimetableBoard from "@/components/TimetableBoard";
+import { startOfWeek } from "date-fns";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
 const GET_CLASS = gql`
-  query GetClass($id: ID!) {
+  query GetClass($id: ID!, $attendanceFilter: AttendanceFilter!) {
     class(id: $id) {
       id
       name
@@ -56,20 +55,25 @@ const GET_CLASS = gql`
         img
         activeState
       }
+      attendances(attendanceFilter: $attendanceFilter) {
+        date
+        present
+      }
     }
   }
 `;
 
 const ClassInfoPage = async ({ params }: SearchParams) => {
   const { id } = await params;
-  const { schoolId, accessLevel } = await getCurrentUser();
+  const { accessLevel } = await getCurrentUser();
 
-  const school = await getSchool(schoolId ?? "");
+  const today = new Date();
+  const lastMonday = startOfWeek(today, { weekStartsOn: 1 });
 
-  const { client } = await createServerClient();
+  const { client } = await createUrqlServerClient();
   const { data } = await client.query<GetClassQuery, GetClassQueryVariables>(
     GET_CLASS,
-    { id },
+    { id, attendanceFilter: { startDate: lastMonday } },
   );
 
   if (!data || !data.class) redirect("/list/classes");
@@ -201,7 +205,6 @@ const ClassInfoPage = async ({ params }: SearchParams) => {
                 accessLevel={accessLevel!}
                 tableFor="student"
                 relatedData={{
-                  schoolSlug: school?.slug,
                   programId: formattedData.grade?.program?.id,
                   gradeId: formattedData.grade?.id,
                   classId: formattedData.id,
@@ -214,36 +217,14 @@ const ClassInfoPage = async ({ params }: SearchParams) => {
         <TimetableBoard classId={formattedData.id} />
 
         <div className="h-[450px] w-full">
-          <AttendanceChartContainer
-            classId={formattedData.id!}
-            schoolId={schoolId!}
-          />
+          <AttendanceChartContainer data={formattedData.attendances ?? []} />
         </div>
       </div>
 
       <div className="flex w-full flex-col gap-8 lg:w-1/3">
-        <Announcements classId={formattedData.id!} schoolId={schoolId!} />
-
-        <div className="rounded-md bg-white p-4">
-          <div className="flex items-center justify-between">
-            <h1 className="my-4 text-xl font-semibold">Upcoming Events</h1>
-            <Link href="/list/events" className="text-xs text-gray-400">
-              {" "}
-              View All
-            </Link>
-          </div>
-
-          <EventList
-            gradeId={classDetails?.grade?.id ?? ""}
-            schoolId={schoolId!}
-          />
-
-          {/*<FeeSummary*/}
-          {/*  schoolId={schoolId}*/}
-          {/*  termId={1}*/}
-          {/*  gradeId={classDetails.grade.id}*/}
-          {/*/>*/}
-        </div>
+        <EventList gradeId={formattedData.grade.id} />
+        <Announcements gradeId={formattedData.grade.id} />
+        <FeeSummary gradeId={formattedData.grade.id} />
       </div>
     </div>
   );

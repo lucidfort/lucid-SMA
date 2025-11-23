@@ -1,0 +1,48 @@
+query GetSchool($id: ID!) {
+  school(id: $id) {
+    slug
+  }
+}
+
+query GetPrograms {
+  programs {
+    id
+    name
+  }
+}
+
+query GetGrades($where: GradeFilterInput) {
+  grades(filter: $where) {
+    id
+    name
+  }
+}
+
+query GetSubjects($teacherId: ID) {
+  subjects(teacherId: $teacherId) {
+    id
+    name
+  }
+}
+
+query GetAcademicYears {
+  academicYears {
+    id
+    year
+    isCurrent
+    terms {
+      term
+    }
+  }
+}
+
+query GetTerms($take: Int) {
+  terms(take: $take) {
+    id
+    term
+    isCurrent
+    academicYear {
+      year
+    }
+  }
+}

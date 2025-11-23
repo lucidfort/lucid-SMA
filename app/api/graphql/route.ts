@@ -1,11 +1,32 @@
-import { createYoga } from "graphql-yoga";
 import { schema } from "@/lib/pothos/schema";
-import { auth } from "@clerk/nextjs/server";
+import prisma from "@/lib/prisma";
 import { RoleAccessLevel } from "@/types";
+import { auth } from "@clerk/nextjs/server";
+import { createYoga, createPubSub } from "graphql-yoga";
+import { useGraphQLSSE } from "@graphql-yoga/plugin-graphql-sse";
+
+const pubSub = createPubSub<{
+  "announcement:created": [{ schoolId: string; payload?: any }];
+  "announcement:updated": [{ schoolId: string; payload?: any }];
+}>();
 
 const yoga = createYoga({
   schema,
   graphqlEndpoint: "/api/graphql",
+
+  plugins: [
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useGraphQLSSE(),
+  ],
+
+  graphiql: {
+    subscriptionsProtocol: "GRAPHQL_SSE",
+    title: "School App",
+    logo: "http://localhost:3000/ffs.png",
+  },
+
+  logging: true,
+
   fetchAPI: { Response },
 
   cors: {
@@ -26,10 +47,26 @@ const yoga = createYoga({
 
     if (!user) return null;
 
+    const school = await prisma.school.findUnique({
+      where: {
+        id: user.schoolId,
+      },
+      select: {
+        slug: true,
+        terms: {
+          where: { isCurrent: true },
+          select: { id: true },
+        },
+      },
+    });
+
     return {
       userId,
       schoolId: user.schoolId,
       accessLevel: user.accessLevel,
+      currentTerm: school?.terms[0].id,
+      slug: school?.slug,
+      pubSub,
     };
   },
 });

@@ -1,46 +1,66 @@
 "use server";
 
-import { AnnouncementSchema } from "../zod/validation";
-import { getCurrentUser } from "@/lib/serverUtils";
-import { handleServerErrors } from "@/lib/utils";
+import { AppError, NotFoundError } from "@/lib/pothos/errors";
+import { getCurrentUser, handleGraphqlServerErrors } from "@/lib/server/utils";
+import { AnnouncementInput } from "../generated/graphql/server";
 import prisma from "../prisma";
-import { AppError } from "@/lib/pothos/errors";
 
-export const createAnnouncementAction = async (data: AnnouncementSchema) => {
+interface InputProps extends AnnouncementInput {
+  termId: string;
+}
+
+export const createAnnouncementAction = async (
+  data: Omit<InputProps, "id">,
+) => {
+  const { schoolId, accessLevel } = await getCurrentUser();
+
+  if (!schoolId || !accessLevel)
+    throw new AppError("Log in to perform this action", "UNAUTHORIZED");
+
+  const allowedRoles = ["manager", "administration"];
+  if (!allowedRoles.includes(accessLevel))
+    throw new AppError(
+      "You are not authorized to perform this action",
+      "UNAUTHORIZED",
+    );
+
+  const { gradeId, ...input } = data;
+
   try {
-    const { schoolId, accessLevel } = await getCurrentUser();
-
-    if (!schoolId || !accessLevel)
-      throw new AppError("Invalid user", "UNAUTHORIZED");
-
     return await prisma.announcement.create({
       data: {
-        title: data.title,
-        content: data.content,
+        ...input,
+        ...(gradeId && { gradeId: gradeId! }),
         schoolId: schoolId!,
-        termId: "3",
         publishedAt: new Date(),
       },
     });
   } catch (err: any) {
-    const error = handleServerErrors(err);
-    console.log(error);
+    handleGraphqlServerErrors(err);
   }
 };
 
-export const updateAnnouncementAction = async (data: AnnouncementSchema) => {
+export const updateAnnouncementAction = async (data: InputProps) => {
+  const { id, gradeId, termId, ...input } = data;
+
+  if (!id) throw new NotFoundError("Announcement");
+
   try {
     const { schoolId } = await getCurrentUser();
 
     return await prisma.announcement.update({
       where: {
-        id: data.id,
+        id,
         schoolId,
+        termId,
       },
-      data,
+      data: {
+        ...input,
+        ...(gradeId && { gradeId: gradeId! }),
+      },
     });
   } catch (err: any) {
-    await handleServerErrors(err);
+    handleGraphqlServerErrors(err);
   }
 };
 

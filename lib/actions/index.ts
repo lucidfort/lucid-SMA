@@ -21,9 +21,21 @@ export {
 } from "./event";
 export { deleteExamAction } from "./exam";
 export { deleteClubAction } from "./club";
-export { createParent, deleteParent, updateParent } from "./parent";
-export { createResult, deleteResult, updateResult } from "./result";
-export { createStudentAction, deleteStudent } from "./student";
+export {
+  createParentAction,
+  deleteParentAction,
+  updateParentAction,
+} from "./parent";
+export {
+  createResultAction,
+  deleteResultAction,
+  updateResultAction,
+} from "./result";
+export {
+  createStudentAction,
+  updateStudentAction,
+  deleteStudentAction,
+} from "./student";
 export {
   createSubjectAction,
   deleteSubjectAction,
@@ -33,14 +45,19 @@ export {
   createStaffAction,
   deleteStaffAction,
   updateStaffAction,
-} from "./teacher";
-export { createFee, deleteFee, updateFee } from "./fee";
+} from "./staff";
+export {
+  createInvoiceAction,
+  deleteInvoiceAction,
+  updateInvoiceAction,
+  initiateFeePayment,
+  verifyPaymentStatus,
+} from "./fee";
 export { markStaffAttendance, markStudentAttendance } from "./attendance";
-export { initiateTransaction } from "./transaction";
 export {
   createSchoolAction,
-  createProgramAction,
   createAcademicYearAction,
   createTermAction,
 } from "./school";
 export { assignTimetableAction, assignPeriodSlotAction } from "./timetable";
+export { createProgramAction, deleteProgramAction } from "./program";
