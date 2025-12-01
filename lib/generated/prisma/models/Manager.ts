@@ -31,8 +31,6 @@ export type ManagerMinAggregateOutputType = {
   surname: string | null
   email: string | null
   phone: string | null
-  img: string | null
-  birthday: Date | null
   schoolId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -46,8 +44,6 @@ export type ManagerMaxAggregateOutputType = {
   surname: string | null
   email: string | null
   phone: string | null
-  img: string | null
-  birthday: Date | null
   schoolId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -61,8 +57,6 @@ export type ManagerCountAggregateOutputType = {
   surname: number
   email: number
   phone: number
-  img: number
-  birthday: number
   schoolId: number
   createdAt: number
   updatedAt: number
@@ -78,8 +72,6 @@ export type ManagerMinAggregateInputType = {
   surname?: true
   email?: true
   phone?: true
-  img?: true
-  birthday?: true
   schoolId?: true
   createdAt?: true
   updatedAt?: true
@@ -93,8 +85,6 @@ export type ManagerMaxAggregateInputType = {
   surname?: true
   email?: true
   phone?: true
-  img?: true
-  birthday?: true
   schoolId?: true
   createdAt?: true
   updatedAt?: true
@@ -108,8 +98,6 @@ export type ManagerCountAggregateInputType = {
   surname?: true
   email?: true
   phone?: true
-  img?: true
-  birthday?: true
   schoolId?: true
   createdAt?: true
   updatedAt?: true
@@ -190,14 +178,12 @@ export type ManagerGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 
 export type ManagerGroupByOutputType = {
   id: string
-  clerkUserId: string | null
+  clerkUserId: string
   username: string
   name: string
   surname: string
   email: string
   phone: string
-  img: string | null
-  birthday: Date
   schoolId: string
   createdAt: Date
   updatedAt: Date
@@ -226,14 +212,12 @@ export type ManagerWhereInput = {
   OR?: Prisma.ManagerWhereInput[]
   NOT?: Prisma.ManagerWhereInput | Prisma.ManagerWhereInput[]
   id?: Prisma.StringFilter<"Manager"> | string
-  clerkUserId?: Prisma.StringNullableFilter<"Manager"> | string | null
+  clerkUserId?: Prisma.StringFilter<"Manager"> | string
   username?: Prisma.StringFilter<"Manager"> | string
   name?: Prisma.StringFilter<"Manager"> | string
   surname?: Prisma.StringFilter<"Manager"> | string
   email?: Prisma.StringFilter<"Manager"> | string
   phone?: Prisma.StringFilter<"Manager"> | string
-  img?: Prisma.StringNullableFilter<"Manager"> | string | null
-  birthday?: Prisma.DateTimeFilter<"Manager"> | Date | string
   schoolId?: Prisma.StringFilter<"Manager"> | string
   createdAt?: Prisma.DateTimeFilter<"Manager"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Manager"> | Date | string
@@ -242,14 +226,12 @@ export type ManagerWhereInput = {
 
 export type ManagerOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  clerkUserId?: Prisma.SortOrderInput | Prisma.SortOrder
+  clerkUserId?: Prisma.SortOrder
   username?: Prisma.SortOrder
   name?: Prisma.SortOrder
   surname?: Prisma.SortOrder
   email?: Prisma.SortOrder
   phone?: Prisma.SortOrder
-  img?: Prisma.SortOrderInput | Prisma.SortOrder
-  birthday?: Prisma.SortOrder
   schoolId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -269,8 +251,6 @@ export type ManagerWhereUniqueInput = Prisma.AtLeast<{
   surname?: Prisma.StringFilter<"Manager"> | string
   email?: Prisma.StringFilter<"Manager"> | string
   phone?: Prisma.StringFilter<"Manager"> | string
-  img?: Prisma.StringNullableFilter<"Manager"> | string | null
-  birthday?: Prisma.DateTimeFilter<"Manager"> | Date | string
   schoolId?: Prisma.StringFilter<"Manager"> | string
   createdAt?: Prisma.DateTimeFilter<"Manager"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Manager"> | Date | string
@@ -279,14 +259,12 @@ export type ManagerWhereUniqueInput = Prisma.AtLeast<{
 
 export type ManagerOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  clerkUserId?: Prisma.SortOrderInput | Prisma.SortOrder
+  clerkUserId?: Prisma.SortOrder
   username?: Prisma.SortOrder
   name?: Prisma.SortOrder
   surname?: Prisma.SortOrder
   email?: Prisma.SortOrder
   phone?: Prisma.SortOrder
-  img?: Prisma.SortOrderInput | Prisma.SortOrder
-  birthday?: Prisma.SortOrder
   schoolId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -300,14 +278,12 @@ export type ManagerScalarWhereWithAggregatesInput = {
   OR?: Prisma.ManagerScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ManagerScalarWhereWithAggregatesInput | Prisma.ManagerScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Manager"> | string
-  clerkUserId?: Prisma.StringNullableWithAggregatesFilter<"Manager"> | string | null
+  clerkUserId?: Prisma.StringWithAggregatesFilter<"Manager"> | string
   username?: Prisma.StringWithAggregatesFilter<"Manager"> | string
   name?: Prisma.StringWithAggregatesFilter<"Manager"> | string
   surname?: Prisma.StringWithAggregatesFilter<"Manager"> | string
   email?: Prisma.StringWithAggregatesFilter<"Manager"> | string
   phone?: Prisma.StringWithAggregatesFilter<"Manager"> | string
-  img?: Prisma.StringNullableWithAggregatesFilter<"Manager"> | string | null
-  birthday?: Prisma.DateTimeWithAggregatesFilter<"Manager"> | Date | string
   schoolId?: Prisma.StringWithAggregatesFilter<"Manager"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Manager"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Manager"> | Date | string
@@ -315,14 +291,12 @@ export type ManagerScalarWhereWithAggregatesInput = {
 
 export type ManagerCreateInput = {
   id?: string
-  clerkUserId?: string | null
+  clerkUserId: string
   username: string
   name: string
   surname: string
   email: string
   phone: string
-  img?: string | null
-  birthday: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
   school: Prisma.SchoolCreateNestedOneWithoutManagersInput
@@ -330,14 +304,12 @@ export type ManagerCreateInput = {
 
 export type ManagerUncheckedCreateInput = {
   id?: string
-  clerkUserId?: string | null
+  clerkUserId: string
   username: string
   name: string
   surname: string
   email: string
   phone: string
-  img?: string | null
-  birthday: Date | string
   schoolId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -345,14 +317,12 @@ export type ManagerUncheckedCreateInput = {
 
 export type ManagerUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  clerkUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   surname?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
-  img?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  birthday?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   school?: Prisma.SchoolUpdateOneRequiredWithoutManagersNestedInput
@@ -360,14 +330,12 @@ export type ManagerUpdateInput = {
 
 export type ManagerUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  clerkUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   surname?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
-  img?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  birthday?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -375,14 +343,12 @@ export type ManagerUncheckedUpdateInput = {
 
 export type ManagerCreateManyInput = {
   id?: string
-  clerkUserId?: string | null
+  clerkUserId: string
   username: string
   name: string
   surname: string
   email: string
   phone: string
-  img?: string | null
-  birthday: Date | string
   schoolId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -390,28 +356,24 @@ export type ManagerCreateManyInput = {
 
 export type ManagerUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  clerkUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   surname?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
-  img?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  birthday?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ManagerUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  clerkUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   surname?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
-  img?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  birthday?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -445,8 +407,6 @@ export type ManagerCountOrderByAggregateInput = {
   surname?: Prisma.SortOrder
   email?: Prisma.SortOrder
   phone?: Prisma.SortOrder
-  img?: Prisma.SortOrder
-  birthday?: Prisma.SortOrder
   schoolId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -460,8 +420,6 @@ export type ManagerMaxOrderByAggregateInput = {
   surname?: Prisma.SortOrder
   email?: Prisma.SortOrder
   phone?: Prisma.SortOrder
-  img?: Prisma.SortOrder
-  birthday?: Prisma.SortOrder
   schoolId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -475,8 +433,6 @@ export type ManagerMinOrderByAggregateInput = {
   surname?: Prisma.SortOrder
   email?: Prisma.SortOrder
   phone?: Prisma.SortOrder
-  img?: Prisma.SortOrder
-  birthday?: Prisma.SortOrder
   schoolId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -526,28 +482,24 @@ export type ManagerUncheckedUpdateManyWithoutSchoolNestedInput = {
 
 export type ManagerCreateWithoutSchoolInput = {
   id?: string
-  clerkUserId?: string | null
+  clerkUserId: string
   username: string
   name: string
   surname: string
   email: string
   phone: string
-  img?: string | null
-  birthday: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type ManagerUncheckedCreateWithoutSchoolInput = {
   id?: string
-  clerkUserId?: string | null
+  clerkUserId: string
   username: string
   name: string
   surname: string
   email: string
   phone: string
-  img?: string | null
-  birthday: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -583,14 +535,12 @@ export type ManagerScalarWhereInput = {
   OR?: Prisma.ManagerScalarWhereInput[]
   NOT?: Prisma.ManagerScalarWhereInput | Prisma.ManagerScalarWhereInput[]
   id?: Prisma.StringFilter<"Manager"> | string
-  clerkUserId?: Prisma.StringNullableFilter<"Manager"> | string | null
+  clerkUserId?: Prisma.StringFilter<"Manager"> | string
   username?: Prisma.StringFilter<"Manager"> | string
   name?: Prisma.StringFilter<"Manager"> | string
   surname?: Prisma.StringFilter<"Manager"> | string
   email?: Prisma.StringFilter<"Manager"> | string
   phone?: Prisma.StringFilter<"Manager"> | string
-  img?: Prisma.StringNullableFilter<"Manager"> | string | null
-  birthday?: Prisma.DateTimeFilter<"Manager"> | Date | string
   schoolId?: Prisma.StringFilter<"Manager"> | string
   createdAt?: Prisma.DateTimeFilter<"Manager"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Manager"> | Date | string
@@ -598,56 +548,48 @@ export type ManagerScalarWhereInput = {
 
 export type ManagerCreateManySchoolInput = {
   id?: string
-  clerkUserId?: string | null
+  clerkUserId: string
   username: string
   name: string
   surname: string
   email: string
   phone: string
-  img?: string | null
-  birthday: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type ManagerUpdateWithoutSchoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  clerkUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   surname?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
-  img?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  birthday?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ManagerUncheckedUpdateWithoutSchoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  clerkUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   surname?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
-  img?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  birthday?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ManagerUncheckedUpdateManyWithoutSchoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  clerkUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   surname?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
-  img?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  birthday?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -662,8 +604,6 @@ export type ManagerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   surname?: boolean
   email?: boolean
   phone?: boolean
-  img?: boolean
-  birthday?: boolean
   schoolId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -678,8 +618,6 @@ export type ManagerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   surname?: boolean
   email?: boolean
   phone?: boolean
-  img?: boolean
-  birthday?: boolean
   schoolId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -694,8 +632,6 @@ export type ManagerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   surname?: boolean
   email?: boolean
   phone?: boolean
-  img?: boolean
-  birthday?: boolean
   schoolId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -710,14 +646,12 @@ export type ManagerSelectScalar = {
   surname?: boolean
   email?: boolean
   phone?: boolean
-  img?: boolean
-  birthday?: boolean
   schoolId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ManagerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clerkUserId" | "username" | "name" | "surname" | "email" | "phone" | "img" | "birthday" | "schoolId" | "createdAt" | "updatedAt", ExtArgs["result"]["manager"]>
+export type ManagerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clerkUserId" | "username" | "name" | "surname" | "email" | "phone" | "schoolId" | "createdAt" | "updatedAt", ExtArgs["result"]["manager"]>
 export type ManagerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   school?: boolean | Prisma.SchoolDefaultArgs<ExtArgs>
 }
@@ -735,14 +669,12 @@ export type $ManagerPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    clerkUserId: string | null
+    clerkUserId: string
     username: string
     name: string
     surname: string
     email: string
     phone: string
-    img: string | null
-    birthday: Date
     schoolId: string
     createdAt: Date
     updatedAt: Date
@@ -1177,8 +1109,6 @@ export interface ManagerFieldRefs {
   readonly surname: Prisma.FieldRef<"Manager", 'String'>
   readonly email: Prisma.FieldRef<"Manager", 'String'>
   readonly phone: Prisma.FieldRef<"Manager", 'String'>
-  readonly img: Prisma.FieldRef<"Manager", 'String'>
-  readonly birthday: Prisma.FieldRef<"Manager", 'DateTime'>
   readonly schoolId: Prisma.FieldRef<"Manager", 'String'>
   readonly createdAt: Prisma.FieldRef<"Manager", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Manager", 'DateTime'>

@@ -1,4 +1,3 @@
-import ErrorListener from "@/components/ErrorListener";
 import { DataTable } from "@/components/tables/data-table";
 import { studentsColumn } from "@/components/tables/studentsColumn";
 import {
@@ -35,7 +34,7 @@ const StudentsList = async () => {
   const { accessLevel } = await getCurrentUser();
 
   const { client } = await createUrqlServerClient();
-  const { data, error } = await client
+  const { data } = await client
     .query<GetStudentsQuery, GetStudentsQueryVariables>(GET_STUDENTS, {})
     .toPromise();
 
@@ -48,8 +47,6 @@ const StudentsList = async () => {
         tableFor="student"
         accessLevel={accessLevel!}
       />
-
-      <ErrorListener error={error?.graphQLErrors} />
     </div>
   );
 };

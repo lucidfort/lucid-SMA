@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
@@ -9,24 +9,37 @@ type ValuePiece = Date | null;
 
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
-const EventCalendar = () => {
+const EventCalendar = ({ view = "month" }: { view?: "month" | "year" | "decade" | "century" }) => {
   const [value, onChange] = useState<Value>(new Date());
 
+  console.log({ value })
+
   const router = useRouter();
-  const searchParams = useSearchParams()
 
   useEffect(() => {
-    if (value instanceof Date) {
-      const isoDate = value.toLocaleDateString("en-CA");
+    if (!(value instanceof Date)) return;
 
-      const params = new URLSearchParams(searchParams.toString())
-      params.set("date", isoDate);
+    const isoDate = value.toLocaleDateString("en-CA");
 
-      router.push(`?${params.toString()}`);
-    }
-  }, [value, router, searchParams]);
+    const params = new URLSearchParams(window.location.search)
+    const current = params.get("date")
 
-  return <Calendar onChange={onChange} value={value} view="month" />;
+    if (current === isoDate) return;
+
+    params.set("date", isoDate);
+
+    router.replace(`?${params.toString()}`);
+  }, [value]);
+
+  return <Calendar
+    onChange={onChange}
+    onClickMonth={(date) => {
+      onChange(date)
+    }}
+    value={value}
+    view={view}
+    maxDate={new Date()}
+  />;
 };
 
 export default EventCalendar;

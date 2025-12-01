@@ -13,7 +13,7 @@ import {
 } from "@/lib/pothos/errors";
 import prisma from "@/lib/prisma";
 
-const PaymentStatus = builder.enumType("PaymentStatus", {
+export const PaymentStatus = builder.enumType("PaymentStatus", {
   values: ["PENDING", "PROCESSING", "SUCCESS", "FAILED", "FAILED", "REFUNDED"],
 });
 

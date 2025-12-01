@@ -1,9 +1,9 @@
 import Announcements from "@/components/Announcements";
 import AttendanceChartContainer from "@/components/AttendanceChartContainer";
-import { InfoCard } from "@/components/Card";
-import ErrorListener from "@/components/ErrorListener";
+import EventList from "@/components/EventList";
 import { ChildSelector } from "@/components/parent";
 import PerformanceChartContainer from "@/components/PerformanceChartContainer";
+import { InfoCard } from "@/components/shareable/Card";
 import {
   GetParentQuery,
   GetParentQueryVariables,
@@ -13,13 +13,14 @@ import {
 } from "@/lib/generated/graphql/server";
 import { getCurrentUser } from "@/lib/server/utils";
 import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
+import { calculateAge } from "@/lib/utils";
 import { SearchParams } from "@/types";
 import { gql } from "@urql/core";
-import { subDays } from "date-fns";
-import EventList from "@/components/EventList";
+import { format, subDays } from "date-fns";
+import { Activity, Cake, GraduationCap } from "lucide-react";
 
 const GET_PARENT = gql(`
-  query getParent ($id: ID, $clerkUserId: ID) {
+  query getParent ($id: ID, $clerkUserId: ID, $attendanceFilter: AttendanceFilter!) {
     parent(id: $id, clerkUserId: $clerkUserId) {
       id 
       name 
@@ -36,6 +37,9 @@ const GET_PARENT = gql(`
               id 
               name
             }
+            attendances(attendanceFilter: $attendanceFilter) {
+          date present
+        }
           }
         }
       }
@@ -59,7 +63,7 @@ const GET_STUDENT_PERFORMANCE = gql(`
 
 const ParentsOverview = async ({ searchParams }: SearchParams) => {
   const { childId } = await searchParams;
-  const { currentUserId, schoolId } = await getCurrentUser();
+  const { currentUserId } = await getCurrentUser();
 
   const today = new Date();
   const daysSinceMonday = (today.getDay() / 6) % 7;
@@ -67,12 +71,16 @@ const ParentsOverview = async ({ searchParams }: SearchParams) => {
   const lastMonday = subDays(today, daysSinceMonday);
 
   const { client } = await createUrqlServerClient();
-  const { data, error } = await client.query<
+  const { data } = await client.query<
     GetParentQuery,
     GetParentQueryVariables
-  >(GET_PARENT, { clerkUserId: currentUserId });
+  >(GET_PARENT, {
+    clerkUserId: currentUserId, attendanceFilter: {
+      startDate: lastMonday
+    }
+  });
 
-  const { data: studentData, error: studentError } = await client.query<
+  const { data: studentData } = await client.query<
     GetStudentPerformanceDetailsQuery,
     GetStudentPerformanceDetailsQueryVariables
   >(GET_STUDENT_PERFORMANCE, {
@@ -89,6 +97,28 @@ const ParentsOverview = async ({ searchParams }: SearchParams) => {
 
   const selectedStudent = children.find((child) => childId === child.id)?.class;
   const formattedStudent = { ...studentData?.student, class: selectedStudent };
+
+  const attendances = formattedStudent?.attendances || [];
+  const presentDays = attendances.filter((day) => day.present).length;
+  const attendanceRate = Math.floor((presentDays / 5) * 100);
+
+  const cards = [
+    {
+      label: "Birthday",
+      value: `${format(new Date(formattedStudent.birthday), "MMM d, yyy")} (${calculateAge(formattedStudent.birthday)} years)`,
+      icon: Cake,
+    },
+    {
+      label: "Class",
+      value: `${formattedStudent?.class?.grade.name} ${formattedStudent.class?.name}`,
+      icon: GraduationCap,
+    },
+    {
+      label: "Attendance",
+      value: `${attendanceRate || "-"}%`,
+      icon: Activity,
+    },
+  ];
 
   return (
     <div className="flex flex-col gap-4 p-4">
@@ -118,7 +148,7 @@ const ParentsOverview = async ({ searchParams }: SearchParams) => {
                 data={formattedStudent}
                 table="student"
                 accessLevel="parent"
-                schoolId={schoolId!}
+                cards={cards}
               />
 
               <PerformanceChartContainer studentId={childId} />
@@ -136,10 +166,6 @@ const ParentsOverview = async ({ searchParams }: SearchParams) => {
           <Announcements />
         </div>
       </div>
-
-      <ErrorListener
-        error={error?.graphQLErrors || studentError?.graphQLErrors}
-      />
     </div>
   );
 };

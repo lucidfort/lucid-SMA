@@ -15,6 +15,7 @@ import {
   deleteStudentAction,
   deleteSubjectAction,
   deleteProgramAction,
+  deletePayrollProfileAction,
 } from "@/lib/actions";
 import { Table } from "@/types";
 import { Loader2 } from "lucide-react";
@@ -60,6 +61,7 @@ const deleteActionMap = {
   timetable: deleteInvoiceAction,
   term: deleteInvoiceAction,
   "academic-year": deleteInvoiceAction,
+  "payroll-profile": deletePayrollProfileAction,
 };
 
 const DeleteModal = ({

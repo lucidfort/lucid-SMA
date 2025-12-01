@@ -1,8 +1,9 @@
 import Announcements from "@/components/Announcements";
 import AttendanceChartContainer from "@/components/AttendanceChartContainer";
-import { InfoCard, ParentInfoCard, SmallCard } from "@/components/Card";
-import ErrorListener from "@/components/ErrorListener";
+import EventList from "@/components/EventList";
 import PerformanceChartContainer from "@/components/PerformanceChartContainer";
+import { InfoCard, ParentInfoCard } from "@/components/shareable/Card";
+import ShortcutLinks from "@/components/shareable/ShortcutLinks";
 import {
   GetStudentQuery,
   GetStudentQueryVariables,
@@ -10,10 +11,10 @@ import {
 } from "@/lib/generated/graphql/server";
 import { getCurrentUser } from "@/lib/server/utils";
 import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
+import { calculateAge } from "@/lib/utils";
 import { SearchParams } from "@/types";
-import { subDays } from "date-fns";
-import Link from "next/link";
-import { notFound } from "next/navigation";
+import { format, subDays } from "date-fns";
+import { Activity, Cake, GraduationCap, MapPin } from "lucide-react";
 import { gql } from "urql/core";
 
 const GET_STUDENT = gql(`
@@ -53,7 +54,7 @@ const GET_STUDENT = gql(`
 
 const SingleStudentPage = async ({ params }: SearchParams) => {
   const { id } = await params;
-  const { accessLevel, schoolId } = await getCurrentUser();
+  const { accessLevel } = await getCurrentUser();
 
   const today = new Date();
   const daysSinceMonday = (today.getDay() / 6) % 7;
@@ -61,7 +62,7 @@ const SingleStudentPage = async ({ params }: SearchParams) => {
   const lastMonday = subDays(today, daysSinceMonday);
 
   const { client } = await createUrqlServerClient();
-  const { data, error } = await client.query<
+  const { data } = await client.query<
     GetStudentQuery,
     GetStudentQueryVariables
   >(GET_STUDENT, {
@@ -69,47 +70,50 @@ const SingleStudentPage = async ({ params }: SearchParams) => {
     attendanceFilter: {
       startDate: lastMonday,
     },
-    // skipAttendance:
   });
 
   const student = data?.student;
-  if (!student) return notFound();
+  if (!student) return (
+    <p>Loading...</p>
+  );
 
   const attendances = student?.attendances || [];
   const presentDays = attendances.filter((day) => day.present).length;
-  const percentage = Math.floor((presentDays / 5) * 100);
+  const attendanceRate = Math.floor((presentDays / 5) * 100);
 
   const cards = [
     {
-      value: `${percentage || "-"}%`,
-      desc: "Attendance",
-      img: "/singleAttendance.svg",
+      label: "Birthday",
+      value: `${format(new Date(student.birthday), "MMM d, yyy")} (${calculateAge(student.birthday)} years)`,
+      icon: Cake,
     },
     {
-      value: `${student.class.grade.name}`,
-      desc: "Grade",
-      img: "/singleBranch.svg",
+      label: "Class",
+      value: `${student.class.grade.name} ${student.class.name}`,
+      icon: GraduationCap,
     },
     {
-      value: student.class.name,
-      desc: "Class",
-      img: "/singleClass.svg",
+      label: "Attendance",
+      value: `${attendanceRate || "-"}%`,
+      icon: Activity,
+    },
+    {
+      label: "Address",
+      value: student.address,
+      icon: MapPin,
     },
   ];
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 xl:flex-row">
+    <div className="flex flex-1 flex-col gap-4 xl:flex-row rounded-t-x-2xl">
       {/* LEFT */}
       <div className="flex w-full flex-col gap-4 xl:w-2/3">
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <InfoCard
-            table="student"
-            data={student}
-            accessLevel={accessLevel!}
-            schoolId={schoolId!}
-          />
-          <SmallCard cards={cards} />
-        </div>
+        <InfoCard
+          table="student"
+          data={student}
+          cards={cards}
+          accessLevel={accessLevel!}
+        />
 
         <div className="flex flex-col justify-between gap-4 lg:flex-row">
           {student.guardians &&
@@ -132,47 +136,20 @@ const SingleStudentPage = async ({ params }: SearchParams) => {
       <div className="flex w-full flex-col gap-4 xl:w-1/3">
         <div className="rounded-md bg-white p-4">
           <h2 className="text-lg font-semibold">Shortcuts</h2>
-          <div className="mt-4 flex flex-wrap gap-4 text-xs text-gray-500">
-            <Link
-              className="rounded-md bg-lamaPurpleLight p-3"
-              href={`/list/teachers?classId=${student.class.id}`}
-            >
-              Student&apos;s Teachers
-            </Link>
-            <Link
-              className="rounded-md bg-pink-50 p-3"
-              href={`/list/exams?classId=${student.class.id}`}
-            >
-              Student&apos;s Exams
-            </Link>
-            <Link
-              className="rounded-md bg-lamaSkyLight p-3"
-              href={`/list/assignments?classId=${student.class.id}`}
-            >
-              Student&apos;s Assignments
-            </Link>
-            <Link
-              className="rounded-md bg-lamaYellowLight p-3"
-              href={`/list/results?studentId=${id}`}
-            >
-              Student&apos;s Results
-            </Link>
-
-            <Link
-              className="rounded-md bg-lamaYellowLight p-3"
-              href={`/list/fees/pay?studentId=${id}`}
-            >
-              Pay Fees
-            </Link>
-          </div>
+          <ShortcutLinks links={[
+            { href: `/list/staffs?classId=${student.class.id}`, label: "Student's Teachers" },
+            { href: `/list/exams?classId=${student.class.id}`, label: "Student's Exams", className: "bg-pink-50" },
+            { href: `/list/assignments?classId=${student.class.id}`, label: "Student's Assignments", className: "bg-lamaSkyLight" },
+            { href: `/list/results?studentId=${student.id}`, label: "Student's Results", className: "bg-lamaYellowLight" },
+            { href: `/list/fees/pay?studentId=${student.id}`, label: "Pay Fees" },
+          ]} />
         </div>
 
         <PerformanceChartContainer studentId={id} />
 
+        <EventList gradeId={student.class.grade.id} />
         <Announcements gradeId={student.class.grade.id} />
       </div>
-
-      <ErrorListener error={error?.graphQLErrors} />
     </div>
   );
 };

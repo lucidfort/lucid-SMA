@@ -35,15 +35,15 @@ model AuditLog {
 
 // School and Organizational Structure
 model School {
-  id      String  @id @default(uuid())
-  slug    String  @unique
-  // country String
-  name    String
-  email   String
-  phone   String
-  address String
-  motto   String?
-  logo    String?
+  id             String  @id @default(uuid())
+  slug           String  @unique
+  organizationId String  @unique
+  name           String
+  email          String
+  phone          String
+  address        String
+  motto          String?
+  logo           String?
 
   auditLogs                 AuditLog[]
   programs                  Program[]
@@ -69,19 +69,20 @@ model School {
   staffAttendances          StaffAttendance[]
   announcements             Announcement[]
   invoices                  Invoice[]
-  salaryPayments            SalaryPayment[]
+  salaryPayments            PayrollTransactions[]
   payments                  InvoicePayment[]
   teacherSubjectAssignments TeacherSubjectAssignment[]
   studentClassHistory       StudentClassHistory[]
-  staffsBankAccounts        StaffBankAccount[]
+  staffsBankAccounts        StaffPayrollProfile[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Program {
-  id   String      @id @default(uuid())
-  name ProgramType
+  id       String      @id @default(uuid())
+  name     ProgramType
+  isActive Boolean     @default(true)
 
   schoolId String
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
@@ -97,6 +98,8 @@ model AcademicYear {
   startDate DateTime
   endDate   DateTime?
   isCurrent Boolean   @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   schoolId String
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
@@ -108,10 +111,13 @@ model AcademicYear {
 
 model Term {
   id        String    @id @default(uuid())
-  term      Int
+  session   Int
   startDate DateTime
   endDate   DateTime?
   isCurrent Boolean   @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   schoolId       String
   school         School       @relation(fields: [schoolId], references: [id], onDelete: Cascade)
@@ -127,7 +133,7 @@ model Term {
   invoices           Invoice[]
   termlyResults      TermlyResult[]
 
-  @@unique([schoolId, academicYearId, term])
+  @@unique([schoolId, academicYearId, session])
 }
 
 // ACADEMIC STRUCTURE
@@ -152,9 +158,10 @@ model Grade {
 }
 
 model Class {
-  id       String @id @default(uuid())
+  id       String  @id @default(uuid())
   name     String
   capacity Int
+  isActive Boolean @default(true)
 
   schoolId String
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
@@ -239,14 +246,12 @@ model TimetableAssignment {
 // PEOPLE
 model Manager {
   id          String   @id @default(uuid())
-  clerkUserId String?  @unique
+  clerkUserId String   @unique
   username    String   @unique
   name        String
   surname     String
   email       String
   phone       String
-  img         String?
-  birthday    DateTime
 
   schoolId String
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
@@ -324,11 +329,11 @@ model Staff {
   class   Class?  @relation(fields: [classId], references: [id], onDelete: SetNull)
   clubId  String?
   club    Club?   @relation(fields: [clubId], references: [id], onDelete: SetNull)
+  salaryInfo StaffPayrollProfile?
 
   timetableAssignments      TimetableAssignment[]
   attendances               StaffAttendance[]
-  salaries                  SalaryPayment[]
-  bankAccounts              StaffBankAccount[]
+  salaries                  PayrollTransactions[]
   teacherSubjectAssignments TeacherSubjectAssignment[]
 
   createdAt DateTime @default(now())
@@ -563,16 +568,31 @@ model InvoicePayment {
   @@unique([schoolId, reference])
 }
 
-model SalaryPayment {
+model StaffPayrollProfile {
+  id            String @id @default(uuid())
+  accountNumber String
+  bankName      String
+  accountName   String
+  salary Int
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  staffId  String @unique
+  staff    Staff  @relation(fields: [staffId], references: [id], onDelete: Cascade)
+
+  @@unique([staffId, accountNumber, bankName])
+}
+
+model PayrollTransactions {
   id              String        @id @default(uuid())
-  totalAmount     Int
-  deductions      Int
-  deductionReason String?
-  amountPaid      Decimal       @db.Decimal(12, 2)
-  payPeriod       String
+  reference       String @unique
+  grossAmount Int // Before deductions
+  netAmount Int // After deductions
+  payYear Int
+  payMonth Int
+  paymentDate DateTime?
   status          PaymentStatus @default(PENDING)
-  paymentDate     DateTime
-  reference       String
 
   schoolId String
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
@@ -582,22 +602,17 @@ model SalaryPayment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([schoolId, reference])
-  @@index([schoolId, status])
+  lineItems PayrollTransactionLine[]
 }
 
-model StaffBankAccount {
-  id            String @id @default(uuid())
-  accountNumber String
-  bankName      String
-  accountName   String
+model PayrollTransactionLine {
+  id String @id @default(uuid())
+  label String
+  type PaymentLineType
+  amount Int
 
-  schoolId String
-  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
-  staffId  String
-  staff    Staff  @relation(fields: [staffId], references: [id], onDelete: Cascade)
-
-  @@unique([staffId, accountNumber, bankName])
+  salaryPaymentId String
+  salaryPayment PayrollTransactions @relation(fields: [salaryPaymentId], references: [id])
 }
 
 // EVENTS AND COMMUNICATION
@@ -748,4 +763,9 @@ enum AttendanceStatus {
 enum EventGroup {
   PUBLIC
   STAFF
+}
+
+enum PaymentLineType {
+  ALLOWANCE
+  DEDUCTION
 }

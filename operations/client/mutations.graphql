@@ -208,37 +208,3 @@ mutation UpdateEvent($input: EventInput!) {
     }
   }
 }
-
-mutation CreateAcademicYear($input: AcademicYearInput!) {
-  mutateAcademicYear(input: $input) {
-    __typename
-
-    ... on MutationMutateAcademicYearSuccess {
-      data {
-        id
-      }
-    }
-
-    ... on AppError {
-      __typename
-      message
-    }
-  }
-}
-
-mutation CreateTerm($input: TermInput!) {
-  mutateTerm(input: $input) {
-    __typename
-
-    ... on MutationMutateTermSuccess {
-      data {
-        id
-      }
-    }
-
-    ... on AppError {
-      __typename
-      message
-    }
-  }
-}

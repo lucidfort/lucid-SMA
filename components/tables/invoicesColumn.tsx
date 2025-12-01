@@ -34,7 +34,7 @@ export const invoicesColumn: ColumnDef<Invoice>[] = [
         accessorKey: "term",
         header: "Term",
         cell: ({ row: { original: { term } } }) => {
-            const name = schoolTerms.find(t => t.id == term.term)?.name
+            const name = schoolTerms.find(t => t.id == term.session)?.name
 
             return (
                 <div>{name ?? "-"} Term, {term.academicYear.year}</div>
@@ -53,17 +53,17 @@ export const invoicesColumn: ColumnDef<Invoice>[] = [
                 <DropdownOptions>
                     <>
                         <DropdownMenuItem asChild>
+                            <Link href={`/list/fees/pay?invoiceId=${original.id}`}>
+                                Initiate Transaction
+                            </Link>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem asChild>
                             <FormModal
                                 table="invoice"
                                 type="update"
                                 data={original}
                             />
-                        </DropdownMenuItem>
-
-                        <DropdownMenuItem asChild>
-                            <Link href={`/list/fees/pay?invoiceId=${original.id}`}>
-                                Initiate Transaction
-                            </Link>
                         </DropdownMenuItem>
 
                         <DropdownMenuSeparator />

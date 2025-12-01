@@ -89,7 +89,7 @@ const InputField = ({
             <div className="relative flex items-center gap-2">
               {prefix && (
                 <span className="pointer-events-none rounded-md p-2 text-sm whitespace-nowrap ring-[1.5px] ring-gray-300 select-none">
-                  {prefix}-
+                  {prefix}
                 </span>
               )}
 
@@ -104,13 +104,13 @@ const InputField = ({
                 placeholder={placeholder}
                 disabled={disabled}
                 className={cn(
-                  "w-full rounded-md p-2 text-sm ring-[1.5px] ring-gray-300 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-4",
+                  "form-input",
                 )}
                 {...inputProps}
               />
 
               {type === "password" && (
-                <div className="absolute top-1/2 right-2 w-4 -translate-y-1/2 cursor-pointer bg-white">
+                <div className="absolute top-1/2 right-2 w-4 -translate-y-1/2 cursor-pointer invert">
                   {visible ? (
                     <EyeOff
                       color="#99a1af"
@@ -135,7 +135,7 @@ const InputField = ({
             <Textarea
               {...field}
               placeholder={placeholder}
-              className="custom-scrollbar w-full rounded-md p-2 text-sm ring-[1.5px] ring-gray-300"
+              className="form-input custom-scrollbar"
             />
           </FormControl>
         );
@@ -148,7 +148,7 @@ const InputField = ({
             disabled={disabled}
           >
             <FormControl>
-              <SelectTrigger className="w-full rounded-md p-2 text-sm ring-[1.5px] ring-gray-300">
+              <SelectTrigger className="form-input">
                 <SelectValue placeholder={placeholder} />
               </SelectTrigger>
             </FormControl>
@@ -159,8 +159,8 @@ const InputField = ({
       case FormFieldType.MULTI_SELECT:
         const selectedOptions = field?.value
           ? field?.value
-              ?.map((v: string) => options?.find((o) => o.id === v))
-              .filter(Boolean)
+            ?.map((v: string) => options?.find((o) => o.id === v))
+            .filter(Boolean)
           : [];
 
         const value = Array.isArray(field.value) ? field.value : [];
@@ -173,7 +173,7 @@ const InputField = ({
                 role="combobox"
                 disabled={disabled}
                 className={cn(
-                  "flex w-full items-center justify-between rounded-md p-2 text-sm text-gray-700 ring-[1.5px] ring-gray-300",
+                  "form-input flex items-center justify-between",
                   selectedOptions.length === 0 && "text-gray-400",
                 )}
               >
@@ -196,8 +196,8 @@ const InputField = ({
                           return checked
                             ? field.onChange([...value, opt.id])
                             : field.onChange(
-                                value.filter((v: string) => v !== opt.id),
-                              );
+                              value.filter((v: string) => v !== opt.id),
+                            );
                         }}
                       />
 
@@ -210,6 +210,8 @@ const InputField = ({
           </Popover>
         );
       case FormFieldType.DATE_PICKER:
+        const now = new Date(2025, 0);
+
         return (
           <Popover open={open} onOpenChange={setOpen}>
             <FormControl>
@@ -217,7 +219,7 @@ const InputField = ({
                 <Button
                   variant="outline"
                   id="date"
-                  className="flex w-full items-center justify-between rounded-md p-2 text-sm text-gray-700 ring-[1.5px] ring-gray-300"
+                  className="form-input flex items-center justify-between"
                 >
                   {field.value
                     ? field.value.toLocaleDateString()
@@ -235,7 +237,7 @@ const InputField = ({
                   field.onChange(date);
                   setOpen(false);
                 }}
-                // minD
+                endMonth={new Date(now.getFullYear() + 1, 11)}
               />
             </PopoverContent>
           </Popover>
@@ -262,7 +264,7 @@ const InputField = ({
               onValueChange={(val) => field.onChange(val || "")}
               disabled={disabled}
               className={cn(
-                "flex-flex-wrap flex w-full gap-6 rounded-lg border-2 border-dashed p-2.5",
+                "flex flex-wrap w-full gap-6 rounded-lg border-2 border-dashed p-2.5",
                 containerClassName,
               )}
             >

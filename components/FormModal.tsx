@@ -62,6 +62,9 @@ const TimetableForm = dynamic(() => import("./forms/TimetableForm"), {
 const TermForm = dynamic(() => import("./forms/TermForm"), {
   loading: () => <h1>Loading...</h1>,
 });
+const PayrollProfileForm = dynamic(() => import("./forms/PayrollProfileForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
 
 const forms: {
   [key: string]: (
@@ -136,6 +139,9 @@ const forms: {
   ),
   invoice: (setOpen, type, data) => (
     <InvoiceForm type={type} data={data} setOpen={setOpen} />
+  ),
+  "payroll-profile": (setOpen, type, data) => (
+    <PayrollProfileForm type={type} data={data} setOpen={setOpen} />
   ),
 };
 

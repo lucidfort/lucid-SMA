@@ -1,15 +1,7 @@
 "use client";
 
-import { StudentSchema, studentSchema } from "@/lib/validation";
-import { FormProps } from "@/types";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import InputField, { FormFieldType } from "../InputField";
-import UserSearchForm from "../UserSearchForm";
 import FileUploader from "@/components/FileUploader";
+import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { SelectContent, SelectItem } from "@/components/ui/select";
 import { relationships, userSex } from "@/constants";
@@ -23,14 +15,23 @@ import {
   useGetClassesQuery,
   useGetGradesQuery,
   useGetProgramsQuery,
-  useGetSchoolQuery,
-  useUpdateStudentMutation,
+  useUpdateStudentMutation
 } from "@/lib/generated/graphql/client";
-import { Button } from "@/components/ui/button";
 import { handleGraphqlClientErrors } from "@/lib/utils";
+import { StudentSchema, studentSchema } from "@/lib/validation";
+import { useUserStore } from "@/stores/user.store";
+import { FormProps } from "@/types";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import InputField, { FormFieldType } from "../InputField";
+import UserSearchForm from "../UserSearchForm";
 
-const StudentForm = ({ type, data, setOpen, relatedData }: FormProps) => {
+const StudentForm = ({ type, data, setOpen }: FormProps) => {
   const router = useRouter();
+  const { user } = useUserStore()
 
   const primaryParent = data?.guardians.find(
     (guardian: Omit<ParentStudent, "student">) => guardian.isPrimary,
@@ -58,22 +59,18 @@ const StudentForm = ({ type, data, setOpen, relatedData }: FormProps) => {
         name: primaryParent
           ? `${primaryParent.parent.name} ${primaryParent.parent.surname}`
           : "",
-        relation: primaryParent.relation ?? "",
+        relation: primaryParent?.relation ?? "",
       },
       secondaryGuardian: secondaryParent
         ? {
-            id: secondaryParent?.parent.id,
-            name: secondaryParent
-              ? `${secondaryParent.parent.name} ${secondaryParent.parent.surname}`
-              : "",
-            relation: secondaryParent.relation,
-          }
+          id: secondaryParent?.parent.id,
+          name: secondaryParent
+            ? `${secondaryParent.parent.name} ${secondaryParent.parent.surname}`
+            : "",
+          relation: secondaryParent?.relation,
+        }
         : null,
     },
-  });
-
-  const [schoolResult] = useGetSchoolQuery({
-    variables: { id: relatedData?.schoolId },
   });
   const [programs] = useGetProgramsQuery();
 
@@ -106,12 +103,12 @@ const StudentForm = ({ type, data, setOpen, relatedData }: FormProps) => {
       },
       ...(values.secondaryGuardian &&
         values.secondaryGuardian.id && {
-          secondaryGuardian: {
-            id: values.secondaryGuardian.id,
-            relation: values.secondaryGuardian
-              .relation as ParentStudentRelationship,
-          },
-        }),
+        secondaryGuardian: {
+          id: values.secondaryGuardian.id,
+          relation: values.secondaryGuardian
+            .relation as ParentStudentRelationship,
+        },
+      }),
       name: values.name,
       surname: values.surname,
       address: values.address,
@@ -127,8 +124,6 @@ const StudentForm = ({ type, data, setOpen, relatedData }: FormProps) => {
       type === "create"
         ? await createStudent({ input: formData })
         : await updateStudent({ input: formData });
-
-    console.log({ response });
 
     const mutationResult =
       type === "create"
@@ -153,7 +148,7 @@ const StudentForm = ({ type, data, setOpen, relatedData }: FormProps) => {
     }
   });
 
-  const slug = schoolResult.data?.school?.slug;
+  const slug = user?.schoolSlug;
 
   const selectedProgram = programs?.data?.programs?.find(
     ({ id }) => programId === id,

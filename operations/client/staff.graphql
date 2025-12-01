@@ -1,5 +1,5 @@
-query GetStaffs($filter: StaffFilterInput!) {
-  staffs(filter: $filter) {
+query GetStaffs($searchTerm: String, $filter: StaffFilterInput!) {
+  staffs(filter: $filter, searchTerm: $searchTerm) {
     id
     name
     surname

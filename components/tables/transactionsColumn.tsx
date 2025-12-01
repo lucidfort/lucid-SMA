@@ -8,7 +8,7 @@ import { format } from "date-fns"
 export const transactionsColumn: ColumnDef<InvoicePayment>[] = [
     {
         accessorKey: "reference",
-        header: 'Students',
+        header: 'Reference',
         cell: ({ row: { original } }) => <span>{original.reference}</span>
     },
     {
@@ -29,7 +29,7 @@ export const transactionsColumn: ColumnDef<InvoicePayment>[] = [
     {
         accessorKey: "status",
         header: "Status",
-        cell: ({ row: { original } }) => <Badge>₦{original.status}</Badge>
+        cell: ({ row: { original } }) => <Badge>{original.status}</Badge>
     },
     {
         accessorKey: "createdAt",
@@ -38,11 +38,7 @@ export const transactionsColumn: ColumnDef<InvoicePayment>[] = [
             const date = new Date(original.createdAt)
             return (
                 <div>
-                    {new Intl.DateTimeFormat("en-NG").format(date)}, {date.toLocaleTimeString('en-NG', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: true,
-                    })}
+                    {format(date, "MMM d, yyyy - h:mm a")}
                 </div>
             )
         }
@@ -51,7 +47,7 @@ export const transactionsColumn: ColumnDef<InvoicePayment>[] = [
         accessorKey: "paidAt",
         header: "Payment Date",
         cell: ({ row: { original: { paidAt } } }) => {
-            const formatted = paidAt ? format(new Date(paidAt), "MMMM d, yyyy - h:mm a") : "-"
+            const formatted = paidAt ? format(new Date(paidAt), "MMM d, yyyy - h:mm a") : "-"
 
             return (
                 <div>

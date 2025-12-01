@@ -6,12 +6,12 @@ import { cn } from '@/lib/utils';
 type Props = {
   img?: string | null;
   name: string;
-  size?: string
+  className?: string
 }
 
-const UserAvatar = ({ img, name, size }: Props) => {
+const UserAvatar = ({ img, name, className }: Props) => {
   return (
-    <Avatar className={cn("size-6", size)}>
+    <Avatar className={cn("size-6", className)}>
       <AvatarImage src={img ?? "./noAvatar.png"} alt={name} />
       <AvatarFallback>{name[0]}</AvatarFallback>
     </Avatar>

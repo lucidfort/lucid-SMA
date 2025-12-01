@@ -93,7 +93,7 @@ export const createStudentAction = async (data: Omit<InputProps, "id">) => {
       return student;
     });
   } catch (err: any) {
-    await handleGraphqlServerErrors(err);
+    handleGraphqlServerErrors(err);
   }
 };
 

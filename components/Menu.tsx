@@ -20,6 +20,7 @@ import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import SignOutButton from "./SignOutButton";
 import { School } from "@/lib/generated/graphql/server";
+import { defaultHome } from "@/lib/settings";
 
 type SchoolDetails = Pick<School, "name" | "motto" | "slug" | "logo">;
 
@@ -103,7 +104,7 @@ const Menu = async ({
                             <SidebarLink
                               href={
                                 item.label === "Home"
-                                  ? `/${accessLevel}`
+                                  ? `${defaultHome[accessLevel]}`
                                   : item.href!
                               }
                             >

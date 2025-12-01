@@ -7,14 +7,14 @@ type RouteAccessMap = {
 export const defaultHome: { [key: string]: string } = {
   finance: "/finance/overview",
   academics: "/academics/overview",
-  manager: "/manager",
+  manager: "/admin",
   teacher: "/teacher",
   parent: "/parent",
   student: "/student",
 };
 
 export const routeAccessMap: RouteAccessMap = {
-  "/admin(.*)": ["administration"],
+  "/admin(.*)": ["manager"],
   "/teacher(.*)": ["teacher"],
   "/parent(.*)": ["parent"],
   "/finance(.*)": ["finance", "manager"],
@@ -70,12 +70,13 @@ export const listCreationAccess: { [key: string]: string[] } = {
     "grade",
     "result",
     "club",
-    "invoice",
     "program",
     "term",
     "academic-year",
+    "invoice",
+    "payroll-profile",
   ],
-  finance: ["invoice"],
+  finance: ["invoice", "payroll-profile"],
   teacher: ["assignment", "exam", "result"],
   student: [],
   parent: [],

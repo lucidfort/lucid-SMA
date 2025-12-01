@@ -11,11 +11,11 @@ import { Form } from "@/components/ui/form";
 import { SelectContent, SelectItem } from "@/components/ui/select";
 import { generateAcademicYears, handleGraphqlClientErrors } from "@/lib/utils";
 import {
-  CreateAcademicYearMutation,
-  CreateTermMutation,
-  useCreateAcademicYearMutation,
-  useCreateTermMutation,
+  MutateAcademicYearMutation,
+  MutateTermMutation,
   useGetAcademicYearsQuery,
+  useMutateAcademicYearMutation,
+  useMutateTermMutation,
 } from "@/lib/generated/graphql/client";
 import { toast } from "sonner";
 import { schoolTerms } from "@/constants";
@@ -43,26 +43,26 @@ const TermForm = ({ type, data, setOpen, relatedData }: FormProps) => {
     pause: isAcademicYearForm,
   });
 
-  const [termMutationResult, createTerm] = useCreateTermMutation();
-  const [academicYearMutationResult, createAcademicYear] =
-    useCreateAcademicYearMutation();
+  const [termMutationResult, mutateTerm] = useMutateTermMutation();
+  const [academicYearMutationResult, mutateAcademicYear] =
+    useMutateAcademicYearMutation();
 
   const onSubmit = form.handleSubmit(async (values) => {
     const { year, academicYearId, term, ...input } = values;
 
     const response = isAcademicYearForm
-      ? await createAcademicYear({ input: { ...input, year: year! } })
-      : await createTerm({
-          input: {
-            ...input,
-            academicYearId: academicYearId!,
-            term: term!,
-          },
-        });
+      ? await mutateAcademicYear({ input: { ...input, year: year! } })
+      : await mutateTerm({
+        input: {
+          ...input,
+          academicYearId: academicYearId!,
+          session: term!,
+        },
+      });
 
     const mutationResult = isAcademicYearForm
-      ? (response.data as CreateAcademicYearMutation)?.mutateAcademicYear
-      : (response.data as CreateTermMutation)?.mutateTerm;
+      ? (response.data as MutateAcademicYearMutation)?.mutateAcademicYear
+      : (response.data as MutateTermMutation)?.mutateTerm;
 
     if (!mutationResult) {
       toast.error("Something went wrong");
@@ -90,7 +90,7 @@ const TermForm = ({ type, data, setOpen, relatedData }: FormProps) => {
   const academicYears = academicYearsQueryResult.data?.academicYears;
 
   const registeredTerms = academicYears?.flatMap(({ terms }) =>
-    terms.map((term) => term.term),
+    terms.map((term) => term.session),
   );
 
   return (

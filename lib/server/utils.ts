@@ -37,6 +37,7 @@ export const handleGraphqlServerErrors = async (error: any) => {
   // CLERK ERRORS
   if (error?.errors && Array.isArray(error.errors)) {
     const primaryError = error.errors[0];
+    console.log(primaryError);
 
     switch (primaryError.code) {
       case "form_password_pwned":
@@ -51,11 +52,23 @@ export const handleGraphqlServerErrors = async (error: any) => {
       case "unexpected_error":
         throw new AppError("Something went wrong. Please try again later.", "");
 
+      case "form_param_format_invalid":
+        throw new AppError(
+          `${primaryError.longMessage || `Invalid ${primaryError.meta.paramName}`}`,
+          "",
+        );
+
+      case "form_param_unknown":
+        throw new AppError(
+          `${`Unknown argument ${primaryError.meta.paramName}`}`,
+          "",
+        );
+
       case "resource_not_found":
         throw new NotFoundError();
 
       default:
-        break;
+        throw new AppError("Something went wrong. Please try again later.", "");
     }
   }
 

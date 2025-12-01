@@ -348,9 +348,7 @@ input InvoicePaymentFilter {
 }
 
 input ManagerInput {
-  birthday: DateTime!
   email: String!
-  img: String
   name: String!
   password: String!
   phone: String!
@@ -359,6 +357,8 @@ input ManagerInput {
 }
 
 type Mutation {
+  activateAcademicYear(academicYearId: ID!): MutationActivateAcademicYearResult
+  activateTerm(academicYearId: ID!, termId: ID!): MutationActivateTermResult
   createAnnouncement(input: AnnouncementInput!): MutationCreateAnnouncementResult
   createAssignment(input: AssignmentInput!): MutationCreateAssignmentResult
   createClass(input: ClassInput!): MutationCreateClassResult
@@ -368,6 +368,7 @@ type Mutation {
   createGrade(input: GradeInput!): MutationCreateGradeResult
   createInvoice(input: InvoiceInput!): MutationCreateInvoiceResult
   createParent(input: ParentInput!): MutationCreateParentResult
+  createPayrollProfile(input: PayrollProfileInput!): MutationCreatePayrollProfileResult
   createProgram(input: ProgramInput!): MutationCreateProgramResult
   createResult(input: ResultInput!): MutationCreateResultResult
   createSchool(input: SchoolInput!): MutationCreateSchoolResult
@@ -388,6 +389,7 @@ type Mutation {
   updateGrade(input: GradeInput!): MutationUpdateGradeResult
   updateInvoice(input: InvoiceInput!): MutationUpdateInvoiceResult
   updateParent(input: ParentInput!): MutationUpdateParentResult
+  updatePayrollProfile(input: PayrollProfileInput!): MutationUpdatePayrollProfileResult
   updatePeriodSlot(input: TimetablePeriodInput!): MutationUpdatePeriodSlotResult
   updateResult(input: ResultInput!): MutationUpdateResultResult
   updateStaff(input: StaffInput!): MutationUpdateStaffResult
@@ -395,6 +397,18 @@ type Mutation {
   updateSubject(input: SubjectInput!): MutationUpdateSubjectResult
   updateTimetableAssignment(input: TimetableAssignmentInput!): MutationUpdateTimetableAssignmentResult
   verifyPaymentStatus(reference: String!): MutationVerifyPaymentStatusResult
+}
+
+union MutationActivateAcademicYearResult = BaseAppError | BaseError | MutationActivateAcademicYearSuccess
+
+type MutationActivateAcademicYearSuccess {
+  data: Boolean!
+}
+
+union MutationActivateTermResult = BaseAppError | BaseError | MutationActivateTermSuccess
+
+type MutationActivateTermSuccess {
+  data: Boolean!
 }
 
 union MutationCreateAnnouncementResult = BaseAppError | BaseError | MutationCreateAnnouncementSuccess | UniqueConstraintError
@@ -449,6 +463,12 @@ union MutationCreateParentResult = BaseAppError | BaseError | ForeignKeyError | 
 
 type MutationCreateParentSuccess {
   data: Parent!
+}
+
+union MutationCreatePayrollProfileResult = BaseAppError | BaseError | MutationCreatePayrollProfileSuccess | UniqueConstraintError
+
+type MutationCreatePayrollProfileSuccess {
+  data: StaffPayrollProfile!
 }
 
 union MutationCreateProgramResult = BaseAppError | BaseError | MutationCreateProgramSuccess
@@ -571,6 +591,12 @@ type MutationUpdateParentSuccess {
   data: Parent!
 }
 
+union MutationUpdatePayrollProfileResult = BaseAppError | BaseError | MutationUpdatePayrollProfileSuccess | NotFoundError | UniqueConstraintError
+
+type MutationUpdatePayrollProfileSuccess {
+  data: StaffPayrollProfile!
+}
+
 union MutationUpdatePeriodSlotResult = BaseAppError | BaseError | MutationUpdatePeriodSlotSuccess | UniqueConstraintError
 
 type MutationUpdatePeriodSlotSuccess {
@@ -677,6 +703,28 @@ enum PaymentStatus {
   SUCCESS
 }
 
+input PayrollProfileInput {
+  accountName: String!
+  accountNumber: String!
+  bankName: String!
+  id: ID
+  salary: Int!
+  staffId: ID!
+}
+
+type PayrollTransactions {
+  createdAt: DateTime!
+  grossAmount: Int!
+  id: ID!
+  netAmount: Int!
+  payMonth: Int!
+  payYear: Int!
+  paymentDate: DateTime
+  reference: String!
+  staff: Staff!
+  status: PaymentStatus!
+}
+
 type PeriodSlot {
   dayOfWeek: Int!
   id: ID!
@@ -717,12 +765,14 @@ type Query {
   invoices(filter: InvoiceFilter): [Invoice!]
   parent(clerkUserId: ID, id: ID): Parent
   parents(searchTerm: String): [Parent!]
+  payrollProfile: [StaffPayrollProfile!]
+  payrollTransactions(month: Int!, paymentDate: DateTime, year: Int!): [PayrollTransactions!]
   programs: [Program!]
   results(filter: ResultFilter!, termId: ID): [Result!]
   school(id: ID!): School
   schools: [School!]
   staff(clerkUserId: String, id: ID): Staff
-  staffs(filter: StaffFilterInput): [Staff!]
+  staffs(filter: StaffFilterInput, searchTerm: String): [Staff!]
   student(id: ID!): Student
   studentAttendances(filter: AttendanceFilter!): [StudentAttendance!]
   students(after: ID, filter: StudentFilter, first: Int, searchTerm: String): [Student!]
@@ -877,6 +927,15 @@ input StaffInput {
   surname: String!
 }
 
+type StaffPayrollProfile {
+  accountName: String!
+  accountNumber: String!
+  bankName: String!
+  id: ID!
+  salary: Int!
+  staff: Staff!
+}
+
 type Student {
   activeState: String!
   address: String!
@@ -969,8 +1028,8 @@ type Term {
   endDate: DateTime
   id: ID!
   isCurrent: Boolean!
+  session: Int!
   startDate: DateTime!
-  term: Int!
 }
 
 input TermInput {
@@ -978,8 +1037,8 @@ input TermInput {
   endDate: DateTime
   id: ID
   isCurrent: Boolean!
+  session: String!
   startDate: DateTime!
-  term: String!
 }
 
 type TimetableAssignment {

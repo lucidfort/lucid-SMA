@@ -36,10 +36,9 @@ export const createParentAction = async ({
   try {
     if (primaryId && password) {
       const user = await createUser({
+        ...data,
         username,
         password: password,
-        firstName: data.name,
-        lastName: data.surname,
         accessLevel: "parent",
         schoolId: schoolId!,
       });
@@ -86,15 +85,14 @@ export const updateParentAction = async ({
   try {
     const username = `${slug}-${primaryId}`;
     const authData = {
+      ...data,
       username,
-      firstName: data.name,
-      lastName: data.surname,
       schoolId: schoolId!,
       accessLevel: "parent",
       ...(password && { password }),
     };
     if (primaryId && data.clerkUserId) {
-      await updateUser({ ...authData, clerkId: data.id });
+      await updateUser({ ...authData, userClerkId: data.id });
     } else if (primaryId && !data.clerkUserId && password) {
       await createUser({ ...authData });
     }

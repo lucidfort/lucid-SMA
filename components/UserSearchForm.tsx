@@ -20,11 +20,12 @@ import InputField, { FormFieldType } from "@/components/InputField";
 import { useController } from "react-hook-form";
 import {
   useGetParentsQuery,
+  useGetStaffsQuery,
   useGetStudentsQuery,
 } from "@/lib/generated/graphql/client";
 
 type UserSearchProps = {
-  type: "parent" | "student";
+  type: "parent" | "student" | "staff";
   label: string;
   control: any;
   name: string;
@@ -47,15 +48,16 @@ const UserSearchForm = ({
     pause: true,
     variables: {
       searchTerm,
-      ...(type === "student" && { filter: { grades } })
+      ...(type === "student" && { filter: { grades } }),
     },
   };
 
   const [students, reexecuteStudentsQuery] = useGetStudentsQuery(options);
   const [parents, reexecuteParentsQuery] = useGetParentsQuery(options);
+  const [staffs, reexecuteStaffsQuery] = useGetStaffsQuery({ ...options, variables: { ...options.variables, filter: { isActive: true } } });
 
-  const isFetching = students.fetching || parents.fetching;
-  const results = students.data?.students || parents.data?.parents || [];
+  const isFetching = students.fetching || parents.fetching || staffs.fetching;
+  const results = students.data?.students || parents.data?.parents || staffs.data?.staffs || [];
 
   const {
     field: { value, onChange },
@@ -69,8 +71,10 @@ const UserSearchForm = ({
 
     if (type === "student") {
       reexecuteStudentsQuery();
-    } else {
+    } else if (type === "parent") {
       reexecuteParentsQuery();
+    } else {
+      reexecuteStaffsQuery()
     }
   };
 

@@ -69,7 +69,8 @@
     "tailwind-merge": "^3.3.0",
     "tw-animate-css": "^1.3.4",
     "urql": "^5.0.1",
-    "zod": "^3.25.51"
+    "zod": "^3.25.51",
+    "zustand": "^5.0.9"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

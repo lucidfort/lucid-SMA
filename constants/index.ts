@@ -149,10 +149,17 @@ export const menuItems = [
         visible: ["finance", "manager"],
       },
       {
-        icon: "/announcement.svg",
-        label: "Payroll Management",
-        href: "/finance/payroll",
-        visible: ["finance", "manager"],
+        grouped: true,
+        icon: "/fee.svg",
+        label: "Payroll",
+        links: [
+          {
+            label: "Account Details",
+            href: "/finance/payroll/account-details",
+          },
+          { label: "Transactions", href: "/finance/payroll/transactions" },
+        ],
+        visible: ["manager", "finance"],
       },
       {
         icon: "/fee.svg",

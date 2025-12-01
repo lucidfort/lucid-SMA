@@ -16,7 +16,7 @@ const GET_ASSIGNMENTS = gql(`
       dueDate
       maxScore
       term {
-        id term
+        id session
       }
       class {
         id 

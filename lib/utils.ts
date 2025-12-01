@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
+import { getYear, set, subYears } from "date-fns";
 import { twMerge } from "tailwind-merge";
-import { getYear, subYears } from "date-fns";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -144,7 +144,6 @@ export const handleGraphqlClientErrors = (error: any) => {
 
   return message;
 };
-
 export const extractImageId = (url: string) => {
   const publicId = url.split("/").pop()?.split(".")[0];
 
@@ -176,6 +175,47 @@ export function generateAcademicYears(yearsBack = 3) {
   });
 }
 
+export function getCurrentSession() {
+  const now = new Date();
+  const month = now.getMonth();
+  const currentStartYear = month >= 8 ? getYear(now) : getYear(now) - 1;
+
+  const academicYear = `${currentStartYear}/${currentStartYear + 1}`;
+
+  const academicYearStartDate = set(new Date(), {
+    year: currentStartYear,
+    month: 8,
+    date: 13,
+    hours: 0,
+  });
+
+  let currentTerm: string;
+  let termStartDate: Date;
+
+  if (month >= 8 && month <= 11) {
+    currentTerm = "1";
+    termStartDate = academicYearStartDate;
+  } else if (month >= 0 && month <= 3) {
+    currentTerm = "2";
+    termStartDate = set(new Date(), {
+      year: getYear(now),
+      month: 0,
+      date: 13,
+      hours: 0,
+    });
+  } else {
+    currentTerm = "3";
+    termStartDate = set(new Date(), {
+      year: getYear(now),
+      month: 3,
+      date: 22,
+      hours: 0,
+    });
+  }
+
+  return { academicYear, currentTerm, academicYearStartDate, termStartDate };
+}
+
 export function generateUuid(length = 5) {
   const alphabet =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -187,4 +227,12 @@ export function generateUuid(length = 5) {
   }
 
   return id;
+}
+
+export function getFirstCharacters(str: string, count?: number) {
+  const words = str.trim().toLowerCase().split(" ");
+  return words
+    .map((w) => w.charAt(0))
+    .slice(0, count || words.length)
+    .join("");
 }

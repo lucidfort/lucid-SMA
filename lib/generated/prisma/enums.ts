@@ -108,3 +108,11 @@ export const EventGroup = {
 } as const
 
 export type EventGroup = (typeof EventGroup)[keyof typeof EventGroup]
+
+
+export const PaymentLineType = {
+  ALLOWANCE: 'ALLOWANCE',
+  DEDUCTION: 'DEDUCTION'
+} as const
+
+export type PaymentLineType = (typeof PaymentLineType)[keyof typeof PaymentLineType]

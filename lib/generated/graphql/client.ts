@@ -391,9 +391,7 @@ export type InvoicePaymentFilter = {
 };
 
 export type ManagerInput = {
-  birthday: Scalars['DateTime']['input'];
   email: Scalars['String']['input'];
-  img?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   password: Scalars['String']['input'];
   phone: Scalars['String']['input'];
@@ -403,6 +401,8 @@ export type ManagerInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  activateAcademicYear?: Maybe<MutationActivateAcademicYearResult>;
+  activateTerm?: Maybe<MutationActivateTermResult>;
   createAnnouncement?: Maybe<MutationCreateAnnouncementResult>;
   createAssignment?: Maybe<MutationCreateAssignmentResult>;
   createClass?: Maybe<MutationCreateClassResult>;
@@ -412,6 +412,7 @@ export type Mutation = {
   createGrade?: Maybe<MutationCreateGradeResult>;
   createInvoice?: Maybe<MutationCreateInvoiceResult>;
   createParent?: Maybe<MutationCreateParentResult>;
+  createPayrollProfile?: Maybe<MutationCreatePayrollProfileResult>;
   createProgram?: Maybe<MutationCreateProgramResult>;
   createResult?: Maybe<MutationCreateResultResult>;
   createSchool?: Maybe<MutationCreateSchoolResult>;
@@ -432,6 +433,7 @@ export type Mutation = {
   updateGrade?: Maybe<MutationUpdateGradeResult>;
   updateInvoice?: Maybe<MutationUpdateInvoiceResult>;
   updateParent?: Maybe<MutationUpdateParentResult>;
+  updatePayrollProfile?: Maybe<MutationUpdatePayrollProfileResult>;
   updatePeriodSlot?: Maybe<MutationUpdatePeriodSlotResult>;
   updateResult?: Maybe<MutationUpdateResultResult>;
   updateStaff?: Maybe<MutationUpdateStaffResult>;
@@ -439,6 +441,17 @@ export type Mutation = {
   updateSubject?: Maybe<MutationUpdateSubjectResult>;
   updateTimetableAssignment?: Maybe<MutationUpdateTimetableAssignmentResult>;
   verifyPaymentStatus?: Maybe<MutationVerifyPaymentStatusResult>;
+};
+
+
+export type MutationActivateAcademicYearArgs = {
+  academicYearId: Scalars['ID']['input'];
+};
+
+
+export type MutationActivateTermArgs = {
+  academicYearId: Scalars['ID']['input'];
+  termId: Scalars['ID']['input'];
 };
 
 
@@ -484,6 +497,11 @@ export type MutationCreateInvoiceArgs = {
 
 export type MutationCreateParentArgs = {
   input: ParentInput;
+};
+
+
+export type MutationCreatePayrollProfileArgs = {
+  input: PayrollProfileInput;
 };
 
 
@@ -587,6 +605,11 @@ export type MutationUpdateParentArgs = {
 };
 
 
+export type MutationUpdatePayrollProfileArgs = {
+  input: PayrollProfileInput;
+};
+
+
 export type MutationUpdatePeriodSlotArgs = {
   input: TimetablePeriodInput;
 };
@@ -619,6 +642,20 @@ export type MutationUpdateTimetableAssignmentArgs = {
 
 export type MutationVerifyPaymentStatusArgs = {
   reference: Scalars['String']['input'];
+};
+
+export type MutationActivateAcademicYearResult = BaseAppError | BaseError | MutationActivateAcademicYearSuccess;
+
+export type MutationActivateAcademicYearSuccess = {
+  __typename?: 'MutationActivateAcademicYearSuccess';
+  data: Scalars['Boolean']['output'];
+};
+
+export type MutationActivateTermResult = BaseAppError | BaseError | MutationActivateTermSuccess;
+
+export type MutationActivateTermSuccess = {
+  __typename?: 'MutationActivateTermSuccess';
+  data: Scalars['Boolean']['output'];
 };
 
 export type MutationCreateAnnouncementResult = BaseAppError | BaseError | MutationCreateAnnouncementSuccess | UniqueConstraintError;
@@ -682,6 +719,13 @@ export type MutationCreateParentResult = BaseAppError | BaseError | ForeignKeyEr
 export type MutationCreateParentSuccess = {
   __typename?: 'MutationCreateParentSuccess';
   data: Parent;
+};
+
+export type MutationCreatePayrollProfileResult = BaseAppError | BaseError | MutationCreatePayrollProfileSuccess | UniqueConstraintError;
+
+export type MutationCreatePayrollProfileSuccess = {
+  __typename?: 'MutationCreatePayrollProfileSuccess';
+  data: StaffPayrollProfile;
 };
 
 export type MutationCreateProgramResult = BaseAppError | BaseError | MutationCreateProgramSuccess;
@@ -824,6 +868,13 @@ export type MutationUpdateParentSuccess = {
   data: Parent;
 };
 
+export type MutationUpdatePayrollProfileResult = BaseAppError | BaseError | MutationUpdatePayrollProfileSuccess | NotFoundError | UniqueConstraintError;
+
+export type MutationUpdatePayrollProfileSuccess = {
+  __typename?: 'MutationUpdatePayrollProfileSuccess';
+  data: StaffPayrollProfile;
+};
+
 export type MutationUpdatePeriodSlotResult = BaseAppError | BaseError | MutationUpdatePeriodSlotSuccess | UniqueConstraintError;
 
 export type MutationUpdatePeriodSlotSuccess = {
@@ -942,6 +993,29 @@ export enum PaymentStatus {
   Success = 'SUCCESS'
 }
 
+export type PayrollProfileInput = {
+  accountName: Scalars['String']['input'];
+  accountNumber: Scalars['String']['input'];
+  bankName: Scalars['String']['input'];
+  id?: InputMaybe<Scalars['ID']['input']>;
+  salary: Scalars['Int']['input'];
+  staffId: Scalars['ID']['input'];
+};
+
+export type PayrollTransactions = {
+  __typename?: 'PayrollTransactions';
+  createdAt: Scalars['DateTime']['output'];
+  grossAmount: Scalars['Int']['output'];
+  id: Scalars['ID']['output'];
+  netAmount: Scalars['Int']['output'];
+  payMonth: Scalars['Int']['output'];
+  payYear: Scalars['Int']['output'];
+  paymentDate?: Maybe<Scalars['DateTime']['output']>;
+  reference: Scalars['String']['output'];
+  staff: Staff;
+  status: PaymentStatus;
+};
+
 export type PeriodSlot = {
   __typename?: 'PeriodSlot';
   dayOfWeek: Scalars['Int']['output'];
@@ -990,6 +1064,8 @@ export type Query = {
   invoices?: Maybe<Array<Invoice>>;
   parent?: Maybe<Parent>;
   parents?: Maybe<Array<Parent>>;
+  payrollProfile?: Maybe<Array<StaffPayrollProfile>>;
+  payrollTransactions?: Maybe<Array<PayrollTransactions>>;
   programs?: Maybe<Array<Program>>;
   results?: Maybe<Array<Result>>;
   school?: Maybe<School>;
@@ -1076,6 +1152,13 @@ export type QueryParentsArgs = {
 };
 
 
+export type QueryPayrollTransactionsArgs = {
+  month: Scalars['Int']['input'];
+  paymentDate?: InputMaybe<Scalars['DateTime']['input']>;
+  year: Scalars['Int']['input'];
+};
+
+
 export type QueryResultsArgs = {
   filter: ResultFilter;
   termId?: InputMaybe<Scalars['ID']['input']>;
@@ -1095,6 +1178,7 @@ export type QueryStaffArgs = {
 
 export type QueryStaffsArgs = {
   filter?: InputMaybe<StaffFilterInput>;
+  searchTerm?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -1307,6 +1391,16 @@ export type StaffInput = {
   surname: Scalars['String']['input'];
 };
 
+export type StaffPayrollProfile = {
+  __typename?: 'StaffPayrollProfile';
+  accountName: Scalars['String']['output'];
+  accountNumber: Scalars['String']['output'];
+  bankName: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  salary: Scalars['Int']['output'];
+  staff: Staff;
+};
+
 export type Student = {
   __typename?: 'Student';
   activeState: Scalars['String']['output'];
@@ -1411,8 +1505,8 @@ export type Term = {
   endDate?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['ID']['output'];
   isCurrent: Scalars['Boolean']['output'];
+  session: Scalars['Int']['output'];
   startDate: Scalars['DateTime']['output'];
-  term: Scalars['Int']['output'];
 };
 
 export type TermInput = {
@@ -1420,8 +1514,8 @@ export type TermInput = {
   endDate?: InputMaybe<Scalars['DateTime']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
   isCurrent: Scalars['Boolean']['input'];
+  session: Scalars['String']['input'];
   startDate: Scalars['DateTime']['input'];
-  term: Scalars['String']['input'];
 };
 
 export type TimetableAssignment = {
@@ -1459,6 +1553,65 @@ export type UniqueConstraintError = AppError & Error & {
   code?: Maybe<Scalars['String']['output']>;
   message?: Maybe<Scalars['String']['output']>;
 };
+
+export type GetAcademicYearsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAcademicYearsQuery = { __typename?: 'Query', academicYears?: Array<{ __typename?: 'AcademicYear', id: string, year: string, isCurrent: boolean, terms: Array<{ __typename?: 'Term', session: number }> }> | null };
+
+export type GetTermsQueryVariables = Exact<{
+  take?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type GetTermsQuery = { __typename?: 'Query', terms?: Array<{ __typename?: 'Term', id: string, session: number, isCurrent: boolean, academicYear: { __typename?: 'AcademicYear', year: string } }> | null };
+
+export type MutateAcademicYearMutationVariables = Exact<{
+  input: AcademicYearInput;
+}>;
+
+
+export type MutateAcademicYearMutation = { __typename?: 'Mutation', mutateAcademicYear?:
+    | { __typename: 'BaseAppError', message?: string | null }
+    | { __typename: 'BaseError' }
+    | { __typename: 'MutationMutateAcademicYearSuccess', data: { __typename?: 'AcademicYear', id: string } }
+    | { __typename: 'UniqueConstraintError', message?: string | null }
+   | null };
+
+export type MutateTermMutationVariables = Exact<{
+  input: TermInput;
+}>;
+
+
+export type MutateTermMutation = { __typename?: 'Mutation', mutateTerm?:
+    | { __typename: 'BaseAppError', message?: string | null }
+    | { __typename: 'BaseError' }
+    | { __typename: 'MutationMutateTermSuccess', data: { __typename?: 'Term', id: string } }
+    | { __typename: 'UniqueConstraintError', message?: string | null }
+   | null };
+
+export type ActivateAcademicYearMutationVariables = Exact<{
+  academicYearId: Scalars['ID']['input'];
+}>;
+
+
+export type ActivateAcademicYearMutation = { __typename?: 'Mutation', activateAcademicYear?:
+    | { __typename: 'BaseAppError', message?: string | null }
+    | { __typename: 'BaseError' }
+    | { __typename: 'MutationActivateAcademicYearSuccess', data: boolean }
+   | null };
+
+export type ActivateTermMutationVariables = Exact<{
+  termId: Scalars['ID']['input'];
+  academicYearId: Scalars['ID']['input'];
+}>;
+
+
+export type ActivateTermMutation = { __typename?: 'Mutation', activateTerm?:
+    | { __typename: 'BaseAppError', message?: string | null }
+    | { __typename: 'BaseError' }
+    | { __typename: 'MutationActivateTermSuccess', data: boolean }
+   | null };
 
 export type CreateAnnouncementMutationVariables = Exact<{
   input: AnnouncementInput;
@@ -1752,30 +1905,6 @@ export type UpdateEventMutation = { __typename?: 'Mutation', updateEvent?:
     | { __typename: 'UniqueConstraintError', message?: string | null }
    | null };
 
-export type CreateAcademicYearMutationVariables = Exact<{
-  input: AcademicYearInput;
-}>;
-
-
-export type CreateAcademicYearMutation = { __typename?: 'Mutation', mutateAcademicYear?:
-    | { __typename: 'BaseAppError', message?: string | null }
-    | { __typename: 'BaseError' }
-    | { __typename: 'MutationMutateAcademicYearSuccess', data: { __typename?: 'AcademicYear', id: string } }
-    | { __typename: 'UniqueConstraintError', message?: string | null }
-   | null };
-
-export type CreateTermMutationVariables = Exact<{
-  input: TermInput;
-}>;
-
-
-export type CreateTermMutation = { __typename?: 'Mutation', mutateTerm?:
-    | { __typename: 'BaseAppError', message?: string | null }
-    | { __typename: 'BaseError' }
-    | { __typename: 'MutationMutateTermSuccess', data: { __typename?: 'Term', id: string } }
-    | { __typename: 'UniqueConstraintError', message?: string | null }
-   | null };
-
 export type GetParentsQueryVariables = Exact<{
   searchTerm?: InputMaybe<Scalars['String']['input']>;
 }>;
@@ -1810,12 +1939,37 @@ export type UpdateParentMutation = { __typename?: 'Mutation', updateParent?:
     | { __typename: 'UniqueConstraintError', message?: string | null }
    | null };
 
-export type GetSchoolQueryVariables = Exact<{
+export type CreatePayrollProfileMutationVariables = Exact<{
+  input: PayrollProfileInput;
+}>;
+
+
+export type CreatePayrollProfileMutation = { __typename?: 'Mutation', createPayrollProfile?:
+    | { __typename: 'BaseAppError', message?: string | null }
+    | { __typename: 'BaseError' }
+    | { __typename: 'MutationCreatePayrollProfileSuccess', data: { __typename?: 'StaffPayrollProfile', id: string } }
+    | { __typename: 'UniqueConstraintError', message?: string | null }
+   | null };
+
+export type UpdatePayrollProfileMutationVariables = Exact<{
+  input: PayrollProfileInput;
+}>;
+
+
+export type UpdatePayrollProfileMutation = { __typename?: 'Mutation', updatePayrollProfile?:
+    | { __typename: 'BaseAppError', message?: string | null }
+    | { __typename: 'BaseError' }
+    | { __typename: 'MutationUpdatePayrollProfileSuccess', data: { __typename?: 'StaffPayrollProfile', id: string } }
+    | { __typename: 'NotFoundError', message?: string | null }
+    | { __typename: 'UniqueConstraintError', message?: string | null }
+   | null };
+
+export type GetSchoolSlugQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
 
-export type GetSchoolQuery = { __typename?: 'Query', school?: { __typename?: 'School', slug: string } | null };
+export type GetSchoolSlugQuery = { __typename?: 'Query', school?: { __typename?: 'School', id: string, slug: string } | null };
 
 export type GetProgramsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1835,18 +1989,6 @@ export type GetSubjectsQueryVariables = Exact<{
 
 
 export type GetSubjectsQuery = { __typename?: 'Query', subjects?: Array<{ __typename?: 'Subject', id: string, name: string }> | null };
-
-export type GetAcademicYearsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetAcademicYearsQuery = { __typename?: 'Query', academicYears?: Array<{ __typename?: 'AcademicYear', id: string, year: string, isCurrent: boolean, terms: Array<{ __typename?: 'Term', term: number }> }> | null };
-
-export type GetTermsQueryVariables = Exact<{
-  take?: InputMaybe<Scalars['Int']['input']>;
-}>;
-
-
-export type GetTermsQuery = { __typename?: 'Query', terms?: Array<{ __typename?: 'Term', id: string, term: number, isCurrent: boolean, academicYear: { __typename?: 'AcademicYear', year: string } }> | null };
 
 export type CreateResultMutationVariables = Exact<{
   input: ResultInput;
@@ -1874,6 +2016,7 @@ export type UpdateResultMutation = { __typename?: 'Mutation', updateResult?:
    | null };
 
 export type GetStaffsQueryVariables = Exact<{
+  searchTerm?: InputMaybe<Scalars['String']['input']>;
   filter: StaffFilterInput;
 }>;
 
@@ -1994,6 +2137,114 @@ export type VerifyPaymentStatusMutation = { __typename?: 'Mutation', verifyPayme
    | null };
 
 
+export const GetAcademicYearsDocument = gql`
+    query GetAcademicYears {
+  academicYears {
+    id
+    year
+    isCurrent
+    terms {
+      session
+    }
+  }
+}
+    `;
+
+export function useGetAcademicYearsQuery(options?: Omit<Urql.UseQueryArgs<GetAcademicYearsQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetAcademicYearsQuery, GetAcademicYearsQueryVariables>({ query: GetAcademicYearsDocument, ...options });
+};
+export const GetTermsDocument = gql`
+    query GetTerms($take: Int) {
+  terms(take: $take) {
+    id
+    session
+    isCurrent
+    academicYear {
+      year
+    }
+  }
+}
+    `;
+
+export function useGetTermsQuery(options?: Omit<Urql.UseQueryArgs<GetTermsQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetTermsQuery, GetTermsQueryVariables>({ query: GetTermsDocument, ...options });
+};
+export const MutateAcademicYearDocument = gql`
+    mutation MutateAcademicYear($input: AcademicYearInput!) {
+  mutateAcademicYear(input: $input) {
+    __typename
+    ... on MutationMutateAcademicYearSuccess {
+      data {
+        id
+      }
+    }
+    ... on AppError {
+      __typename
+      message
+    }
+  }
+}
+    `;
+
+export function useMutateAcademicYearMutation() {
+  return Urql.useMutation<MutateAcademicYearMutation, MutateAcademicYearMutationVariables>(MutateAcademicYearDocument);
+};
+export const MutateTermDocument = gql`
+    mutation MutateTerm($input: TermInput!) {
+  mutateTerm(input: $input) {
+    __typename
+    ... on MutationMutateTermSuccess {
+      data {
+        id
+      }
+    }
+    ... on AppError {
+      __typename
+      message
+    }
+  }
+}
+    `;
+
+export function useMutateTermMutation() {
+  return Urql.useMutation<MutateTermMutation, MutateTermMutationVariables>(MutateTermDocument);
+};
+export const ActivateAcademicYearDocument = gql`
+    mutation ActivateAcademicYear($academicYearId: ID!) {
+  activateAcademicYear(academicYearId: $academicYearId) {
+    __typename
+    ... on AppError {
+      __typename
+      message
+    }
+    ... on MutationActivateAcademicYearSuccess {
+      data
+    }
+  }
+}
+    `;
+
+export function useActivateAcademicYearMutation() {
+  return Urql.useMutation<ActivateAcademicYearMutation, ActivateAcademicYearMutationVariables>(ActivateAcademicYearDocument);
+};
+export const ActivateTermDocument = gql`
+    mutation ActivateTerm($termId: ID!, $academicYearId: ID!) {
+  activateTerm(termId: $termId, academicYearId: $academicYearId) {
+    __typename
+    ... on AppError {
+      __typename
+      message
+    }
+    ... on MutationActivateTermSuccess {
+      data
+    }
+  }
+}
+    `;
+
+export function useActivateTermMutation() {
+  return Urql.useMutation<ActivateTermMutation, ActivateTermMutationVariables>(ActivateTermDocument);
+};
 export const CreateAnnouncementDocument = gql`
     mutation CreateAnnouncement($input: AnnouncementInput!) {
   createAnnouncement(input: $input) {
@@ -2537,46 +2788,6 @@ export const UpdateEventDocument = gql`
 export function useUpdateEventMutation() {
   return Urql.useMutation<UpdateEventMutation, UpdateEventMutationVariables>(UpdateEventDocument);
 };
-export const CreateAcademicYearDocument = gql`
-    mutation CreateAcademicYear($input: AcademicYearInput!) {
-  mutateAcademicYear(input: $input) {
-    __typename
-    ... on MutationMutateAcademicYearSuccess {
-      data {
-        id
-      }
-    }
-    ... on AppError {
-      __typename
-      message
-    }
-  }
-}
-    `;
-
-export function useCreateAcademicYearMutation() {
-  return Urql.useMutation<CreateAcademicYearMutation, CreateAcademicYearMutationVariables>(CreateAcademicYearDocument);
-};
-export const CreateTermDocument = gql`
-    mutation CreateTerm($input: TermInput!) {
-  mutateTerm(input: $input) {
-    __typename
-    ... on MutationMutateTermSuccess {
-      data {
-        id
-      }
-    }
-    ... on AppError {
-      __typename
-      message
-    }
-  }
-}
-    `;
-
-export function useCreateTermMutation() {
-  return Urql.useMutation<CreateTermMutation, CreateTermMutationVariables>(CreateTermDocument);
-};
 export const GetParentsDocument = gql`
     query GetParents($searchTerm: String) {
   parents(searchTerm: $searchTerm) {
@@ -2638,16 +2849,61 @@ export const UpdateParentDocument = gql`
 export function useUpdateParentMutation() {
   return Urql.useMutation<UpdateParentMutation, UpdateParentMutationVariables>(UpdateParentDocument);
 };
-export const GetSchoolDocument = gql`
-    query GetSchool($id: ID!) {
+export const CreatePayrollProfileDocument = gql`
+    mutation CreatePayrollProfile($input: PayrollProfileInput!) {
+  createPayrollProfile(input: $input) {
+    __typename
+    ... on MutationCreatePayrollProfileSuccess {
+      data {
+        id
+      }
+    }
+    ... on AppError {
+      __typename
+      message
+    }
+  }
+}
+    `;
+
+export function useCreatePayrollProfileMutation() {
+  return Urql.useMutation<CreatePayrollProfileMutation, CreatePayrollProfileMutationVariables>(CreatePayrollProfileDocument);
+};
+export const UpdatePayrollProfileDocument = gql`
+    mutation UpdatePayrollProfile($input: PayrollProfileInput!) {
+  updatePayrollProfile(input: $input) {
+    __typename
+    ... on MutationUpdatePayrollProfileSuccess {
+      data {
+        id
+      }
+    }
+    ... on AppError {
+      __typename
+      message
+    }
+    ... on NotFoundError {
+      __typename
+      message
+    }
+  }
+}
+    `;
+
+export function useUpdatePayrollProfileMutation() {
+  return Urql.useMutation<UpdatePayrollProfileMutation, UpdatePayrollProfileMutationVariables>(UpdatePayrollProfileDocument);
+};
+export const GetSchoolSlugDocument = gql`
+    query GetSchoolSlug($id: ID!) {
   school(id: $id) {
+    id
     slug
   }
 }
     `;
 
-export function useGetSchoolQuery(options: Omit<Urql.UseQueryArgs<GetSchoolQueryVariables>, 'query'>) {
-  return Urql.useQuery<GetSchoolQuery, GetSchoolQueryVariables>({ query: GetSchoolDocument, ...options });
+export function useGetSchoolSlugQuery(options: Omit<Urql.UseQueryArgs<GetSchoolSlugQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetSchoolSlugQuery, GetSchoolSlugQueryVariables>({ query: GetSchoolSlugDocument, ...options });
 };
 export const GetProgramsDocument = gql`
     query GetPrograms {
@@ -2684,38 +2940,6 @@ export const GetSubjectsDocument = gql`
 
 export function useGetSubjectsQuery(options?: Omit<Urql.UseQueryArgs<GetSubjectsQueryVariables>, 'query'>) {
   return Urql.useQuery<GetSubjectsQuery, GetSubjectsQueryVariables>({ query: GetSubjectsDocument, ...options });
-};
-export const GetAcademicYearsDocument = gql`
-    query GetAcademicYears {
-  academicYears {
-    id
-    year
-    isCurrent
-    terms {
-      term
-    }
-  }
-}
-    `;
-
-export function useGetAcademicYearsQuery(options?: Omit<Urql.UseQueryArgs<GetAcademicYearsQueryVariables>, 'query'>) {
-  return Urql.useQuery<GetAcademicYearsQuery, GetAcademicYearsQueryVariables>({ query: GetAcademicYearsDocument, ...options });
-};
-export const GetTermsDocument = gql`
-    query GetTerms($take: Int) {
-  terms(take: $take) {
-    id
-    term
-    isCurrent
-    academicYear {
-      year
-    }
-  }
-}
-    `;
-
-export function useGetTermsQuery(options?: Omit<Urql.UseQueryArgs<GetTermsQueryVariables>, 'query'>) {
-  return Urql.useQuery<GetTermsQuery, GetTermsQueryVariables>({ query: GetTermsDocument, ...options });
 };
 export const CreateResultDocument = gql`
     mutation CreateResult($input: ResultInput!) {
@@ -2762,8 +2986,8 @@ export function useUpdateResultMutation() {
   return Urql.useMutation<UpdateResultMutation, UpdateResultMutationVariables>(UpdateResultDocument);
 };
 export const GetStaffsDocument = gql`
-    query GetStaffs($filter: StaffFilterInput!) {
-  staffs(filter: $filter) {
+    query GetStaffs($searchTerm: String, $filter: StaffFilterInput!) {
+  staffs(filter: $filter, searchTerm: $searchTerm) {
     id
     name
     surname

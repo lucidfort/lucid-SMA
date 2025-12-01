@@ -40,16 +40,23 @@ export const createStaffAction = async ({
   let clerkUserId = "";
 
   try {
-    const employeeId = `${slug}-${username}`;
+    const employeeId = `${slug}-p${username}`;
+
+    const school = await prisma.school.findUnique({
+      where: { id: schoolId },
+      select: { organizationId: true },
+    });
 
     if (accessLevel !== "RESTRICTED" && password) {
       const user = await createUser({
+        ...data,
         username: employeeId,
         password: password,
-        firstName: data.name,
-        lastName: data.surname,
         accessLevel: accessLevel.toLowerCase(),
         schoolId: schoolId!,
+        ...(school?.organizationId && {
+          organizationId: school.organizationId,
+        }),
       });
 
       clerkUserId = user.id;
@@ -104,11 +111,10 @@ export const updateStaffAction = async ({
     const employeeId = `${slug}-${username}`;
 
     await updateUser({
+      ...data,
+      ...(data.clerkUserId && { clerkId: data.clerkUserId }),
       username: employeeId,
-      firstName: data.name,
-      lastName: data.surname,
       accessLevel: accessLevel.toLowerCase(),
-      clerkId: data.clerkUserId!,
       schoolId: schoolId!,
       ...(password && password !== "" ? { password } : {}),
     });

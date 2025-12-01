@@ -44,8 +44,4 @@ yarn-error.log*
 next-env.d.ts
 
 # Prisma Client + query engine
-/lib/generated/prisma
-
-
-# Graphql schema + cache
-.urql-cache.json
+/lib/generated/

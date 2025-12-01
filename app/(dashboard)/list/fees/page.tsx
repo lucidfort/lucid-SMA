@@ -14,7 +14,7 @@ const GET_INVOICES = gql(`
       amount 
       dueDate 
       term {
-        term
+        session
         academicYear {
           year
         }

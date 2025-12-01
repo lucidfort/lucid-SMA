@@ -37,6 +37,7 @@ export type ClassMinAggregateOutputType = {
   id: string | null
   name: string | null
   capacity: number | null
+  isActive: boolean | null
   schoolId: string | null
   gradeId: string | null
 }
@@ -45,6 +46,7 @@ export type ClassMaxAggregateOutputType = {
   id: string | null
   name: string | null
   capacity: number | null
+  isActive: boolean | null
   schoolId: string | null
   gradeId: string | null
 }
@@ -53,6 +55,7 @@ export type ClassCountAggregateOutputType = {
   id: number
   name: number
   capacity: number
+  isActive: number
   schoolId: number
   gradeId: number
   _all: number
@@ -71,6 +74,7 @@ export type ClassMinAggregateInputType = {
   id?: true
   name?: true
   capacity?: true
+  isActive?: true
   schoolId?: true
   gradeId?: true
 }
@@ -79,6 +83,7 @@ export type ClassMaxAggregateInputType = {
   id?: true
   name?: true
   capacity?: true
+  isActive?: true
   schoolId?: true
   gradeId?: true
 }
@@ -87,6 +92,7 @@ export type ClassCountAggregateInputType = {
   id?: true
   name?: true
   capacity?: true
+  isActive?: true
   schoolId?: true
   gradeId?: true
   _all?: true
@@ -182,6 +188,7 @@ export type ClassGroupByOutputType = {
   id: string
   name: string
   capacity: number
+  isActive: boolean
   schoolId: string
   gradeId: string
   _count: ClassCountAggregateOutputType | null
@@ -213,6 +220,7 @@ export type ClassWhereInput = {
   id?: Prisma.StringFilter<"Class"> | string
   name?: Prisma.StringFilter<"Class"> | string
   capacity?: Prisma.IntFilter<"Class"> | number
+  isActive?: Prisma.BoolFilter<"Class"> | boolean
   schoolId?: Prisma.StringFilter<"Class"> | string
   gradeId?: Prisma.StringFilter<"Class"> | string
   school?: Prisma.XOR<Prisma.SchoolScalarRelationFilter, Prisma.SchoolWhereInput>
@@ -230,6 +238,7 @@ export type ClassOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   capacity?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   schoolId?: Prisma.SortOrder
   gradeId?: Prisma.SortOrder
   school?: Prisma.SchoolOrderByWithRelationInput
@@ -251,6 +260,7 @@ export type ClassWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ClassWhereInput | Prisma.ClassWhereInput[]
   name?: Prisma.StringFilter<"Class"> | string
   capacity?: Prisma.IntFilter<"Class"> | number
+  isActive?: Prisma.BoolFilter<"Class"> | boolean
   schoolId?: Prisma.StringFilter<"Class"> | string
   gradeId?: Prisma.StringFilter<"Class"> | string
   school?: Prisma.XOR<Prisma.SchoolScalarRelationFilter, Prisma.SchoolWhereInput>
@@ -268,6 +278,7 @@ export type ClassOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   capacity?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   schoolId?: Prisma.SortOrder
   gradeId?: Prisma.SortOrder
   _count?: Prisma.ClassCountOrderByAggregateInput
@@ -284,6 +295,7 @@ export type ClassScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Class"> | string
   name?: Prisma.StringWithAggregatesFilter<"Class"> | string
   capacity?: Prisma.IntWithAggregatesFilter<"Class"> | number
+  isActive?: Prisma.BoolWithAggregatesFilter<"Class"> | boolean
   schoolId?: Prisma.StringWithAggregatesFilter<"Class"> | string
   gradeId?: Prisma.StringWithAggregatesFilter<"Class"> | string
 }
@@ -292,6 +304,7 @@ export type ClassCreateInput = {
   id?: string
   name: string
   capacity: number
+  isActive?: boolean
   school: Prisma.SchoolCreateNestedOneWithoutClassesInput
   grade: Prisma.GradeCreateNestedOneWithoutClassesInput
   students?: Prisma.StudentCreateNestedManyWithoutClassInput
@@ -307,6 +320,7 @@ export type ClassUncheckedCreateInput = {
   id?: string
   name: string
   capacity: number
+  isActive?: boolean
   schoolId: string
   gradeId: string
   students?: Prisma.StudentUncheckedCreateNestedManyWithoutClassInput
@@ -322,6 +336,7 @@ export type ClassUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   school?: Prisma.SchoolUpdateOneRequiredWithoutClassesNestedInput
   grade?: Prisma.GradeUpdateOneRequiredWithoutClassesNestedInput
   students?: Prisma.StudentUpdateManyWithoutClassNestedInput
@@ -337,6 +352,7 @@ export type ClassUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   gradeId?: Prisma.StringFieldUpdateOperationsInput | string
   students?: Prisma.StudentUncheckedUpdateManyWithoutClassNestedInput
@@ -352,6 +368,7 @@ export type ClassCreateManyInput = {
   id?: string
   name: string
   capacity: number
+  isActive?: boolean
   schoolId: string
   gradeId: string
 }
@@ -360,12 +377,14 @@ export type ClassUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type ClassUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   gradeId?: Prisma.StringFieldUpdateOperationsInput | string
 }
@@ -390,6 +409,7 @@ export type ClassCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   capacity?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   schoolId?: Prisma.SortOrder
   gradeId?: Prisma.SortOrder
 }
@@ -402,6 +422,7 @@ export type ClassMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   capacity?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   schoolId?: Prisma.SortOrder
   gradeId?: Prisma.SortOrder
 }
@@ -410,6 +431,7 @@ export type ClassMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   capacity?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   schoolId?: Prisma.SortOrder
   gradeId?: Prisma.SortOrder
 }
@@ -618,6 +640,7 @@ export type ClassCreateWithoutSchoolInput = {
   id?: string
   name: string
   capacity: number
+  isActive?: boolean
   grade: Prisma.GradeCreateNestedOneWithoutClassesInput
   students?: Prisma.StudentCreateNestedManyWithoutClassInput
   supervisors?: Prisma.StaffCreateNestedManyWithoutClassInput
@@ -632,6 +655,7 @@ export type ClassUncheckedCreateWithoutSchoolInput = {
   id?: string
   name: string
   capacity: number
+  isActive?: boolean
   gradeId: string
   students?: Prisma.StudentUncheckedCreateNestedManyWithoutClassInput
   supervisors?: Prisma.StaffUncheckedCreateNestedManyWithoutClassInput
@@ -675,6 +699,7 @@ export type ClassScalarWhereInput = {
   id?: Prisma.StringFilter<"Class"> | string
   name?: Prisma.StringFilter<"Class"> | string
   capacity?: Prisma.IntFilter<"Class"> | number
+  isActive?: Prisma.BoolFilter<"Class"> | boolean
   schoolId?: Prisma.StringFilter<"Class"> | string
   gradeId?: Prisma.StringFilter<"Class"> | string
 }
@@ -683,6 +708,7 @@ export type ClassCreateWithoutGradeInput = {
   id?: string
   name: string
   capacity: number
+  isActive?: boolean
   school: Prisma.SchoolCreateNestedOneWithoutClassesInput
   students?: Prisma.StudentCreateNestedManyWithoutClassInput
   supervisors?: Prisma.StaffCreateNestedManyWithoutClassInput
@@ -697,6 +723,7 @@ export type ClassUncheckedCreateWithoutGradeInput = {
   id?: string
   name: string
   capacity: number
+  isActive?: boolean
   schoolId: string
   students?: Prisma.StudentUncheckedCreateNestedManyWithoutClassInput
   supervisors?: Prisma.StaffUncheckedCreateNestedManyWithoutClassInput
@@ -737,6 +764,7 @@ export type ClassCreateWithoutTimetablePeriodsInput = {
   id?: string
   name: string
   capacity: number
+  isActive?: boolean
   school: Prisma.SchoolCreateNestedOneWithoutClassesInput
   grade: Prisma.GradeCreateNestedOneWithoutClassesInput
   students?: Prisma.StudentCreateNestedManyWithoutClassInput
@@ -751,6 +779,7 @@ export type ClassUncheckedCreateWithoutTimetablePeriodsInput = {
   id?: string
   name: string
   capacity: number
+  isActive?: boolean
   schoolId: string
   gradeId: string
   students?: Prisma.StudentUncheckedCreateNestedManyWithoutClassInput
@@ -781,6 +810,7 @@ export type ClassUpdateWithoutTimetablePeriodsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   school?: Prisma.SchoolUpdateOneRequiredWithoutClassesNestedInput
   grade?: Prisma.GradeUpdateOneRequiredWithoutClassesNestedInput
   students?: Prisma.StudentUpdateManyWithoutClassNestedInput
@@ -795,6 +825,7 @@ export type ClassUncheckedUpdateWithoutTimetablePeriodsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   gradeId?: Prisma.StringFieldUpdateOperationsInput | string
   students?: Prisma.StudentUncheckedUpdateManyWithoutClassNestedInput
@@ -809,6 +840,7 @@ export type ClassCreateWithoutTimetableAssignmentsInput = {
   id?: string
   name: string
   capacity: number
+  isActive?: boolean
   school: Prisma.SchoolCreateNestedOneWithoutClassesInput
   grade: Prisma.GradeCreateNestedOneWithoutClassesInput
   students?: Prisma.StudentCreateNestedManyWithoutClassInput
@@ -823,6 +855,7 @@ export type ClassUncheckedCreateWithoutTimetableAssignmentsInput = {
   id?: string
   name: string
   capacity: number
+  isActive?: boolean
   schoolId: string
   gradeId: string
   students?: Prisma.StudentUncheckedCreateNestedManyWithoutClassInput
@@ -853,6 +886,7 @@ export type ClassUpdateWithoutTimetableAssignmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   school?: Prisma.SchoolUpdateOneRequiredWithoutClassesNestedInput
   grade?: Prisma.GradeUpdateOneRequiredWithoutClassesNestedInput
   students?: Prisma.StudentUpdateManyWithoutClassNestedInput
@@ -867,6 +901,7 @@ export type ClassUncheckedUpdateWithoutTimetableAssignmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   gradeId?: Prisma.StringFieldUpdateOperationsInput | string
   students?: Prisma.StudentUncheckedUpdateManyWithoutClassNestedInput
@@ -881,6 +916,7 @@ export type ClassCreateWithoutStudentsInput = {
   id?: string
   name: string
   capacity: number
+  isActive?: boolean
   school: Prisma.SchoolCreateNestedOneWithoutClassesInput
   grade: Prisma.GradeCreateNestedOneWithoutClassesInput
   supervisors?: Prisma.StaffCreateNestedManyWithoutClassInput
@@ -895,6 +931,7 @@ export type ClassUncheckedCreateWithoutStudentsInput = {
   id?: string
   name: string
   capacity: number
+  isActive?: boolean
   schoolId: string
   gradeId: string
   supervisors?: Prisma.StaffUncheckedCreateNestedManyWithoutClassInput
@@ -925,6 +962,7 @@ export type ClassUpdateWithoutStudentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   school?: Prisma.SchoolUpdateOneRequiredWithoutClassesNestedInput
   grade?: Prisma.GradeUpdateOneRequiredWithoutClassesNestedInput
   supervisors?: Prisma.StaffUpdateManyWithoutClassNestedInput
@@ -939,6 +977,7 @@ export type ClassUncheckedUpdateWithoutStudentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   gradeId?: Prisma.StringFieldUpdateOperationsInput | string
   supervisors?: Prisma.StaffUncheckedUpdateManyWithoutClassNestedInput
@@ -953,6 +992,7 @@ export type ClassCreateWithoutSupervisorsInput = {
   id?: string
   name: string
   capacity: number
+  isActive?: boolean
   school: Prisma.SchoolCreateNestedOneWithoutClassesInput
   grade: Prisma.GradeCreateNestedOneWithoutClassesInput
   students?: Prisma.StudentCreateNestedManyWithoutClassInput
@@ -967,6 +1007,7 @@ export type ClassUncheckedCreateWithoutSupervisorsInput = {
   id?: string
   name: string
   capacity: number
+  isActive?: boolean
   schoolId: string
   gradeId: string
   students?: Prisma.StudentUncheckedCreateNestedManyWithoutClassInput
@@ -997,6 +1038,7 @@ export type ClassUpdateWithoutSupervisorsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   school?: Prisma.SchoolUpdateOneRequiredWithoutClassesNestedInput
   grade?: Prisma.GradeUpdateOneRequiredWithoutClassesNestedInput
   students?: Prisma.StudentUpdateManyWithoutClassNestedInput
@@ -1011,6 +1053,7 @@ export type ClassUncheckedUpdateWithoutSupervisorsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   gradeId?: Prisma.StringFieldUpdateOperationsInput | string
   students?: Prisma.StudentUncheckedUpdateManyWithoutClassNestedInput
@@ -1025,6 +1068,7 @@ export type ClassCreateWithoutAssignmentsInput = {
   id?: string
   name: string
   capacity: number
+  isActive?: boolean
   school: Prisma.SchoolCreateNestedOneWithoutClassesInput
   grade: Prisma.GradeCreateNestedOneWithoutClassesInput
   students?: Prisma.StudentCreateNestedManyWithoutClassInput
@@ -1039,6 +1083,7 @@ export type ClassUncheckedCreateWithoutAssignmentsInput = {
   id?: string
   name: string
   capacity: number
+  isActive?: boolean
   schoolId: string
   gradeId: string
   students?: Prisma.StudentUncheckedCreateNestedManyWithoutClassInput
@@ -1069,6 +1114,7 @@ export type ClassUpdateWithoutAssignmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   school?: Prisma.SchoolUpdateOneRequiredWithoutClassesNestedInput
   grade?: Prisma.GradeUpdateOneRequiredWithoutClassesNestedInput
   students?: Prisma.StudentUpdateManyWithoutClassNestedInput
@@ -1083,6 +1129,7 @@ export type ClassUncheckedUpdateWithoutAssignmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   gradeId?: Prisma.StringFieldUpdateOperationsInput | string
   students?: Prisma.StudentUncheckedUpdateManyWithoutClassNestedInput
@@ -1097,6 +1144,7 @@ export type ClassCreateWithoutAttendancesInput = {
   id?: string
   name: string
   capacity: number
+  isActive?: boolean
   school: Prisma.SchoolCreateNestedOneWithoutClassesInput
   grade: Prisma.GradeCreateNestedOneWithoutClassesInput
   students?: Prisma.StudentCreateNestedManyWithoutClassInput
@@ -1111,6 +1159,7 @@ export type ClassUncheckedCreateWithoutAttendancesInput = {
   id?: string
   name: string
   capacity: number
+  isActive?: boolean
   schoolId: string
   gradeId: string
   students?: Prisma.StudentUncheckedCreateNestedManyWithoutClassInput
@@ -1141,6 +1190,7 @@ export type ClassUpdateWithoutAttendancesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   school?: Prisma.SchoolUpdateOneRequiredWithoutClassesNestedInput
   grade?: Prisma.GradeUpdateOneRequiredWithoutClassesNestedInput
   students?: Prisma.StudentUpdateManyWithoutClassNestedInput
@@ -1155,6 +1205,7 @@ export type ClassUncheckedUpdateWithoutAttendancesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   gradeId?: Prisma.StringFieldUpdateOperationsInput | string
   students?: Prisma.StudentUncheckedUpdateManyWithoutClassNestedInput
@@ -1169,6 +1220,7 @@ export type ClassCreateWithoutStudentClassHistoryInput = {
   id?: string
   name: string
   capacity: number
+  isActive?: boolean
   school: Prisma.SchoolCreateNestedOneWithoutClassesInput
   grade: Prisma.GradeCreateNestedOneWithoutClassesInput
   students?: Prisma.StudentCreateNestedManyWithoutClassInput
@@ -1183,6 +1235,7 @@ export type ClassUncheckedCreateWithoutStudentClassHistoryInput = {
   id?: string
   name: string
   capacity: number
+  isActive?: boolean
   schoolId: string
   gradeId: string
   students?: Prisma.StudentUncheckedCreateNestedManyWithoutClassInput
@@ -1213,6 +1266,7 @@ export type ClassUpdateWithoutStudentClassHistoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   school?: Prisma.SchoolUpdateOneRequiredWithoutClassesNestedInput
   grade?: Prisma.GradeUpdateOneRequiredWithoutClassesNestedInput
   students?: Prisma.StudentUpdateManyWithoutClassNestedInput
@@ -1227,6 +1281,7 @@ export type ClassUncheckedUpdateWithoutStudentClassHistoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   gradeId?: Prisma.StringFieldUpdateOperationsInput | string
   students?: Prisma.StudentUncheckedUpdateManyWithoutClassNestedInput
@@ -1241,6 +1296,7 @@ export type ClassCreateManySchoolInput = {
   id?: string
   name: string
   capacity: number
+  isActive?: boolean
   gradeId: string
 }
 
@@ -1248,6 +1304,7 @@ export type ClassUpdateWithoutSchoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   grade?: Prisma.GradeUpdateOneRequiredWithoutClassesNestedInput
   students?: Prisma.StudentUpdateManyWithoutClassNestedInput
   supervisors?: Prisma.StaffUpdateManyWithoutClassNestedInput
@@ -1262,6 +1319,7 @@ export type ClassUncheckedUpdateWithoutSchoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   gradeId?: Prisma.StringFieldUpdateOperationsInput | string
   students?: Prisma.StudentUncheckedUpdateManyWithoutClassNestedInput
   supervisors?: Prisma.StaffUncheckedUpdateManyWithoutClassNestedInput
@@ -1276,6 +1334,7 @@ export type ClassUncheckedUpdateManyWithoutSchoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   gradeId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -1283,6 +1342,7 @@ export type ClassCreateManyGradeInput = {
   id?: string
   name: string
   capacity: number
+  isActive?: boolean
   schoolId: string
 }
 
@@ -1290,6 +1350,7 @@ export type ClassUpdateWithoutGradeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   school?: Prisma.SchoolUpdateOneRequiredWithoutClassesNestedInput
   students?: Prisma.StudentUpdateManyWithoutClassNestedInput
   supervisors?: Prisma.StaffUpdateManyWithoutClassNestedInput
@@ -1304,6 +1365,7 @@ export type ClassUncheckedUpdateWithoutGradeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   students?: Prisma.StudentUncheckedUpdateManyWithoutClassNestedInput
   supervisors?: Prisma.StaffUncheckedUpdateManyWithoutClassNestedInput
@@ -1318,6 +1380,7 @@ export type ClassUncheckedUpdateManyWithoutGradeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   capacity?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -1410,6 +1473,7 @@ export type ClassSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   id?: boolean
   name?: boolean
   capacity?: boolean
+  isActive?: boolean
   schoolId?: boolean
   gradeId?: boolean
   school?: boolean | Prisma.SchoolDefaultArgs<ExtArgs>
@@ -1428,6 +1492,7 @@ export type ClassSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   id?: boolean
   name?: boolean
   capacity?: boolean
+  isActive?: boolean
   schoolId?: boolean
   gradeId?: boolean
   school?: boolean | Prisma.SchoolDefaultArgs<ExtArgs>
@@ -1438,6 +1503,7 @@ export type ClassSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   id?: boolean
   name?: boolean
   capacity?: boolean
+  isActive?: boolean
   schoolId?: boolean
   gradeId?: boolean
   school?: boolean | Prisma.SchoolDefaultArgs<ExtArgs>
@@ -1448,11 +1514,12 @@ export type ClassSelectScalar = {
   id?: boolean
   name?: boolean
   capacity?: boolean
+  isActive?: boolean
   schoolId?: boolean
   gradeId?: boolean
 }
 
-export type ClassOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "capacity" | "schoolId" | "gradeId", ExtArgs["result"]["class"]>
+export type ClassOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "capacity" | "isActive" | "schoolId" | "gradeId", ExtArgs["result"]["class"]>
 export type ClassInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   school?: boolean | Prisma.SchoolDefaultArgs<ExtArgs>
   grade?: boolean | Prisma.GradeDefaultArgs<ExtArgs>
@@ -1491,6 +1558,7 @@ export type $ClassPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     id: string
     name: string
     capacity: number
+    isActive: boolean
     schoolId: string
     gradeId: string
   }, ExtArgs["result"]["class"]>
@@ -1928,6 +1996,7 @@ export interface ClassFieldRefs {
   readonly id: Prisma.FieldRef<"Class", 'String'>
   readonly name: Prisma.FieldRef<"Class", 'String'>
   readonly capacity: Prisma.FieldRef<"Class", 'Int'>
+  readonly isActive: Prisma.FieldRef<"Class", 'Boolean'>
   readonly schoolId: Prisma.FieldRef<"Class", 'String'>
   readonly gradeId: Prisma.FieldRef<"Class", 'String'>
 }

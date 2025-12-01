@@ -18,7 +18,7 @@ const GET_EXAMS = gql(`
       type
       maxScore
       term {
-        id term
+        id session
       }
       grade {
         id name

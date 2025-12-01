@@ -54,10 +54,17 @@ export {
   verifyPaymentStatus,
 } from "./fee";
 export { markStaffAttendance, markStudentAttendance } from "./attendance";
-export {
-  createSchoolAction,
-  createAcademicYearAction,
-  createTermAction,
-} from "./school";
+export { createSchoolAction } from "./school";
 export { assignTimetableAction, assignPeriodSlotAction } from "./timetable";
 export { createProgramAction, deleteProgramAction } from "./program";
+export {
+  upsertTermAction,
+  upsertAcademicYearAction,
+  updateAcademicYearStatusAction,
+  updateTermStatusAction,
+} from "./academic-session";
+export {
+  createPayrollProfileAction,
+  updatePayrollProfileAction,
+  deletePayrollProfileAction,
+} from "./payroll";

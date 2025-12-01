@@ -1,10 +1,15 @@
+import { getCurrentUser } from "@/lib/server/utils";
+import { defaultHome } from "@/lib/settings";
+import { redirect } from "next/navigation";
 import { ReactNode } from "react";
-import MenuSidebar from "@/components/landing-page/MenuSidebar";
 
-const Layout = ({ children }: { children: ReactNode }) => {
+const Layout = async ({ children }: { children: ReactNode }) => {
+  const { currentUserId, accessLevel } = await getCurrentUser();
+
+  if (currentUserId && accessLevel) redirect(defaultHome[accessLevel])
+
   return (
     <div className="w-full">
-      <MenuSidebar />
       {children}
     </div>
   );

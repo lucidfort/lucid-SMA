@@ -142,15 +142,20 @@ export type Invoice = Prisma.InvoiceModel
  */
 export type InvoicePayment = Prisma.InvoicePaymentModel
 /**
- * Model SalaryPayment
+ * Model StaffPayrollProfile
  * 
  */
-export type SalaryPayment = Prisma.SalaryPaymentModel
+export type StaffPayrollProfile = Prisma.StaffPayrollProfileModel
 /**
- * Model StaffBankAccount
+ * Model PayrollTransactions
  * 
  */
-export type StaffBankAccount = Prisma.StaffBankAccountModel
+export type PayrollTransactions = Prisma.PayrollTransactionsModel
+/**
+ * Model PayrollTransactionLine
+ * 
+ */
+export type PayrollTransactionLine = Prisma.PayrollTransactionLineModel
 /**
  * Model Event
  * 

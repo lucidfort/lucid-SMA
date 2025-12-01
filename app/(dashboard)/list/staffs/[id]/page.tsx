@@ -1,16 +1,14 @@
-import { InfoCard } from "@/components/Card";
+import Announcements from "@/components/Announcements";
 import TimetableBoard from "@/components/TimetableBoard";
 import {
   GetStaffQuery,
   GetStaffQueryVariables,
 } from "@/lib/generated/graphql/server";
-import { getCurrentUser } from "@/lib/server/utils";
 import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
 import { SearchParams } from "@/types";
 import { gql } from "@urql/core";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import Announcements from "@/components/Announcements";
 
 const GET_STAFF = gql(`
   query GetStaff($id: ID!) {
@@ -42,7 +40,6 @@ const GET_STAFF = gql(`
 
 const TeacherDetailsPage = async ({ params }: SearchParams) => {
   const { id } = await params;
-  const { accessLevel, schoolId } = await getCurrentUser();
 
   const { client } = await createUrqlServerClient();
   const { data } = await client
@@ -53,41 +50,18 @@ const TeacherDetailsPage = async ({ params }: SearchParams) => {
 
   if (!teacher) return notFound();
 
-  // const smallCards = [
-  //   {
-  //     value: "90%",
-  //     desc: "Attendance",
-  //     img: "/singleAttendance.svg",
-  //   },
-  //   {
-  //     value: `${teacher._count.subjects}`,
-  //     desc: "Subjects",
-  //     img: "/singleBranch.svg",
-  //   },
-  //   {
-  //     value: `${teacher._count.lessons}`,
-  //     desc: "Lessons",
-  //     img: "/singleLesson.svg",
-  //   },
-  //   {
-  //     value: `${teacher._count.classes}`,
-  //     desc: "Classes",
-  //     img: "/singleClass.svg",
-  //   },
-  // ];
-
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 xl:flex-row">
       {/* LEFT */}
       <div className="w-full xl:w-2/3">
         {/* TOP */}
         <div className="flex flex-col gap-4 lg:flex-row">
-          <InfoCard
+          {/* <InfoCard
             table="staff"
             data={teacher}
             accessLevel={accessLevel!}
             schoolId={schoolId!}
-          />
+          /> */}
           {/*<SmallCard cards={smallCards} />*/}
         </div>
 

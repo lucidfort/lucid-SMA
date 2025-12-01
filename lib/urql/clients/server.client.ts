@@ -3,6 +3,7 @@ import {
   errorExchange,
   fetchExchange,
   ssrExchange,
+  cacheExchange,
   subscriptionExchange,
 } from "@urql/next";
 import { cookies } from "next/headers";
@@ -31,6 +32,7 @@ export async function createUrqlServerClient() {
         },
       }),
       ssr,
+      cacheExchange,
       fetchExchange,
       subscriptionExchange({
         forwardSubscription(operation) {

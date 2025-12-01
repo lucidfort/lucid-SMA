@@ -9,10 +9,14 @@ const GET_TERMS = gql(`
     query GetTerms {
         terms {
             id
-            term
+            session
             startDate
             endDate
             isCurrent
+            academicYear {
+              id
+              year
+            }
         }
     }
 `);
@@ -23,11 +27,17 @@ const TermsListPage = async () => {
   const { client } = await createUrqlServerClient();
   const { data } = await client.query<GetTermsQuery>(GET_TERMS, {});
 
+  const formattedData = data?.terms?.map(term => ({
+    ...term,
+    year: term.academicYear.year,
+    academicYearId: term.academicYear.id
+  }))
+
   return (
     <div className="m-4 mt-0 flex-1 rounded-md bg-white p-4">
       <DataTable
         columns={termsColumns}
-        data={data?.terms ?? []}
+        data={formattedData ?? []}
         accessLevel={accessLevel!}
         tableFor="term"
         title="Terms"

@@ -44,8 +44,9 @@ export const ModelName = {
   TermlyResult: 'TermlyResult',
   Invoice: 'Invoice',
   InvoicePayment: 'InvoicePayment',
-  SalaryPayment: 'SalaryPayment',
-  StaffBankAccount: 'StaffBankAccount',
+  StaffPayrollProfile: 'StaffPayrollProfile',
+  PayrollTransactions: 'PayrollTransactions',
+  PayrollTransactionLine: 'PayrollTransactionLine',
   Event: 'Event',
   Announcement: 'Announcement',
   StudentClassHistory: 'StudentClassHistory',
@@ -85,6 +86,7 @@ export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typ
 export const SchoolScalarFieldEnum = {
   id: 'id',
   slug: 'slug',
+  organizationId: 'organizationId',
   name: 'name',
   email: 'email',
   phone: 'phone',
@@ -101,6 +103,7 @@ export type SchoolScalarFieldEnum = (typeof SchoolScalarFieldEnum)[keyof typeof 
 export const ProgramScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  isActive: 'isActive',
   schoolId: 'schoolId'
 } as const
 
@@ -113,6 +116,8 @@ export const AcademicYearScalarFieldEnum = {
   startDate: 'startDate',
   endDate: 'endDate',
   isCurrent: 'isCurrent',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
   schoolId: 'schoolId'
 } as const
 
@@ -121,10 +126,12 @@ export type AcademicYearScalarFieldEnum = (typeof AcademicYearScalarFieldEnum)[k
 
 export const TermScalarFieldEnum = {
   id: 'id',
-  term: 'term',
+  session: 'session',
   startDate: 'startDate',
   endDate: 'endDate',
   isCurrent: 'isCurrent',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
   schoolId: 'schoolId',
   academicYearId: 'academicYearId'
 } as const
@@ -147,6 +154,7 @@ export const ClassScalarFieldEnum = {
   id: 'id',
   name: 'name',
   capacity: 'capacity',
+  isActive: 'isActive',
   schoolId: 'schoolId',
   gradeId: 'gradeId'
 } as const
@@ -204,8 +212,6 @@ export const ManagerScalarFieldEnum = {
   surname: 'surname',
   email: 'email',
   phone: 'phone',
-  img: 'img',
-  birthday: 'birthday',
   schoolId: 'schoolId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -433,35 +439,46 @@ export const InvoicePaymentScalarFieldEnum = {
 export type InvoicePaymentScalarFieldEnum = (typeof InvoicePaymentScalarFieldEnum)[keyof typeof InvoicePaymentScalarFieldEnum]
 
 
-export const SalaryPaymentScalarFieldEnum = {
+export const StaffPayrollProfileScalarFieldEnum = {
   id: 'id',
-  totalAmount: 'totalAmount',
-  deductions: 'deductions',
-  deductionReason: 'deductionReason',
-  amountPaid: 'amountPaid',
-  payPeriod: 'payPeriod',
-  status: 'status',
-  paymentDate: 'paymentDate',
+  accountNumber: 'accountNumber',
+  bankName: 'bankName',
+  accountName: 'accountName',
+  salary: 'salary',
+  schoolId: 'schoolId',
+  staffId: 'staffId'
+} as const
+
+export type StaffPayrollProfileScalarFieldEnum = (typeof StaffPayrollProfileScalarFieldEnum)[keyof typeof StaffPayrollProfileScalarFieldEnum]
+
+
+export const PayrollTransactionsScalarFieldEnum = {
+  id: 'id',
   reference: 'reference',
+  grossAmount: 'grossAmount',
+  netAmount: 'netAmount',
+  payYear: 'payYear',
+  payMonth: 'payMonth',
+  paymentDate: 'paymentDate',
+  status: 'status',
   schoolId: 'schoolId',
   staffId: 'staffId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type SalaryPaymentScalarFieldEnum = (typeof SalaryPaymentScalarFieldEnum)[keyof typeof SalaryPaymentScalarFieldEnum]
+export type PayrollTransactionsScalarFieldEnum = (typeof PayrollTransactionsScalarFieldEnum)[keyof typeof PayrollTransactionsScalarFieldEnum]
 
 
-export const StaffBankAccountScalarFieldEnum = {
+export const PayrollTransactionLineScalarFieldEnum = {
   id: 'id',
-  accountNumber: 'accountNumber',
-  bankName: 'bankName',
-  accountName: 'accountName',
-  schoolId: 'schoolId',
-  staffId: 'staffId'
+  label: 'label',
+  type: 'type',
+  amount: 'amount',
+  salaryPaymentId: 'salaryPaymentId'
 } as const
 
-export type StaffBankAccountScalarFieldEnum = (typeof StaffBankAccountScalarFieldEnum)[keyof typeof StaffBankAccountScalarFieldEnum]
+export type PayrollTransactionLineScalarFieldEnum = (typeof PayrollTransactionLineScalarFieldEnum)[keyof typeof PayrollTransactionLineScalarFieldEnum]
 
 
 export const EventScalarFieldEnum = {

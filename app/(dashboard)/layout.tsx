@@ -10,9 +10,8 @@ import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
 import { GET_SCHOOL } from "@/operations/server/shared";
 import { Metadata } from "next";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { ReactNode } from "react";
-import NotificationSubscriber from "@/components/NotificationSubscriber";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { schoolId } = await getCurrentUser();
@@ -67,7 +66,7 @@ export default async function DashboardLayout({
   );
 
   const school = data?.school;
-  if (!school) redirect("/sign-in");
+  if (!school) notFound();
 
   const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
 
@@ -84,10 +83,6 @@ export default async function DashboardLayout({
           />
 
           <div className="flex-1 p-4">{children}</div>
-
-          <NotificationSubscriber />
-          {/*<TermProvider currentTerm={currentTerm}>*/}
-          {/*</TermProvider>*/}
         </div>
       </main>
     </SidebarProvider>

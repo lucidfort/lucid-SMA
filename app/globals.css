@@ -4,6 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
+  --color-primary-btn: var(--primary-btn);
   --color-lamaSky: #c3ebfa;
   --color-lamaSkyLight: #edf9fd;
   --color-lamaPurple: #cfceff;
@@ -50,6 +51,8 @@
 }
 
 :root {
+  --primary: #1e2233;
+  --primary-btn: #1f274df5;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.129 0.042 264.695);
@@ -57,7 +60,6 @@
   --card-foreground: oklch(0.129 0.042 264.695);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
   --primary-foreground: oklch(0.984 0.003 247.858);
   --secondary: oklch(0.968 0.007 247.896);
   --secondary-foreground: oklch(0.208 0.042 265.755);
@@ -148,18 +150,21 @@
 }
 
 .form-submit_btn {
-  @apply flex-center cursor-pointer rounded-md bg-blue-400 py-2 text-white capitalize disabled:bg-blue-400/40 disabled:text-neutral-800 disabled:cursor-not-allowed transition-colors ease-in-out duration-200;
+  @apply flex-center cursor-pointer rounded-md bg-primary-btn py-2 text-white capitalize transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-80;
 }
 
 .select-input {
   @apply w-full rounded-md p-2 text-sm ring-[1.5px] ring-gray-300;
 }
 
+.form-input {
+  @apply w-full rounded-md bg-gray-200 p-2 text-sm text-gray-700 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-4;
+}
+
 @layer utilities {
   .custom-scrollbar::-webkit-scrollbar {
     width: 7px;
     height: 7px;
-    border-radius: 5px;
   }
 
   .custom-scrollbar::-webkit-scrollbar-track {
@@ -167,7 +172,7 @@
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: var(--color-blue-300);
+    background: var(--primary-btn);
     border-radius: 50px;
   }
 }

@@ -11,9 +11,8 @@ import {
   useGetClassesQuery,
   useGetGradesQuery,
   useGetProgramsQuery,
-  useGetSchoolQuery,
   useGetSubjectsQuery,
-  useUpdateStaffMutation,
+  useUpdateStaffMutation
 } from "@/lib/generated/graphql/client";
 import { handleGraphqlClientErrors } from "@/lib/utils";
 import { staffSchema, StaffSchema } from "@/lib/validation";
@@ -27,9 +26,11 @@ import { toast } from "sonner";
 import InputField, { FormFieldType } from "../InputField";
 import { Form } from "../ui/form";
 import { SelectContent, SelectItem } from "../ui/select";
+import { useUserStore } from "@/stores/user.store";
 
-const StaffForm = ({ type, data, setOpen, relatedData }: FormProps) => {
+const StaffForm = ({ type, data, setOpen }: FormProps) => {
   const router = useRouter();
+  const { user } = useUserStore()
 
   const form = useForm<StaffSchema>({
     resolver: zodResolver(staffSchema),
@@ -47,13 +48,9 @@ const StaffForm = ({ type, data, setOpen, relatedData }: FormProps) => {
       role: data?.role ?? "",
       isActive: true,
       programId: data?.class.grade.program.id ?? null,
-      gradeId: data.class.grade.id ?? null,
+      gradeId: data?.class.grade.id ?? null,
       classId: data?.class.id ?? null,
     },
-  });
-
-  const [schoolResult] = useGetSchoolQuery({
-    variables: { id: relatedData?.schoolId },
   });
 
   const accessLevel = form.watch("accessLevel");
@@ -134,7 +131,7 @@ const StaffForm = ({ type, data, setOpen, relatedData }: FormProps) => {
     }
   });
 
-  const slug = schoolResult.data?.school?.slug;
+  const slug = user?.schoolSlug
 
   const isLoading = createResult.fetching || updateResult.fetching;
 
@@ -204,7 +201,7 @@ const StaffForm = ({ type, data, setOpen, relatedData }: FormProps) => {
             control={form.control}
             name="img"
             label="Photo"
-            folder="learnatffs"
+            folder={slug ?? "unclaimed"}
           />
         </div>
 
@@ -218,7 +215,7 @@ const StaffForm = ({ type, data, setOpen, relatedData }: FormProps) => {
             control={form.control}
             name="employeeId"
             placeholder="202"
-            prefix={slug}
+            prefix={`${slug}-p`}
             fieldType={FormFieldType.INPUT}
           />
           <InputField

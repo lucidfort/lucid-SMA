@@ -26,7 +26,7 @@ export default clerkMiddleware(async (auth, req) => {
   }
 
   for (const { matcher, allowedRoles } of matchers) {
-    if (matcher(req) && !allowedRoles.includes(accessLevel!)) {
+    if (matcher(req) && accessLevel && !allowedRoles.includes(accessLevel!)) {
       return NextResponse.redirect(new URL(defaultHome[accessLevel!], req.url));
     }
   }

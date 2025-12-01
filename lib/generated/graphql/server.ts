@@ -388,9 +388,7 @@ export type InvoicePaymentFilter = {
 };
 
 export type ManagerInput = {
-  birthday: Scalars['DateTime']['input'];
   email: Scalars['String']['input'];
-  img?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   password: Scalars['String']['input'];
   phone: Scalars['String']['input'];
@@ -400,6 +398,8 @@ export type ManagerInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  activateAcademicYear?: Maybe<MutationActivateAcademicYearResult>;
+  activateTerm?: Maybe<MutationActivateTermResult>;
   createAnnouncement?: Maybe<MutationCreateAnnouncementResult>;
   createAssignment?: Maybe<MutationCreateAssignmentResult>;
   createClass?: Maybe<MutationCreateClassResult>;
@@ -409,6 +409,7 @@ export type Mutation = {
   createGrade?: Maybe<MutationCreateGradeResult>;
   createInvoice?: Maybe<MutationCreateInvoiceResult>;
   createParent?: Maybe<MutationCreateParentResult>;
+  createPayrollProfile?: Maybe<MutationCreatePayrollProfileResult>;
   createProgram?: Maybe<MutationCreateProgramResult>;
   createResult?: Maybe<MutationCreateResultResult>;
   createSchool?: Maybe<MutationCreateSchoolResult>;
@@ -429,6 +430,7 @@ export type Mutation = {
   updateGrade?: Maybe<MutationUpdateGradeResult>;
   updateInvoice?: Maybe<MutationUpdateInvoiceResult>;
   updateParent?: Maybe<MutationUpdateParentResult>;
+  updatePayrollProfile?: Maybe<MutationUpdatePayrollProfileResult>;
   updatePeriodSlot?: Maybe<MutationUpdatePeriodSlotResult>;
   updateResult?: Maybe<MutationUpdateResultResult>;
   updateStaff?: Maybe<MutationUpdateStaffResult>;
@@ -436,6 +438,17 @@ export type Mutation = {
   updateSubject?: Maybe<MutationUpdateSubjectResult>;
   updateTimetableAssignment?: Maybe<MutationUpdateTimetableAssignmentResult>;
   verifyPaymentStatus?: Maybe<MutationVerifyPaymentStatusResult>;
+};
+
+
+export type MutationActivateAcademicYearArgs = {
+  academicYearId: Scalars['ID']['input'];
+};
+
+
+export type MutationActivateTermArgs = {
+  academicYearId: Scalars['ID']['input'];
+  termId: Scalars['ID']['input'];
 };
 
 
@@ -481,6 +494,11 @@ export type MutationCreateInvoiceArgs = {
 
 export type MutationCreateParentArgs = {
   input: ParentInput;
+};
+
+
+export type MutationCreatePayrollProfileArgs = {
+  input: PayrollProfileInput;
 };
 
 
@@ -584,6 +602,11 @@ export type MutationUpdateParentArgs = {
 };
 
 
+export type MutationUpdatePayrollProfileArgs = {
+  input: PayrollProfileInput;
+};
+
+
 export type MutationUpdatePeriodSlotArgs = {
   input: TimetablePeriodInput;
 };
@@ -616,6 +639,20 @@ export type MutationUpdateTimetableAssignmentArgs = {
 
 export type MutationVerifyPaymentStatusArgs = {
   reference: Scalars['String']['input'];
+};
+
+export type MutationActivateAcademicYearResult = BaseAppError | BaseError | MutationActivateAcademicYearSuccess;
+
+export type MutationActivateAcademicYearSuccess = {
+  __typename?: 'MutationActivateAcademicYearSuccess';
+  data: Scalars['Boolean']['output'];
+};
+
+export type MutationActivateTermResult = BaseAppError | BaseError | MutationActivateTermSuccess;
+
+export type MutationActivateTermSuccess = {
+  __typename?: 'MutationActivateTermSuccess';
+  data: Scalars['Boolean']['output'];
 };
 
 export type MutationCreateAnnouncementResult = BaseAppError | BaseError | MutationCreateAnnouncementSuccess | UniqueConstraintError;
@@ -679,6 +716,13 @@ export type MutationCreateParentResult = BaseAppError | BaseError | ForeignKeyEr
 export type MutationCreateParentSuccess = {
   __typename?: 'MutationCreateParentSuccess';
   data: Parent;
+};
+
+export type MutationCreatePayrollProfileResult = BaseAppError | BaseError | MutationCreatePayrollProfileSuccess | UniqueConstraintError;
+
+export type MutationCreatePayrollProfileSuccess = {
+  __typename?: 'MutationCreatePayrollProfileSuccess';
+  data: StaffPayrollProfile;
 };
 
 export type MutationCreateProgramResult = BaseAppError | BaseError | MutationCreateProgramSuccess;
@@ -821,6 +865,13 @@ export type MutationUpdateParentSuccess = {
   data: Parent;
 };
 
+export type MutationUpdatePayrollProfileResult = BaseAppError | BaseError | MutationUpdatePayrollProfileSuccess | NotFoundError | UniqueConstraintError;
+
+export type MutationUpdatePayrollProfileSuccess = {
+  __typename?: 'MutationUpdatePayrollProfileSuccess';
+  data: StaffPayrollProfile;
+};
+
 export type MutationUpdatePeriodSlotResult = BaseAppError | BaseError | MutationUpdatePeriodSlotSuccess | UniqueConstraintError;
 
 export type MutationUpdatePeriodSlotSuccess = {
@@ -939,6 +990,29 @@ export enum PaymentStatus {
   Success = 'SUCCESS'
 }
 
+export type PayrollProfileInput = {
+  accountName: Scalars['String']['input'];
+  accountNumber: Scalars['String']['input'];
+  bankName: Scalars['String']['input'];
+  id?: InputMaybe<Scalars['ID']['input']>;
+  salary: Scalars['Int']['input'];
+  staffId: Scalars['ID']['input'];
+};
+
+export type PayrollTransactions = {
+  __typename?: 'PayrollTransactions';
+  createdAt: Scalars['DateTime']['output'];
+  grossAmount: Scalars['Int']['output'];
+  id: Scalars['ID']['output'];
+  netAmount: Scalars['Int']['output'];
+  payMonth: Scalars['Int']['output'];
+  payYear: Scalars['Int']['output'];
+  paymentDate?: Maybe<Scalars['DateTime']['output']>;
+  reference: Scalars['String']['output'];
+  staff: Staff;
+  status: PaymentStatus;
+};
+
 export type PeriodSlot = {
   __typename?: 'PeriodSlot';
   dayOfWeek: Scalars['Int']['output'];
@@ -987,6 +1061,8 @@ export type Query = {
   invoices?: Maybe<Array<Invoice>>;
   parent?: Maybe<Parent>;
   parents?: Maybe<Array<Parent>>;
+  payrollProfile?: Maybe<Array<StaffPayrollProfile>>;
+  payrollTransactions?: Maybe<Array<PayrollTransactions>>;
   programs?: Maybe<Array<Program>>;
   results?: Maybe<Array<Result>>;
   school?: Maybe<School>;
@@ -1073,6 +1149,13 @@ export type QueryParentsArgs = {
 };
 
 
+export type QueryPayrollTransactionsArgs = {
+  month: Scalars['Int']['input'];
+  paymentDate?: InputMaybe<Scalars['DateTime']['input']>;
+  year: Scalars['Int']['input'];
+};
+
+
 export type QueryResultsArgs = {
   filter: ResultFilter;
   termId?: InputMaybe<Scalars['ID']['input']>;
@@ -1092,6 +1175,7 @@ export type QueryStaffArgs = {
 
 export type QueryStaffsArgs = {
   filter?: InputMaybe<StaffFilterInput>;
+  searchTerm?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -1304,6 +1388,16 @@ export type StaffInput = {
   surname: Scalars['String']['input'];
 };
 
+export type StaffPayrollProfile = {
+  __typename?: 'StaffPayrollProfile';
+  accountName: Scalars['String']['output'];
+  accountNumber: Scalars['String']['output'];
+  bankName: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  salary: Scalars['Int']['output'];
+  staff: Staff;
+};
+
 export type Student = {
   __typename?: 'Student';
   activeState: Scalars['String']['output'];
@@ -1408,8 +1502,8 @@ export type Term = {
   endDate?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['ID']['output'];
   isCurrent: Scalars['Boolean']['output'];
+  session: Scalars['Int']['output'];
   startDate: Scalars['DateTime']['output'];
-  term: Scalars['Int']['output'];
 };
 
 export type TermInput = {
@@ -1417,8 +1511,8 @@ export type TermInput = {
   endDate?: InputMaybe<Scalars['DateTime']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
   isCurrent: Scalars['Boolean']['input'];
+  session: Scalars['String']['input'];
   startDate: Scalars['DateTime']['input'];
-  term: Scalars['String']['input'];
 };
 
 export type TimetableAssignment = {
@@ -1457,6 +1551,28 @@ export type UniqueConstraintError = AppError & Error & {
   message?: Maybe<Scalars['String']['output']>;
 };
 
+export type GetSchoolDetailsQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+  attendanceFilter: AttendanceFilter;
+}>;
+
+
+export type GetSchoolDetailsQuery = { __typename?: 'Query', school?: { __typename?: 'School', id: string, activeStaffCount: number, activeStudentsCount: number, studentSexDistribution: Array<{ __typename?: 'StudentSexCount', sex?: Sex | null, _count?: number | null }>, studentAttendances?: Array<{ __typename?: 'StudentAttendance', date: any, present: boolean }> | null } | null };
+
+export type GetStaffAccountDetailsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetStaffAccountDetailsQuery = { __typename?: 'Query', payrollProfile?: Array<{ __typename?: 'StaffPayrollProfile', id: string, accountName: string, accountNumber: string, bankName: string, salary: number, staff: { __typename?: 'Staff', id: string, name: string, surname: string } }> | null };
+
+export type GetPayrollTransactionsQueryVariables = Exact<{
+  month: Scalars['Int']['input'];
+  year: Scalars['Int']['input'];
+  paymentDate?: InputMaybe<Scalars['DateTime']['input']>;
+}>;
+
+
+export type GetPayrollTransactionsQuery = { __typename?: 'Query', payrollTransactions?: Array<{ __typename?: 'PayrollTransactions', id: string, netAmount: number, grossAmount: number, paymentDate?: any | null, createdAt: any, reference: string, status: PaymentStatus, staff: { __typename?: 'Staff', id: string, name: string, surname: string } }> | null };
+
 export type GetAcademicYearsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1467,7 +1583,7 @@ export type GetAssignmentsQueryVariables = Exact<{
 }>;
 
 
-export type GetAssignmentsQuery = { __typename?: 'Query', assignments?: Array<{ __typename?: 'Assignment', id: string, startDate: any, dueDate: any, maxScore: number, term: { __typename?: 'Term', id: string, term: number }, class: { __typename?: 'Class', id: string, name: string, grade: { __typename?: 'Grade', id: string, name: string } }, subject: { __typename?: 'Subject', id: string, name: string } }> | null };
+export type GetAssignmentsQuery = { __typename?: 'Query', assignments?: Array<{ __typename?: 'Assignment', id: string, startDate: any, dueDate: any, maxScore: number, term: { __typename?: 'Term', id: string, session: number }, class: { __typename?: 'Class', id: string, name: string, grade: { __typename?: 'Grade', id: string, name: string } }, subject: { __typename?: 'Subject', id: string, name: string } }> | null };
 
 export type GetClassAttendanceQueryVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -1519,12 +1635,12 @@ export type GetExamsQueryVariables = Exact<{
 }>;
 
 
-export type GetExamsQuery = { __typename?: 'Query', exams?: Array<{ __typename?: 'Exam', id: string, date: any, startTime: string, endTime?: string | null, type: ExamType, maxScore: number, term: { __typename?: 'Term', id: string, term: number }, grade: { __typename?: 'Grade', id: string, name: string }, subject: { __typename?: 'Subject', id: string, name: string } }> | null };
+export type GetExamsQuery = { __typename?: 'Query', exams?: Array<{ __typename?: 'Exam', id: string, date: any, startTime: string, endTime?: string | null, type: ExamType, maxScore: number, term: { __typename?: 'Term', id: string, session: number }, grade: { __typename?: 'Grade', id: string, name: string }, subject: { __typename?: 'Subject', id: string, name: string } }> | null };
 
 export type GetInvoicesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetInvoicesQuery = { __typename?: 'Query', invoices?: Array<{ __typename?: 'Invoice', id: string, number: string, title: string, amount: number, dueDate?: any | null, term: { __typename?: 'Term', term: number, academicYear: { __typename?: 'AcademicYear', year: string } }, grades: Array<{ __typename?: 'Grade', id: string, name: string }> }> | null };
+export type GetInvoicesQuery = { __typename?: 'Query', invoices?: Array<{ __typename?: 'Invoice', id: string, number: string, title: string, amount: number, dueDate?: any | null, term: { __typename?: 'Term', session: number, academicYear: { __typename?: 'AcademicYear', year: string } }, grades: Array<{ __typename?: 'Grade', id: string, name: string }> }> | null };
 
 export type GetGradeQueryVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -1592,7 +1708,7 @@ export type GetSubjectsQuery = { __typename?: 'Query', subjects?: Array<{ __type
 export type GetTermsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetTermsQuery = { __typename?: 'Query', terms?: Array<{ __typename?: 'Term', id: string, term: number, startDate: any, endDate?: any | null, isCurrent: boolean }> | null };
+export type GetTermsQuery = { __typename?: 'Query', terms?: Array<{ __typename?: 'Term', id: string, session: number, startDate: any, endDate?: any | null, isCurrent: boolean, academicYear: { __typename?: 'AcademicYear', id: string, year: string } }> | null };
 
 export type GetTransactionsQueryVariables = Exact<{
   filter: InvoicePaymentFilter;
@@ -1601,21 +1717,14 @@ export type GetTransactionsQueryVariables = Exact<{
 
 export type GetTransactionsQuery = { __typename?: 'Query', invoicePayments?: Array<{ __typename?: 'InvoicePayment', id: string, amountPaid: number, createdAt: any, paidAt?: any | null, method?: string | null, payerEmail?: string | null, reference: string, status: PaymentStatus, students: Array<{ __typename?: 'Student', name: string, surname: string }>, invoice: { __typename?: 'Invoice', id: string, number: string } }> | null };
 
-export type GetSchoolDetailsQueryVariables = Exact<{
-  id: Scalars['ID']['input'];
+export type GetParentQueryVariables = Exact<{
+  id?: InputMaybe<Scalars['ID']['input']>;
+  clerkUserId?: InputMaybe<Scalars['ID']['input']>;
   attendanceFilter: AttendanceFilter;
 }>;
 
 
-export type GetSchoolDetailsQuery = { __typename?: 'Query', school?: { __typename?: 'School', id: string, activeStaffCount: number, activeStudentsCount: number, studentSexDistribution: Array<{ __typename?: 'StudentSexCount', sex?: Sex | null, _count?: number | null }>, studentAttendances?: Array<{ __typename?: 'StudentAttendance', date: any, present: boolean }> | null } | null };
-
-export type GetParentQueryVariables = Exact<{
-  id?: InputMaybe<Scalars['ID']['input']>;
-  clerkUserId?: InputMaybe<Scalars['ID']['input']>;
-}>;
-
-
-export type GetParentQuery = { __typename?: 'Query', parent?: { __typename?: 'Parent', id: string, name: string, surname: string, children: Array<{ __typename?: 'ParentStudent', student: { __typename?: 'Student', id: string, name: string, surname: string, class: { __typename?: 'Class', id: string, name: string, grade: { __typename?: 'Grade', id: string, name: string } } } }> } | null };
+export type GetParentQuery = { __typename?: 'Query', parent?: { __typename?: 'Parent', id: string, name: string, surname: string, children: Array<{ __typename?: 'ParentStudent', student: { __typename?: 'Student', id: string, name: string, surname: string, class: { __typename?: 'Class', id: string, name: string, grade: { __typename?: 'Grade', id: string, name: string }, attendances: Array<{ __typename?: 'StudentAttendance', date: any, present: boolean }> } } }> } | null };
 
 export type GetStudentPerformanceDetailsQueryVariables = Exact<{
   id: Scalars['ID']['input'];

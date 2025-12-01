@@ -1,5 +1,6 @@
-query GetSchool($id: ID!) {
+query GetSchoolSlug($id: ID!) {
   school(id: $id) {
+    id
     slug
   }
 }
@@ -22,27 +23,5 @@ query GetSubjects($teacherId: ID) {
   subjects(teacherId: $teacherId) {
     id
     name
-  }
-}
-
-query GetAcademicYears {
-  academicYears {
-    id
-    year
-    isCurrent
-    terms {
-      term
-    }
-  }
-}
-
-query GetTerms($take: Int) {
-  terms(take: $take) {
-    id
-    term
-    isCurrent
-    academicYear {
-      year
-    }
   }
 }

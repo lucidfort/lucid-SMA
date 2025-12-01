@@ -1,6 +1,5 @@
-import React, { ReactNode } from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { ProgramType } from "@/lib/generated/prisma/enums";
+import React, { ReactNode } from "react";
 
 type SearchParams = {
   searchParams: Promise<{ [key: string]: string }>;
@@ -26,13 +25,15 @@ type Table =
   | "attendance"
   | "event"
   | "announcement"
-  | "invoice"
-  | "transaction"
   | "grade"
   | "program"
   | "timetable"
   | "term"
-  | "academic-year";
+  | "academic-year"
+  | "invoice"
+  | "transaction"
+  | "payroll-profile"
+  | "payroll-transaction";
 
 type RoleAccessLevel =
   | "student"
@@ -187,38 +188,4 @@ declare interface DataTableProps {
   };
   relatedData?: any;
   paginate?: boolean;
-}
-
-declare interface CreateSchoolInput {
-  programs: ProgramType[];
-  grades: {
-    gradeName: string;
-    programName: string;
-  }[];
-  manager: {
-    username: string;
-    password: string;
-    name: string;
-    surname: string;
-    birthday: Date;
-    email: string;
-    phone: string;
-    img?: string | null;
-  };
-  slug: string;
-  name: string;
-  address: string;
-  email: string;
-  phone: string;
-  logo?: string | null;
-  motto?: string | null;
-}
-
-declare interface UserAuthInput {
-  username: string;
-  password?: string;
-  firstName: string;
-  lastName: string;
-  accessLevel: string;
-  schoolId: string;
 }

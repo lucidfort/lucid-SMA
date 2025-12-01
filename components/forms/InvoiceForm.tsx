@@ -21,6 +21,7 @@ import { Form } from "../ui/form";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { SelectContent, SelectItem } from "../ui/select";
+import { schoolTerms } from "@/constants";
 
 const InvoiceForm = ({ type, data, setOpen }: FormProps) => {
   const router = useRouter();
@@ -95,9 +96,9 @@ const InvoiceForm = ({ type, data, setOpen }: FormProps) => {
             placeholder="Select Term"
           >
             <SelectContent>
-              {terms.map(({ id, term, isCurrent, academicYear }) => (
+              {terms.map(({ id, session, isCurrent, academicYear }) => (
                 <SelectItem key={id} value={id}>
-                  {academicYear.year} - {term} {isCurrent ? "(Current)" : ""}
+                  {academicYear.year} {session && `-${schoolTerms.find(term => term.id === session)?.name} term`} {isCurrent ? "(Current)" : ""}
                 </SelectItem>
               ))}
             </SelectContent>

@@ -14,8 +14,8 @@ const ContractType = builder.enumType("ContractType", {
 
 const StaffFilterInput = builder.inputType("StaffFilterInput", {
   fields: (t) => ({
-    isFormTeacher: t.boolean({ required: false }),
     isActive: t.boolean({ required: true }),
+    isFormTeacher: t.boolean(),
     accessLevel: t.field({ type: AccessLevel }),
     classId: t.string(),
   }),
@@ -106,8 +106,8 @@ builder.queryType({
     staffs: t.prismaField({
       type: ["Staff"],
       args: {
+        searchTerm: t.arg.string(),
         filter: t.arg({ type: StaffFilterInput, required: false }),
-        // attendanceFilter: t.arg
       },
       resolve: async (query, _parent, args, ctx) => {
         const { isFormTeacher, isActive, accessLevel, classId } =
@@ -120,6 +120,12 @@ builder.queryType({
             classId,
             ...(accessLevel && { accessLevel }),
             ...(isFormTeacher && { isFormTeacher }),
+            ...(args.searchTerm && {
+              OR: [
+                { name: { contains: args.searchTerm, mode: "insensitive" } },
+                { surname: { contains: args.searchTerm, mode: "insensitive" } },
+              ],
+            }),
           },
           ...query,
         });

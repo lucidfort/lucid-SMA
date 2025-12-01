@@ -1,13 +1,32 @@
 "use server";
 
-import { AppError, UniqueConstraintError } from "@/lib/pothos/errors";
 import prisma from "@/lib/prisma";
-import { getCurrentUser, handleGraphqlServerErrors } from "@/lib/server/utils";
-import { TermSchema } from "@/lib/validation";
-import { CreateSchoolInput, UserAuthInput } from "@/types";
 import { clerkClient } from "@clerk/nextjs/server";
+import { SchoolInput } from "../generated/graphql/server";
+import { handleGraphqlServerErrors } from "../server/utils";
+import { getCurrentSession } from "../utils";
 
-export async function createSchoolAction(args: CreateSchoolInput) {
+interface UserAuthInput {
+  username: string;
+  password?: string;
+  email?: string;
+  phone: string;
+  name: string;
+  surname: string;
+  accessLevel: string;
+  schoolId: string;
+  userClerkId?: string;
+  organizationId?: string;
+}
+
+interface SchoolInputArgs extends Omit<SchoolInput, "programs"> {
+  programs: ("CRECHE" | "NURSERY" | "PRIMARY" | "SECONDARY")[];
+}
+
+export async function createSchoolAction(args: SchoolInputArgs) {
+  let clerkUserId = "";
+  let organizationId = "";
+
   try {
     const client = await clerkClient();
     const {
@@ -18,172 +37,161 @@ export async function createSchoolAction(args: CreateSchoolInput) {
     } = args;
 
     const user = await createUser({
-      username: managerArgs.username,
+      ...managerArgs,
       password,
-      firstName: managerArgs.name,
-      lastName: managerArgs.surname,
       accessLevel: "manager",
       schoolId: "",
     });
 
-    return await prisma.$transaction(async (tx) => {
+    clerkUserId = user.id;
+
+    const organization = await client.organizations.createOrganization({
+      name: input.name,
+      slug: input.slug,
+      createdBy: user.id,
+    });
+
+    organizationId = organization.id;
+
+    const response = await prisma.$transaction(async (tx) => {
       const school = await tx.school.create({
         data: {
           ...input,
+          organizationId: organization.id,
         },
       });
 
-      const createdPrograms = await Promise.all(
-        programs.map((program) =>
-          tx.program.create({
-            data: {
-              name: program,
-              schoolId: school.id,
-            },
-          }),
-        ),
-      );
+      const createdPrograms = await tx.program.createManyAndReturn({
+        data: programs.map((program) => ({
+          name: program,
+          schoolId: school.id,
+        })),
+      });
 
       const programMap = Object.fromEntries(
         createdPrograms.map((program) => [program.name, program.id]),
       );
 
-      const gradeInserts = grades.map((g) => ({
-        name: g.gradeName,
-        programId: programMap[g.programName],
-        schoolId: school.id,
-      }));
-
-      await tx.grade.createMany({ data: gradeInserts });
+      await tx.grade.createMany({
+        data: grades.map((g) => ({
+          name: g.gradeName,
+          programId: programMap[g.programName],
+          schoolId: school.id,
+        })),
+      });
 
       await tx.manager.create({
         data: { ...managerArgs, schoolId: school.id, clerkUserId: user.id },
       });
 
-      await client.users
-        .updateUserMetadata(user.id, {
-          publicMetadata: { schoolId: school.id },
-        })
-        .catch((err) => {
-          throw new Error(err?.message || "Failed to update user metadata");
-        });
+      const session = getCurrentSession();
+
+      await tx.academicYear.create({
+        data: {
+          schoolId: school.id,
+          year: session.academicYear,
+          startDate: session.academicYearStartDate,
+          isCurrent: true,
+          terms: {
+            create: {
+              session: parseInt(session.currentTerm),
+              startDate: session.termStartDate,
+              isCurrent: true,
+              schoolId: school.id,
+            },
+          },
+        },
+      });
 
       return school;
     });
-  } catch (e) {
-    handleGraphqlServerErrors(e);
-    console.log(e);
-  }
-}
 
-export async function createTermAction(args: Omit<TermSchema, "year">) {
-  try {
-    const { schoolId } = await getCurrentUser();
-
-    const { id, term, academicYearId, ...input } = args;
-
-    return await prisma.term.upsert({
-      where: {
-        schoolId_academicYearId_term: {
-          schoolId: schoolId!,
-          term: parseInt(term!),
-          academicYearId: academicYearId!,
-        },
-        id: id!,
-      },
-      update: {
-        ...input,
-        academicYearId: academicYearId!,
-      },
-      create: {
-        schoolId: schoolId!,
-        term: parseInt(term!),
-        academicYearId: academicYearId!,
-        ...input,
-      },
+    await client.users.updateUserMetadata(user.id, {
+      publicMetadata: { schoolId: response.id },
     });
+
+    return response;
   } catch (e) {
-    handleGraphqlServerErrors(e);
-  }
-}
+    if (clerkUserId && clerkUserId !== "") {
+      await deleteUserAuthInfo(clerkUserId);
+    }
 
-export async function createAcademicYearAction(
-  args: Omit<TermSchema, "term" | "academicYearId">,
-) {
-  try {
-    const { schoolId } = await getCurrentUser();
+    if (organizationId && organizationId !== "") {
+      await deleteOrganization(organizationId);
+    }
 
-    const { id, year, ...input } = args;
-
-    return await prisma.academicYear.upsert({
-      where: {
-        schoolId_year: {
-          schoolId: schoolId!,
-          year: year!,
-        },
-        id: id!,
-      },
-      update: {
-        ...input,
-        year: year!,
-      },
-      create: {
-        schoolId: schoolId!,
-        ...input,
-        year: year!,
-      },
-    });
-  } catch (e) {
-    handleGraphqlServerErrors(e);
+    return await handleGraphqlServerErrors(e);
   }
 }
 
 export async function createUser(args: UserAuthInput) {
   const client = await clerkClient();
 
-  const { accessLevel, schoolId, ...input } = args;
+  const {
+    accessLevel,
+    schoolId,
+    name,
+    surname,
+    email,
+    username,
+    password,
+    organizationId,
+  } = args;
 
-  return await client.users
-    .createUser({
-      ...input,
-      publicMetadata: { accessLevel, schoolId },
-    })
-    .catch((error) => {
-      if (error?.code !== "P2002") {
-        throw new AppError(error.message || "Failed to create user", "");
-      } else {
-        const target = error?.meta?.target;
-        const meta = target[target.length - 1];
+  const user = await client.users.createUser({
+    username,
+    password,
+    firstName: name,
+    lastName: surname,
+    ...(email && { emailAddress: [email] }),
+    publicMetadata: { accessLevel, schoolId },
+  });
 
-        throw new UniqueConstraintError(meta);
-      }
+  if (email && organizationId) {
+    await client.organizations.createOrganizationMembership({
+      organizationId,
+      userId: user.id,
+      role: `org:${accessLevel}`,
     });
+  }
+
+  return user;
 }
 
-export async function updateUser(args: UserAuthInput & { clerkId: string }) {
+export async function updateUser(args: UserAuthInput) {
   const client = await clerkClient();
 
-  const { accessLevel, schoolId, clerkId, ...input } = args;
+  const {
+    accessLevel,
+    schoolId,
+    name,
+    surname,
+    username,
+    password,
+    userClerkId,
+  } = args;
 
-  return await client.users
-    .updateUser(clerkId, {
-      ...input,
-      publicMetadata: { accessLevel, schoolId },
-    })
-    .catch((error) => {
-      if (error?.code !== "P2002") {
-        throw new AppError(error.message || "Failed to create user", "");
-      } else {
-        const target = error?.meta?.target;
-        const meta = target[target.length - 1];
+  if (!userClerkId) {
+    throw new Error("User Clerk ID is required for updating user");
+  }
 
-        throw new UniqueConstraintError(meta);
-      }
-    });
+  return await client.users.updateUser(userClerkId, {
+    username,
+    password,
+    firstName: name,
+    lastName: surname,
+    publicMetadata: { accessLevel, schoolId },
+  });
 }
 
-export async function deleteUserAuthInfo(clerkId: string) {
+export async function deleteUserAuthInfo(id: string) {
   const client = await clerkClient();
 
-  return await client.users.deleteUser(clerkId);
+  return await client.users.deleteUser(id);
+}
+
+export async function deleteOrganization(id: string) {
+  const client = await clerkClient();
+
+  return await client.organizations.deleteOrganization(id);
 }

@@ -45,7 +45,7 @@ const yoga = createYoga({
       schoolId?: string;
     };
 
-    if (!user) return null;
+    if (!user || !user.accessLevel || !user.schoolId) return null;
 
     const school = await prisma.school.findUnique({
       where: {
@@ -64,7 +64,7 @@ const yoga = createYoga({
       userId,
       schoolId: user.schoolId,
       accessLevel: user.accessLevel,
-      currentTerm: school?.terms[0].id,
+      currentTerm: school?.terms?.[0]?.id,
       slug: school?.slug,
       pubSub,
     };

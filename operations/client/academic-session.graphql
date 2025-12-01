@@ -1,0 +1,85 @@
+query GetAcademicYears {
+  academicYears {
+    id
+    year
+    isCurrent
+    terms {
+      session
+    }
+  }
+}
+
+query GetTerms($take: Int) {
+  terms(take: $take) {
+    id
+    session
+    isCurrent
+    academicYear {
+      year
+    }
+  }
+}
+
+mutation MutateAcademicYear($input: AcademicYearInput!) {
+  mutateAcademicYear(input: $input) {
+    __typename
+
+    ... on MutationMutateAcademicYearSuccess {
+      data {
+        id
+      }
+    }
+
+    ... on AppError {
+      __typename
+      message
+    }
+  }
+}
+
+mutation MutateTerm($input: TermInput!) {
+  mutateTerm(input: $input) {
+    __typename
+
+    ... on MutationMutateTermSuccess {
+      data {
+        id
+      }
+    }
+
+    ... on AppError {
+      __typename
+      message
+    }
+  }
+}
+
+mutation ActivateAcademicYear($academicYearId: ID!) {
+  activateAcademicYear(academicYearId: $academicYearId) {
+    __typename
+
+    ... on AppError {
+      __typename
+      message
+    }
+
+    ... on MutationActivateAcademicYearSuccess {
+      data
+    }
+  }
+}
+
+mutation ActivateTerm($termId: ID!, $academicYearId: ID!) {
+  activateTerm(termId: $termId, academicYearId: $academicYearId) {
+    __typename
+
+    ... on AppError {
+      __typename
+      message
+    }
+
+    ... on MutationActivateTermSuccess {
+      data
+    }
+  }
+}

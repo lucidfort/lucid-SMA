@@ -11,6 +11,8 @@ import "./exam";
 import "./assignment";
 import "./result";
 import "./club";
+import "./academic-session";
 import "./subject";
 import "./fee";
+import "./payroll";
 import "../errors";

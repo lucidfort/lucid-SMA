@@ -18,6 +18,13 @@ const birthday = (diff: number) =>
       { message: `User must be at least ${diff} years old` },
     );
 
+export const signInSchema = z.object({
+  username: z.string().min(1, "Username is required"),
+  password: z.string().min(1, "Password is required"),
+});
+
+export type SignInSchema = z.infer<typeof signInSchema>;
+
 export const schoolSchema = z.object({
   slug: z.string().min(3, "This is required"),
   name: z.string().min(3, "What's your school's name?"),
@@ -30,23 +37,20 @@ export const schoolSchema = z.object({
     .array(z.enum(["CRECHE", "NURSERY", "PRIMARY", "SECONDARY"]))
     .min(1, "Please select at least one program"),
   grades: z.array(z.string()).min(1, "Please select at least one grade"),
-  managerUsername: z
-    .string()
-    .min(3, "Username must be up to 3 characters")
-    .max(20, "Username must be at most 20 characters"),
-  managerName: z.string().min(3, { message: "First Name is required" }),
-  managerSurname: z.string().min(3, { message: "Surname is required" }),
-  managerEmail: z.string().email(),
-  managerPhone: z.string().min(10, "Phone number is incorrect"),
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters long")
-    .regex(passwordPattern, {
-      message:
+  manager: z.object({
+    username: z.string().min(3).max(20).regex(usernamePattern),
+    name: z.string().min(3, { message: "First Name is required" }),
+    surname: z.string().min(3, { message: "Surname is required" }),
+    email: z.string().email(),
+    phone: z.string().min(10, "Phone number is incorrect"),
+    password: z
+      .string()
+      .min(8)
+      .regex(
+        passwordPattern,
         "Password must include uppercase, lowercase, number, and special character",
-    }),
-  managerBirthday: birthday(22),
-  managerImage: z.string().optional(),
+      ),
+  }),
 });
 
 export type SchoolSchema = z.infer<typeof schoolSchema>;
@@ -406,6 +410,23 @@ export const transactionSchema = z.object({
 });
 
 export type TransactionSchema = z.infer<typeof transactionSchema>;
+
+export const payrollProfileSchema = z.object({
+  id: z.string().optional().nullable(),
+  staff: z.object(
+    {
+      id: z.string().min(1),
+      name: z.string(),
+    },
+    { message: "Staff is required" },
+  ),
+  bankName: z.string().min(1),
+  accountName: z.string().min(1),
+  accountNumber: z.string().min(10).max(11),
+  salary: z.coerce.number(),
+});
+
+export type PayrollProfileSchema = z.infer<typeof payrollProfileSchema>;
 
 export const studentAttendanceSchema = z.object({
   date: z.coerce.date(),

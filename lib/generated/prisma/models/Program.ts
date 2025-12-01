@@ -26,18 +26,21 @@ export type AggregateProgram = {
 export type ProgramMinAggregateOutputType = {
   id: string | null
   name: $Enums.ProgramType | null
+  isActive: boolean | null
   schoolId: string | null
 }
 
 export type ProgramMaxAggregateOutputType = {
   id: string | null
   name: $Enums.ProgramType | null
+  isActive: boolean | null
   schoolId: string | null
 }
 
 export type ProgramCountAggregateOutputType = {
   id: number
   name: number
+  isActive: number
   schoolId: number
   _all: number
 }
@@ -46,18 +49,21 @@ export type ProgramCountAggregateOutputType = {
 export type ProgramMinAggregateInputType = {
   id?: true
   name?: true
+  isActive?: true
   schoolId?: true
 }
 
 export type ProgramMaxAggregateInputType = {
   id?: true
   name?: true
+  isActive?: true
   schoolId?: true
 }
 
 export type ProgramCountAggregateInputType = {
   id?: true
   name?: true
+  isActive?: true
   schoolId?: true
   _all?: true
 }
@@ -137,6 +143,7 @@ export type ProgramGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 export type ProgramGroupByOutputType = {
   id: string
   name: $Enums.ProgramType
+  isActive: boolean
   schoolId: string
   _count: ProgramCountAggregateOutputType | null
   _min: ProgramMinAggregateOutputType | null
@@ -164,6 +171,7 @@ export type ProgramWhereInput = {
   NOT?: Prisma.ProgramWhereInput | Prisma.ProgramWhereInput[]
   id?: Prisma.StringFilter<"Program"> | string
   name?: Prisma.EnumProgramTypeFilter<"Program"> | $Enums.ProgramType
+  isActive?: Prisma.BoolFilter<"Program"> | boolean
   schoolId?: Prisma.StringFilter<"Program"> | string
   school?: Prisma.XOR<Prisma.SchoolScalarRelationFilter, Prisma.SchoolWhereInput>
   grades?: Prisma.GradeListRelationFilter
@@ -172,6 +180,7 @@ export type ProgramWhereInput = {
 export type ProgramOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   schoolId?: Prisma.SortOrder
   school?: Prisma.SchoolOrderByWithRelationInput
   grades?: Prisma.GradeOrderByRelationAggregateInput
@@ -184,6 +193,7 @@ export type ProgramWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.ProgramWhereInput[]
   NOT?: Prisma.ProgramWhereInput | Prisma.ProgramWhereInput[]
   name?: Prisma.EnumProgramTypeFilter<"Program"> | $Enums.ProgramType
+  isActive?: Prisma.BoolFilter<"Program"> | boolean
   schoolId?: Prisma.StringFilter<"Program"> | string
   school?: Prisma.XOR<Prisma.SchoolScalarRelationFilter, Prisma.SchoolWhereInput>
   grades?: Prisma.GradeListRelationFilter
@@ -192,6 +202,7 @@ export type ProgramWhereUniqueInput = Prisma.AtLeast<{
 export type ProgramOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   schoolId?: Prisma.SortOrder
   _count?: Prisma.ProgramCountOrderByAggregateInput
   _max?: Prisma.ProgramMaxOrderByAggregateInput
@@ -204,12 +215,14 @@ export type ProgramScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ProgramScalarWhereWithAggregatesInput | Prisma.ProgramScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Program"> | string
   name?: Prisma.EnumProgramTypeWithAggregatesFilter<"Program"> | $Enums.ProgramType
+  isActive?: Prisma.BoolWithAggregatesFilter<"Program"> | boolean
   schoolId?: Prisma.StringWithAggregatesFilter<"Program"> | string
 }
 
 export type ProgramCreateInput = {
   id?: string
   name: $Enums.ProgramType
+  isActive?: boolean
   school: Prisma.SchoolCreateNestedOneWithoutProgramsInput
   grades?: Prisma.GradeCreateNestedManyWithoutProgramInput
 }
@@ -217,6 +230,7 @@ export type ProgramCreateInput = {
 export type ProgramUncheckedCreateInput = {
   id?: string
   name: $Enums.ProgramType
+  isActive?: boolean
   schoolId: string
   grades?: Prisma.GradeUncheckedCreateNestedManyWithoutProgramInput
 }
@@ -224,6 +238,7 @@ export type ProgramUncheckedCreateInput = {
 export type ProgramUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.EnumProgramTypeFieldUpdateOperationsInput | $Enums.ProgramType
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   school?: Prisma.SchoolUpdateOneRequiredWithoutProgramsNestedInput
   grades?: Prisma.GradeUpdateManyWithoutProgramNestedInput
 }
@@ -231,6 +246,7 @@ export type ProgramUpdateInput = {
 export type ProgramUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.EnumProgramTypeFieldUpdateOperationsInput | $Enums.ProgramType
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   grades?: Prisma.GradeUncheckedUpdateManyWithoutProgramNestedInput
 }
@@ -238,17 +254,20 @@ export type ProgramUncheckedUpdateInput = {
 export type ProgramCreateManyInput = {
   id?: string
   name: $Enums.ProgramType
+  isActive?: boolean
   schoolId: string
 }
 
 export type ProgramUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.EnumProgramTypeFieldUpdateOperationsInput | $Enums.ProgramType
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type ProgramUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.EnumProgramTypeFieldUpdateOperationsInput | $Enums.ProgramType
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -270,18 +289,21 @@ export type ProgramSchoolIdNameCompoundUniqueInput = {
 export type ProgramCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   schoolId?: Prisma.SortOrder
 }
 
 export type ProgramMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   schoolId?: Prisma.SortOrder
 }
 
 export type ProgramMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   schoolId?: Prisma.SortOrder
 }
 
@@ -336,6 +358,10 @@ export type EnumProgramTypeFieldUpdateOperationsInput = {
   set?: $Enums.ProgramType
 }
 
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
+}
+
 export type ProgramCreateNestedOneWithoutGradesInput = {
   create?: Prisma.XOR<Prisma.ProgramCreateWithoutGradesInput, Prisma.ProgramUncheckedCreateWithoutGradesInput>
   connectOrCreate?: Prisma.ProgramCreateOrConnectWithoutGradesInput
@@ -353,12 +379,14 @@ export type ProgramUpdateOneRequiredWithoutGradesNestedInput = {
 export type ProgramCreateWithoutSchoolInput = {
   id?: string
   name: $Enums.ProgramType
+  isActive?: boolean
   grades?: Prisma.GradeCreateNestedManyWithoutProgramInput
 }
 
 export type ProgramUncheckedCreateWithoutSchoolInput = {
   id?: string
   name: $Enums.ProgramType
+  isActive?: boolean
   grades?: Prisma.GradeUncheckedCreateNestedManyWithoutProgramInput
 }
 
@@ -394,18 +422,21 @@ export type ProgramScalarWhereInput = {
   NOT?: Prisma.ProgramScalarWhereInput | Prisma.ProgramScalarWhereInput[]
   id?: Prisma.StringFilter<"Program"> | string
   name?: Prisma.EnumProgramTypeFilter<"Program"> | $Enums.ProgramType
+  isActive?: Prisma.BoolFilter<"Program"> | boolean
   schoolId?: Prisma.StringFilter<"Program"> | string
 }
 
 export type ProgramCreateWithoutGradesInput = {
   id?: string
   name: $Enums.ProgramType
+  isActive?: boolean
   school: Prisma.SchoolCreateNestedOneWithoutProgramsInput
 }
 
 export type ProgramUncheckedCreateWithoutGradesInput = {
   id?: string
   name: $Enums.ProgramType
+  isActive?: boolean
   schoolId: string
 }
 
@@ -428,35 +459,41 @@ export type ProgramUpdateToOneWithWhereWithoutGradesInput = {
 export type ProgramUpdateWithoutGradesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.EnumProgramTypeFieldUpdateOperationsInput | $Enums.ProgramType
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   school?: Prisma.SchoolUpdateOneRequiredWithoutProgramsNestedInput
 }
 
 export type ProgramUncheckedUpdateWithoutGradesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.EnumProgramTypeFieldUpdateOperationsInput | $Enums.ProgramType
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type ProgramCreateManySchoolInput = {
   id?: string
   name: $Enums.ProgramType
+  isActive?: boolean
 }
 
 export type ProgramUpdateWithoutSchoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.EnumProgramTypeFieldUpdateOperationsInput | $Enums.ProgramType
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   grades?: Prisma.GradeUpdateManyWithoutProgramNestedInput
 }
 
 export type ProgramUncheckedUpdateWithoutSchoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.EnumProgramTypeFieldUpdateOperationsInput | $Enums.ProgramType
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   grades?: Prisma.GradeUncheckedUpdateManyWithoutProgramNestedInput
 }
 
 export type ProgramUncheckedUpdateManyWithoutSchoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.EnumProgramTypeFieldUpdateOperationsInput | $Enums.ProgramType
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 
@@ -493,6 +530,7 @@ export type ProgramCountOutputTypeCountGradesArgs<ExtArgs extends runtime.Types.
 export type ProgramSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  isActive?: boolean
   schoolId?: boolean
   school?: boolean | Prisma.SchoolDefaultArgs<ExtArgs>
   grades?: boolean | Prisma.Program$gradesArgs<ExtArgs>
@@ -502,6 +540,7 @@ export type ProgramSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 export type ProgramSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  isActive?: boolean
   schoolId?: boolean
   school?: boolean | Prisma.SchoolDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["program"]>
@@ -509,6 +548,7 @@ export type ProgramSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
 export type ProgramSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  isActive?: boolean
   schoolId?: boolean
   school?: boolean | Prisma.SchoolDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["program"]>
@@ -516,10 +556,11 @@ export type ProgramSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
 export type ProgramSelectScalar = {
   id?: boolean
   name?: boolean
+  isActive?: boolean
   schoolId?: boolean
 }
 
-export type ProgramOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "schoolId", ExtArgs["result"]["program"]>
+export type ProgramOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "isActive" | "schoolId", ExtArgs["result"]["program"]>
 export type ProgramInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   school?: boolean | Prisma.SchoolDefaultArgs<ExtArgs>
   grades?: boolean | Prisma.Program$gradesArgs<ExtArgs>
@@ -541,6 +582,7 @@ export type $ProgramPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: $Enums.ProgramType
+    isActive: boolean
     schoolId: string
   }, ExtArgs["result"]["program"]>
   composites: {}
@@ -969,6 +1011,7 @@ export interface Prisma__ProgramClient<T, Null = never, ExtArgs extends runtime.
 export interface ProgramFieldRefs {
   readonly id: Prisma.FieldRef<"Program", 'String'>
   readonly name: Prisma.FieldRef<"Program", 'ProgramType'>
+  readonly isActive: Prisma.FieldRef<"Program", 'Boolean'>
   readonly schoolId: Prisma.FieldRef<"Program", 'String'>
 }
     
