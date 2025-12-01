@@ -45,3 +45,4 @@ next-env.d.ts
 
 # Prisma Client + query engine
 /lib/generated/
+/prisma/migrations 
