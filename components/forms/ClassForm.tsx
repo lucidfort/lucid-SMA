@@ -1,15 +1,7 @@
 "use client";
 
-import { classSchema, ClassSchema } from "@/lib/validation";
-import { FormProps } from "@/types";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import InputField, { FormFieldType } from "../InputField";
-import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
-import { SelectContent, SelectItem } from "@/components/ui/select";
 import { Form } from "@/components/ui/form";
-import { classDefaultValues } from "@/lib/zod/defaultValues";
+import { SelectContent, SelectItem } from "@/components/ui/select";
 import {
   AccessLevel,
   CreateClassMutation,
@@ -20,10 +12,28 @@ import {
   useUpdateClassMutation,
 } from "@/lib/generated/graphql/client";
 import { handleGraphqlClientErrors } from "@/lib/utils";
+import { classSchema, ClassSchema } from "@/lib/validation";
+import { FormProps } from "@/types";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import InputField, { FormFieldType } from "../InputField";
 
 const ClassForm = ({ type, data, setOpen }: FormProps) => {
   const router = useRouter();
+
+  const form = useForm<ClassSchema>({
+    resolver: zodResolver(classSchema),
+    defaultValues: {
+      id: data?.id,
+      name: data?.name ?? "",
+      gradeId: data?.grade.id ?? "",
+      capacity: data?.capacity ?? 0,
+      supervisors: data?.supervisors ?? null,
+    }
+  });
 
   const [gradesResult] = useGetGradesQuery();
   const [teachersResult] = useGetStaffsQuery({
@@ -35,10 +45,6 @@ const ClassForm = ({ type, data, setOpen }: FormProps) => {
   const grades = gradesResult?.data?.grades;
   const teachers = teachersResult?.data?.staffs;
 
-  const form = useForm<ClassSchema>({
-    resolver: zodResolver(classSchema),
-    defaultValues: classDefaultValues(data),
-  });
 
   const onSubmit = form.handleSubmit(async (values) => {
     const formData = {

@@ -37,7 +37,7 @@ const GET_PARENT = gql(`
               id 
               name
             }
-            attendances(attendanceFilter: $attendanceFilter) {
+            attendances(filter: $attendanceFilter) {
           date present
         }
           }
@@ -53,7 +53,7 @@ const GET_STUDENT_PERFORMANCE = gql(`
       id name surname registrationNumber
       img
       birthday 
-      attendances(attendanceFilter: $attendanceFilter) {
+      attendances(filter: $attendanceFilter) {
         date 
         present
       }

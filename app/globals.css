@@ -184,13 +184,43 @@
   font-family: "Inter", sans-serif !important;
 }
 
+.react-calendar__navigation__label {
+  background-color: transparent !important;
+}
+
+.react-calendar__navigation__arrow {
+  border-radius: 30px;
+  background-color: white !important;
+  transition: all 300ms ease-in-out;
+}
+
+.react-calendar__navigation__arrow:hover {
+  background-color: var(--primary-btn) !important;
+  color: white !important;
+  font-size: 25px;
+}
+
 .react-calendar__navigation__label__labelText {
   font-weight: 600;
 }
 
+.react-calendar__tile {
+  border-radius: 100%;
+}
+
+.react-calendar__tile:hover {
+  background-color: var(--primary) !important;
+  opacity: 90%;
+  color: white !important;
+}
+
 .react-calendar__tile--active {
-  background-color: #c3ebfa !important;
-  color: black !important;
+  background-color: var(--primary) !important;
+  color: white !important;
+}
+
+.react-calendar__month-view__weekdays__weekday abbr {
+  text-decoration: none;
 }
 
 .rbc-btn-group:first-child {

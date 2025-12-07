@@ -190,9 +190,9 @@ const AssignmentForm = ({ type, data, setOpen }: FormProps) => {
             name="termId"
           >
             <SelectContent>
-              {terms?.map(({ id, term, academicYear }) => (
+              {terms?.map(({ id, session, academicYear }) => (
                 <SelectItem key={id} value={id!}>
-                  {schoolTerms.find((t) => term === t.id)?.name} -{" "}
+                  {schoolTerms.find((t) => session === t.id)?.name} -{" "}
                   {academicYear.year}
                 </SelectItem>
               ))}

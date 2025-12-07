@@ -1,7 +1,7 @@
 import { markStaffAttendance, markStudentAttendance } from "@/lib/actions";
+import prisma from "@/lib/prisma";
 import { builder } from "../builder";
 import { AppError } from "../errors";
-import prisma from "@/lib/prisma";
 
 const StaffAttendanceInput = builder.inputType("StaffAttendanceInput", {
   fields: (t) => ({
@@ -68,7 +68,7 @@ builder.queryType({
       args: { filter: t.arg({ type: AttendanceFilter, required: true }) },
       authScopes: {
         manager: true,
-        admin: true,
+        teacher: true,
       },
       directives: {
         rateLimit: { duration: 3600, limit: 10 },
@@ -82,11 +82,12 @@ builder.queryType({
             schoolId: context.schoolId!,
             termId: termId ?? context.currentTerm!,
             date: {
-              gte: startDate,
-              ...(endDate && { lte: endDate }),
+              gte: new Date(startDate),
+              ...(endDate && { lte: new Date(endDate) }),
             },
             ...(classId && { student: { classId } }),
           },
+          orderBy: { date: "desc" },
         });
       },
     }),
@@ -122,9 +123,3 @@ builder.mutationType({
     }),
   }),
 });
-
-// builder.subscriptionType({
-//   fields: t => ({
-
-//   })
-// })

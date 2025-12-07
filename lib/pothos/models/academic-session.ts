@@ -55,12 +55,16 @@ builder.queryType({
   fields: (t) => ({
     academicYears: t.prismaField({
       type: ["AcademicYear"],
-      resolve: async (query, _parent, _args, ctx) =>
+      args: {
+        take: t.arg.int({ required: false }),
+      },
+      resolve: async (query, _parent, args, ctx) =>
         prisma.academicYear.findMany({
           ...query,
           where: {
             schoolId: ctx.schoolId!,
           },
+          ...(args?.take && { take: args.take }),
         }),
     }),
 

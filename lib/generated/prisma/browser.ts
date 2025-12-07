@@ -142,10 +142,10 @@ export type Invoice = Prisma.InvoiceModel
  */
 export type InvoicePayment = Prisma.InvoicePaymentModel
 /**
- * Model StaffPayrollProfile
+ * Model PayrollProfile
  * 
  */
-export type StaffPayrollProfile = Prisma.StaffPayrollProfileModel
+export type PayrollProfile = Prisma.PayrollProfileModel
 /**
  * Model PayrollTransactions
  * 

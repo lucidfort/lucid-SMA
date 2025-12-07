@@ -67,13 +67,13 @@ builder.prismaObject("Class", {
         admin: true,
       },
       args: {
-        attendanceFilter: t.arg({
+        filter: t.arg({
           type: AttendanceFilter,
           required: true,
         }),
       },
       resolve: async (parent, args, ctx) => {
-        const { termId, startDate, endDate } = args.attendanceFilter;
+        const { termId, startDate, endDate } = args.filter;
 
         return await prisma.studentAttendance.count({
           where: {
@@ -82,8 +82,8 @@ builder.prismaObject("Class", {
             termId: termId ?? ctx.currentTerm!,
             present: true,
             date: {
-              gte: startDate,
-              ...(endDate && { lte: endDate }),
+              gte: new Date(startDate),
+              ...(endDate && { lte: new Date(endDate) }),
             },
           },
         });
@@ -97,22 +97,23 @@ builder.prismaObject("Class", {
         admin: true,
       },
       args: {
-        attendanceFilter: t.arg({
+        filter: t.arg({
           type: AttendanceFilter,
           required: true,
         }),
       },
-      query: (args, ctx) => {
-        const { termId, startDate, endDate } = args.attendanceFilter;
+      query(args, ctx) {
+        const { termId, startDate, endDate, classId } = args.filter;
 
         return {
           where: {
             schoolId: ctx.schoolId!,
-            termId: termId ? termId : ctx.currentTerm!,
+            termId: termId ?? ctx.currentTerm!,
             date: {
-              ...(startDate && { gte: startDate }),
-              ...(endDate && { lte: endDate }),
+              gte: new Date(startDate),
+              ...(endDate && { lte: new Date(endDate) }),
             },
+            ...(classId && { student: { classId } }),
           },
           orderBy: { date: "desc" },
         };

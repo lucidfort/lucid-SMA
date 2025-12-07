@@ -102,8 +102,8 @@ type BaseError implements Error {
 }
 
 type Class {
-  attendancePresentCount(attendanceFilter: AttendanceFilter!): Int!
-  attendances(attendanceFilter: AttendanceFilter!): [StudentAttendance!]!
+  attendancePresentCount(filter: AttendanceFilter!): Int!
+  attendances(filter: AttendanceFilter!): [StudentAttendance!]!
   capacity: Int!
   grade: Grade!
   gradeId: String!
@@ -172,8 +172,8 @@ interface Error {
 }
 
 type Event {
-  description: String!
-  endTime: DateTime!
+  description: String
+  endTime: DateTime
   grade: Grade
   group: EventGroupEnum!
   id: ID!
@@ -375,7 +375,9 @@ type Mutation {
   createStaff(input: StaffInput!): MutationCreateStaffResult
   createStudent(input: StudentInput!): MutationCreateStudentResult
   createSubject(input: SubjectInput!): MutationCreateSubjectResult
+  generatePayrollReference(input: PayrollTransactionInput!): MutationGeneratePayrollReferenceResult
   initiateFeePayment(input: FeePaymentInput!): MutationInitiateFeePaymentResult
+  initiatePayrollTransfer(input: PayrollTransactionInput!): MutationInitiatePayrollTransferResult
   markStaffAttendance(input: StaffAttendanceInput!): MutationMarkStaffAttendanceResult
   markStudentAttendance(input: StudentAttendanceInput!): MutationMarkStudentAttendanceResult
   mutateAcademicYear(input: AcademicYearInput!): MutationMutateAcademicYearResult
@@ -468,7 +470,7 @@ type MutationCreateParentSuccess {
 union MutationCreatePayrollProfileResult = BaseAppError | BaseError | MutationCreatePayrollProfileSuccess | UniqueConstraintError
 
 type MutationCreatePayrollProfileSuccess {
-  data: StaffPayrollProfile!
+  data: PayrollProfile!
 }
 
 union MutationCreateProgramResult = BaseAppError | BaseError | MutationCreateProgramSuccess
@@ -507,10 +509,22 @@ type MutationCreateSubjectSuccess {
   data: Subject!
 }
 
+union MutationGeneratePayrollReferenceResult = BaseAppError | BaseError | MutationGeneratePayrollReferenceSuccess
+
+type MutationGeneratePayrollReferenceSuccess {
+  data: PayrollTransactions!
+}
+
 union MutationInitiateFeePaymentResult = BaseAppError | BaseError | MutationInitiateFeePaymentSuccess
 
 type MutationInitiateFeePaymentSuccess {
   data: FeePaymentResponse!
+}
+
+union MutationInitiatePayrollTransferResult = BaseAppError | BaseError | MutationInitiatePayrollTransferSuccess | NotFoundError
+
+type MutationInitiatePayrollTransferSuccess {
+  data: Boolean!
 }
 
 union MutationMarkStaffAttendanceResult = BaseAppError | BaseError | MutationMarkStaffAttendanceSuccess
@@ -594,7 +608,7 @@ type MutationUpdateParentSuccess {
 union MutationUpdatePayrollProfileResult = BaseAppError | BaseError | MutationUpdatePayrollProfileSuccess | NotFoundError | UniqueConstraintError
 
 type MutationUpdatePayrollProfileSuccess {
-  data: StaffPayrollProfile!
+  data: PayrollProfile!
 }
 
 union MutationUpdatePeriodSlotResult = BaseAppError | BaseError | MutationUpdatePeriodSlotSuccess | UniqueConstraintError
@@ -703,26 +717,43 @@ enum PaymentStatus {
   SUCCESS
 }
 
-input PayrollProfileInput {
+type PayrollProfile {
   accountName: String!
   accountNumber: String!
+  bankCode: String!
   bankName: String!
+  id: ID!
+  recipientCode: String!
+  salary: Int!
+  staff: Staff!
+  transactions(filter: SalaryFilterInput!): [PayrollTransactions!]
+}
+
+input PayrollProfileInput {
+  accountNumber: String!
+  bankCode: String!
   id: ID
   salary: Int!
   staffId: ID!
 }
 
+input PayrollTransactionInput {
+  amount: Int!
+  month: Int!
+  profileId: ID!
+  reference: String
+  year: Int!
+}
+
 type PayrollTransactions {
+  amount: Int!
   createdAt: DateTime!
-  grossAmount: Int!
   id: ID!
-  netAmount: Int!
-  payMonth: Int!
-  payYear: Int!
+  month: Int!
   paymentDate: DateTime
-  reference: String!
-  staff: Staff!
+  profile: PayrollProfile!
   status: PaymentStatus!
+  year: Int!
 }
 
 type PeriodSlot {
@@ -750,7 +781,7 @@ enum ProgramName {
 }
 
 type Query {
-  academicYears: [AcademicYear!]
+  academicYears(take: Int): [AcademicYear!]
   announcements(filter: AnnouncementFilter!): [Announcement!]
   assignments(filter: AssignmentFilter): [Assignment!]
   class(id: ID!): Class
@@ -765,20 +796,28 @@ type Query {
   invoices(filter: InvoiceFilter): [Invoice!]
   parent(clerkUserId: ID, id: ID): Parent
   parents(searchTerm: String): [Parent!]
-  payrollProfile: [StaffPayrollProfile!]
-  payrollTransactions(month: Int!, paymentDate: DateTime, year: Int!): [PayrollTransactions!]
+  payrollProfile: [PayrollProfile!]
+  payrollTransactions(filter: SalaryFilterInput!): [PayrollTransactions!]
   programs: [Program!]
+  resolveRecipientAccount(accountNumber: String!, bankCode: String!): QueryResolveRecipientAccountResult
   results(filter: ResultFilter!, termId: ID): [Result!]
   school(id: ID!): School
   schools: [School!]
   staff(clerkUserId: String, id: ID): Staff
   staffs(filter: StaffFilterInput, searchTerm: String): [Staff!]
+  standardBanks: [StandardBanks!]
   student(id: ID!): Student
   studentAttendances(filter: AttendanceFilter!): [StudentAttendance!]
   students(after: ID, filter: StudentFilter, first: Int, searchTerm: String): [Student!]
   subjects(teacherId: ID): [Subject!]
   terms(take: Int): [Term!]
   timetable(classId: ID!): [TimetablePeriod!]
+}
+
+union QueryResolveRecipientAccountResult = BaseAppError | BaseError | QueryResolveRecipientAccountSuccess
+
+type QueryResolveRecipientAccountSuccess {
+  data: String!
 }
 
 type RateLimitError implements AppError & Error {
@@ -815,6 +854,12 @@ enum ResultType {
   EXAM
 }
 
+input SalaryFilterInput {
+  month: Int!
+  paymentDate: DateTime
+  year: Int!
+}
+
 type School {
   activeStaffCount: Int!
   activeStudentsCount: Int!
@@ -829,7 +874,7 @@ type School {
   phone: String!
   programs: [Program!]
   slug: String!
-  studentAttendances(attendanceFilter: AttendanceFilter!): [StudentAttendance!]
+  studentAttendances(filter: AttendanceFilter!): [StudentAttendance!]
   studentSexDistribution: [StudentSexCount!]!
 }
 
@@ -864,7 +909,7 @@ enum Sex {
 type Staff {
   accessLevel: String!
   address: String!
-  attendances(attendanceFilter: AttendanceFilter!): [StaffAttendance!]!
+  attendances(filter: AttendanceFilter!): [StaffAttendance!]!
   class: Class
   clerkUserId: String
   email: Email
@@ -927,20 +972,17 @@ input StaffInput {
   surname: String!
 }
 
-type StaffPayrollProfile {
-  accountName: String!
-  accountNumber: String!
-  bankName: String!
+type StandardBanks {
+  code: String!
   id: ID!
-  salary: Int!
-  staff: Staff!
+  name: String!
 }
 
 type Student {
   activeState: String!
   address: String!
   admissionDate: DateTime
-  attendances(attendanceFilter: AttendanceFilter!): [StudentAttendance!]
+  attendances(filter: AttendanceFilter!): [StudentAttendance!]
   birthday: DateTime!
   class: Class!
   club: Club

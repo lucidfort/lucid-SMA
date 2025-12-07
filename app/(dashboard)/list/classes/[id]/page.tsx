@@ -55,7 +55,7 @@ const GET_CLASS = gql`
         img
         activeState
       }
-      attendances(attendanceFilter: $attendanceFilter) {
+      attendances(filter: $attendanceFilter) {
         date
         present
       }

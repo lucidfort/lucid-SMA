@@ -126,9 +126,9 @@ const ResultForm = ({ type, data, setOpen }: FormProps) => {
             name="termId"
           >
             <SelectContent>
-              {termsResult.data?.terms?.map(({ id, term, academicYear }) => (
+              {termsResult.data?.terms?.map(({ id, session, academicYear }) => (
                 <SelectItem key={id} value={id!}>
-                  {term} - {academicYear.year}
+                  {session} - {academicYear.year}
                 </SelectItem>
               ))}
             </SelectContent>

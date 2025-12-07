@@ -257,7 +257,7 @@ export type SchoolWhereInput = {
   payments?: Prisma.InvoicePaymentListRelationFilter
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentListRelationFilter
   studentClassHistory?: Prisma.StudentClassHistoryListRelationFilter
-  staffsBankAccounts?: Prisma.StaffPayrollProfileListRelationFilter
+  payrollProfiles?: Prisma.PayrollProfileListRelationFilter
 }
 
 export type SchoolOrderByWithRelationInput = {
@@ -300,7 +300,7 @@ export type SchoolOrderByWithRelationInput = {
   payments?: Prisma.InvoicePaymentOrderByRelationAggregateInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentOrderByRelationAggregateInput
   studentClassHistory?: Prisma.StudentClassHistoryOrderByRelationAggregateInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileOrderByRelationAggregateInput
+  payrollProfiles?: Prisma.PayrollProfileOrderByRelationAggregateInput
 }
 
 export type SchoolWhereUniqueInput = Prisma.AtLeast<{
@@ -346,7 +346,7 @@ export type SchoolWhereUniqueInput = Prisma.AtLeast<{
   payments?: Prisma.InvoicePaymentListRelationFilter
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentListRelationFilter
   studentClassHistory?: Prisma.StudentClassHistoryListRelationFilter
-  staffsBankAccounts?: Prisma.StaffPayrollProfileListRelationFilter
+  payrollProfiles?: Prisma.PayrollProfileListRelationFilter
 }, "id" | "slug" | "organizationId">
 
 export type SchoolOrderByWithAggregationInput = {
@@ -423,7 +423,7 @@ export type SchoolCreateInput = {
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateInput = {
@@ -466,7 +466,7 @@ export type SchoolUncheckedCreateInput = {
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUpdateInput = {
@@ -509,7 +509,7 @@ export type SchoolUpdateInput = {
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateInput = {
@@ -552,7 +552,7 @@ export type SchoolUncheckedUpdateInput = {
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateManyInput = {
@@ -970,18 +970,18 @@ export type SchoolUpdateOneRequiredWithoutPaymentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.SchoolUpdateToOneWithWhereWithoutPaymentsInput, Prisma.SchoolUpdateWithoutPaymentsInput>, Prisma.SchoolUncheckedUpdateWithoutPaymentsInput>
 }
 
-export type SchoolCreateNestedOneWithoutStaffsBankAccountsInput = {
-  create?: Prisma.XOR<Prisma.SchoolCreateWithoutStaffsBankAccountsInput, Prisma.SchoolUncheckedCreateWithoutStaffsBankAccountsInput>
-  connectOrCreate?: Prisma.SchoolCreateOrConnectWithoutStaffsBankAccountsInput
+export type SchoolCreateNestedOneWithoutPayrollProfilesInput = {
+  create?: Prisma.XOR<Prisma.SchoolCreateWithoutPayrollProfilesInput, Prisma.SchoolUncheckedCreateWithoutPayrollProfilesInput>
+  connectOrCreate?: Prisma.SchoolCreateOrConnectWithoutPayrollProfilesInput
   connect?: Prisma.SchoolWhereUniqueInput
 }
 
-export type SchoolUpdateOneRequiredWithoutStaffsBankAccountsNestedInput = {
-  create?: Prisma.XOR<Prisma.SchoolCreateWithoutStaffsBankAccountsInput, Prisma.SchoolUncheckedCreateWithoutStaffsBankAccountsInput>
-  connectOrCreate?: Prisma.SchoolCreateOrConnectWithoutStaffsBankAccountsInput
-  upsert?: Prisma.SchoolUpsertWithoutStaffsBankAccountsInput
+export type SchoolUpdateOneRequiredWithoutPayrollProfilesNestedInput = {
+  create?: Prisma.XOR<Prisma.SchoolCreateWithoutPayrollProfilesInput, Prisma.SchoolUncheckedCreateWithoutPayrollProfilesInput>
+  connectOrCreate?: Prisma.SchoolCreateOrConnectWithoutPayrollProfilesInput
+  upsert?: Prisma.SchoolUpsertWithoutPayrollProfilesInput
   connect?: Prisma.SchoolWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.SchoolUpdateToOneWithWhereWithoutStaffsBankAccountsInput, Prisma.SchoolUpdateWithoutStaffsBankAccountsInput>, Prisma.SchoolUncheckedUpdateWithoutStaffsBankAccountsInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SchoolUpdateToOneWithWhereWithoutPayrollProfilesInput, Prisma.SchoolUpdateWithoutPayrollProfilesInput>, Prisma.SchoolUncheckedUpdateWithoutPayrollProfilesInput>
 }
 
 export type SchoolCreateNestedOneWithoutSalaryPaymentsInput = {
@@ -1093,7 +1093,7 @@ export type SchoolCreateWithoutAuditLogsInput = {
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutAuditLogsInput = {
@@ -1135,7 +1135,7 @@ export type SchoolUncheckedCreateWithoutAuditLogsInput = {
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutAuditLogsInput = {
@@ -1193,7 +1193,7 @@ export type SchoolUpdateWithoutAuditLogsInput = {
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutAuditLogsInput = {
@@ -1235,7 +1235,7 @@ export type SchoolUncheckedUpdateWithoutAuditLogsInput = {
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutProgramsInput = {
@@ -1277,7 +1277,7 @@ export type SchoolCreateWithoutProgramsInput = {
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutProgramsInput = {
@@ -1319,7 +1319,7 @@ export type SchoolUncheckedCreateWithoutProgramsInput = {
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutProgramsInput = {
@@ -1377,7 +1377,7 @@ export type SchoolUpdateWithoutProgramsInput = {
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutProgramsInput = {
@@ -1419,7 +1419,7 @@ export type SchoolUncheckedUpdateWithoutProgramsInput = {
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutAcademicYearsInput = {
@@ -1461,7 +1461,7 @@ export type SchoolCreateWithoutAcademicYearsInput = {
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutAcademicYearsInput = {
@@ -1503,7 +1503,7 @@ export type SchoolUncheckedCreateWithoutAcademicYearsInput = {
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutAcademicYearsInput = {
@@ -1561,7 +1561,7 @@ export type SchoolUpdateWithoutAcademicYearsInput = {
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutAcademicYearsInput = {
@@ -1603,7 +1603,7 @@ export type SchoolUncheckedUpdateWithoutAcademicYearsInput = {
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutTermsInput = {
@@ -1645,7 +1645,7 @@ export type SchoolCreateWithoutTermsInput = {
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutTermsInput = {
@@ -1687,7 +1687,7 @@ export type SchoolUncheckedCreateWithoutTermsInput = {
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutTermsInput = {
@@ -1745,7 +1745,7 @@ export type SchoolUpdateWithoutTermsInput = {
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutTermsInput = {
@@ -1787,7 +1787,7 @@ export type SchoolUncheckedUpdateWithoutTermsInput = {
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutGradesInput = {
@@ -1829,7 +1829,7 @@ export type SchoolCreateWithoutGradesInput = {
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutGradesInput = {
@@ -1871,7 +1871,7 @@ export type SchoolUncheckedCreateWithoutGradesInput = {
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutGradesInput = {
@@ -1929,7 +1929,7 @@ export type SchoolUpdateWithoutGradesInput = {
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutGradesInput = {
@@ -1971,7 +1971,7 @@ export type SchoolUncheckedUpdateWithoutGradesInput = {
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutClassesInput = {
@@ -2013,7 +2013,7 @@ export type SchoolCreateWithoutClassesInput = {
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutClassesInput = {
@@ -2055,7 +2055,7 @@ export type SchoolUncheckedCreateWithoutClassesInput = {
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutClassesInput = {
@@ -2113,7 +2113,7 @@ export type SchoolUpdateWithoutClassesInput = {
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutClassesInput = {
@@ -2155,7 +2155,7 @@ export type SchoolUncheckedUpdateWithoutClassesInput = {
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutSubjectsInput = {
@@ -2197,7 +2197,7 @@ export type SchoolCreateWithoutSubjectsInput = {
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutSubjectsInput = {
@@ -2239,7 +2239,7 @@ export type SchoolUncheckedCreateWithoutSubjectsInput = {
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutSubjectsInput = {
@@ -2297,7 +2297,7 @@ export type SchoolUpdateWithoutSubjectsInput = {
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutSubjectsInput = {
@@ -2339,7 +2339,7 @@ export type SchoolUncheckedUpdateWithoutSubjectsInput = {
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutTimetablePeriodsInput = {
@@ -2381,7 +2381,7 @@ export type SchoolCreateWithoutTimetablePeriodsInput = {
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutTimetablePeriodsInput = {
@@ -2423,7 +2423,7 @@ export type SchoolUncheckedCreateWithoutTimetablePeriodsInput = {
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutTimetablePeriodsInput = {
@@ -2481,7 +2481,7 @@ export type SchoolUpdateWithoutTimetablePeriodsInput = {
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutTimetablePeriodsInput = {
@@ -2523,7 +2523,7 @@ export type SchoolUncheckedUpdateWithoutTimetablePeriodsInput = {
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutPeriodSlotsInput = {
@@ -2565,7 +2565,7 @@ export type SchoolCreateWithoutPeriodSlotsInput = {
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutPeriodSlotsInput = {
@@ -2607,7 +2607,7 @@ export type SchoolUncheckedCreateWithoutPeriodSlotsInput = {
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutPeriodSlotsInput = {
@@ -2665,7 +2665,7 @@ export type SchoolUpdateWithoutPeriodSlotsInput = {
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutPeriodSlotsInput = {
@@ -2707,7 +2707,7 @@ export type SchoolUncheckedUpdateWithoutPeriodSlotsInput = {
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutTimetableAssignmentsInput = {
@@ -2749,7 +2749,7 @@ export type SchoolCreateWithoutTimetableAssignmentsInput = {
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutTimetableAssignmentsInput = {
@@ -2791,7 +2791,7 @@ export type SchoolUncheckedCreateWithoutTimetableAssignmentsInput = {
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutTimetableAssignmentsInput = {
@@ -2849,7 +2849,7 @@ export type SchoolUpdateWithoutTimetableAssignmentsInput = {
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutTimetableAssignmentsInput = {
@@ -2891,7 +2891,7 @@ export type SchoolUncheckedUpdateWithoutTimetableAssignmentsInput = {
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutManagersInput = {
@@ -2933,7 +2933,7 @@ export type SchoolCreateWithoutManagersInput = {
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutManagersInput = {
@@ -2975,7 +2975,7 @@ export type SchoolUncheckedCreateWithoutManagersInput = {
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutManagersInput = {
@@ -3033,7 +3033,7 @@ export type SchoolUpdateWithoutManagersInput = {
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutManagersInput = {
@@ -3075,7 +3075,7 @@ export type SchoolUncheckedUpdateWithoutManagersInput = {
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutStudentsInput = {
@@ -3117,7 +3117,7 @@ export type SchoolCreateWithoutStudentsInput = {
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutStudentsInput = {
@@ -3159,7 +3159,7 @@ export type SchoolUncheckedCreateWithoutStudentsInput = {
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutStudentsInput = {
@@ -3217,7 +3217,7 @@ export type SchoolUpdateWithoutStudentsInput = {
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutStudentsInput = {
@@ -3259,7 +3259,7 @@ export type SchoolUncheckedUpdateWithoutStudentsInput = {
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutStaffsInput = {
@@ -3301,7 +3301,7 @@ export type SchoolCreateWithoutStaffsInput = {
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutStaffsInput = {
@@ -3343,7 +3343,7 @@ export type SchoolUncheckedCreateWithoutStaffsInput = {
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutStaffsInput = {
@@ -3401,7 +3401,7 @@ export type SchoolUpdateWithoutStaffsInput = {
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutStaffsInput = {
@@ -3443,7 +3443,7 @@ export type SchoolUncheckedUpdateWithoutStaffsInput = {
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutParentsInput = {
@@ -3485,7 +3485,7 @@ export type SchoolCreateWithoutParentsInput = {
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutParentsInput = {
@@ -3527,7 +3527,7 @@ export type SchoolUncheckedCreateWithoutParentsInput = {
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutParentsInput = {
@@ -3585,7 +3585,7 @@ export type SchoolUpdateWithoutParentsInput = {
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutParentsInput = {
@@ -3627,7 +3627,7 @@ export type SchoolUncheckedUpdateWithoutParentsInput = {
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutClubsInput = {
@@ -3669,7 +3669,7 @@ export type SchoolCreateWithoutClubsInput = {
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutClubsInput = {
@@ -3711,7 +3711,7 @@ export type SchoolUncheckedCreateWithoutClubsInput = {
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutClubsInput = {
@@ -3769,7 +3769,7 @@ export type SchoolUpdateWithoutClubsInput = {
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutClubsInput = {
@@ -3811,7 +3811,7 @@ export type SchoolUncheckedUpdateWithoutClubsInput = {
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutExamsInput = {
@@ -3853,7 +3853,7 @@ export type SchoolCreateWithoutExamsInput = {
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutExamsInput = {
@@ -3895,7 +3895,7 @@ export type SchoolUncheckedCreateWithoutExamsInput = {
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutExamsInput = {
@@ -3953,7 +3953,7 @@ export type SchoolUpdateWithoutExamsInput = {
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutExamsInput = {
@@ -3995,7 +3995,7 @@ export type SchoolUncheckedUpdateWithoutExamsInput = {
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutAssignmentsInput = {
@@ -4037,7 +4037,7 @@ export type SchoolCreateWithoutAssignmentsInput = {
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutAssignmentsInput = {
@@ -4079,7 +4079,7 @@ export type SchoolUncheckedCreateWithoutAssignmentsInput = {
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutAssignmentsInput = {
@@ -4137,7 +4137,7 @@ export type SchoolUpdateWithoutAssignmentsInput = {
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutAssignmentsInput = {
@@ -4179,7 +4179,7 @@ export type SchoolUncheckedUpdateWithoutAssignmentsInput = {
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutStudentAttendancesInput = {
@@ -4221,7 +4221,7 @@ export type SchoolCreateWithoutStudentAttendancesInput = {
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutStudentAttendancesInput = {
@@ -4263,7 +4263,7 @@ export type SchoolUncheckedCreateWithoutStudentAttendancesInput = {
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutStudentAttendancesInput = {
@@ -4321,7 +4321,7 @@ export type SchoolUpdateWithoutStudentAttendancesInput = {
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutStudentAttendancesInput = {
@@ -4363,7 +4363,7 @@ export type SchoolUncheckedUpdateWithoutStudentAttendancesInput = {
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutStaffAttendancesInput = {
@@ -4405,7 +4405,7 @@ export type SchoolCreateWithoutStaffAttendancesInput = {
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutStaffAttendancesInput = {
@@ -4447,7 +4447,7 @@ export type SchoolUncheckedCreateWithoutStaffAttendancesInput = {
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutStaffAttendancesInput = {
@@ -4505,7 +4505,7 @@ export type SchoolUpdateWithoutStaffAttendancesInput = {
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutStaffAttendancesInput = {
@@ -4547,7 +4547,7 @@ export type SchoolUncheckedUpdateWithoutStaffAttendancesInput = {
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutResultsInput = {
@@ -4589,7 +4589,7 @@ export type SchoolCreateWithoutResultsInput = {
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutResultsInput = {
@@ -4631,7 +4631,7 @@ export type SchoolUncheckedCreateWithoutResultsInput = {
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutResultsInput = {
@@ -4689,7 +4689,7 @@ export type SchoolUpdateWithoutResultsInput = {
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutResultsInput = {
@@ -4731,7 +4731,7 @@ export type SchoolUncheckedUpdateWithoutResultsInput = {
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutTermlyResultsInput = {
@@ -4773,7 +4773,7 @@ export type SchoolCreateWithoutTermlyResultsInput = {
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutTermlyResultsInput = {
@@ -4815,7 +4815,7 @@ export type SchoolUncheckedCreateWithoutTermlyResultsInput = {
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutTermlyResultsInput = {
@@ -4873,7 +4873,7 @@ export type SchoolUpdateWithoutTermlyResultsInput = {
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutTermlyResultsInput = {
@@ -4915,7 +4915,7 @@ export type SchoolUncheckedUpdateWithoutTermlyResultsInput = {
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutInvoicesInput = {
@@ -4957,7 +4957,7 @@ export type SchoolCreateWithoutInvoicesInput = {
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutInvoicesInput = {
@@ -4999,7 +4999,7 @@ export type SchoolUncheckedCreateWithoutInvoicesInput = {
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutInvoicesInput = {
@@ -5057,7 +5057,7 @@ export type SchoolUpdateWithoutInvoicesInput = {
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutInvoicesInput = {
@@ -5099,7 +5099,7 @@ export type SchoolUncheckedUpdateWithoutInvoicesInput = {
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutPaymentsInput = {
@@ -5141,7 +5141,7 @@ export type SchoolCreateWithoutPaymentsInput = {
   salaryPayments?: Prisma.PayrollTransactionsCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutPaymentsInput = {
@@ -5183,7 +5183,7 @@ export type SchoolUncheckedCreateWithoutPaymentsInput = {
   salaryPayments?: Prisma.PayrollTransactionsUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutPaymentsInput = {
@@ -5241,7 +5241,7 @@ export type SchoolUpdateWithoutPaymentsInput = {
   salaryPayments?: Prisma.PayrollTransactionsUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutPaymentsInput = {
@@ -5283,10 +5283,10 @@ export type SchoolUncheckedUpdateWithoutPaymentsInput = {
   salaryPayments?: Prisma.PayrollTransactionsUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
-export type SchoolCreateWithoutStaffsBankAccountsInput = {
+export type SchoolCreateWithoutPayrollProfilesInput = {
   id?: string
   slug: string
   organizationId: string
@@ -5328,7 +5328,7 @@ export type SchoolCreateWithoutStaffsBankAccountsInput = {
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
 }
 
-export type SchoolUncheckedCreateWithoutStaffsBankAccountsInput = {
+export type SchoolUncheckedCreateWithoutPayrollProfilesInput = {
   id?: string
   slug: string
   organizationId: string
@@ -5370,23 +5370,23 @@ export type SchoolUncheckedCreateWithoutStaffsBankAccountsInput = {
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
 }
 
-export type SchoolCreateOrConnectWithoutStaffsBankAccountsInput = {
+export type SchoolCreateOrConnectWithoutPayrollProfilesInput = {
   where: Prisma.SchoolWhereUniqueInput
-  create: Prisma.XOR<Prisma.SchoolCreateWithoutStaffsBankAccountsInput, Prisma.SchoolUncheckedCreateWithoutStaffsBankAccountsInput>
+  create: Prisma.XOR<Prisma.SchoolCreateWithoutPayrollProfilesInput, Prisma.SchoolUncheckedCreateWithoutPayrollProfilesInput>
 }
 
-export type SchoolUpsertWithoutStaffsBankAccountsInput = {
-  update: Prisma.XOR<Prisma.SchoolUpdateWithoutStaffsBankAccountsInput, Prisma.SchoolUncheckedUpdateWithoutStaffsBankAccountsInput>
-  create: Prisma.XOR<Prisma.SchoolCreateWithoutStaffsBankAccountsInput, Prisma.SchoolUncheckedCreateWithoutStaffsBankAccountsInput>
+export type SchoolUpsertWithoutPayrollProfilesInput = {
+  update: Prisma.XOR<Prisma.SchoolUpdateWithoutPayrollProfilesInput, Prisma.SchoolUncheckedUpdateWithoutPayrollProfilesInput>
+  create: Prisma.XOR<Prisma.SchoolCreateWithoutPayrollProfilesInput, Prisma.SchoolUncheckedCreateWithoutPayrollProfilesInput>
   where?: Prisma.SchoolWhereInput
 }
 
-export type SchoolUpdateToOneWithWhereWithoutStaffsBankAccountsInput = {
+export type SchoolUpdateToOneWithWhereWithoutPayrollProfilesInput = {
   where?: Prisma.SchoolWhereInput
-  data: Prisma.XOR<Prisma.SchoolUpdateWithoutStaffsBankAccountsInput, Prisma.SchoolUncheckedUpdateWithoutStaffsBankAccountsInput>
+  data: Prisma.XOR<Prisma.SchoolUpdateWithoutPayrollProfilesInput, Prisma.SchoolUncheckedUpdateWithoutPayrollProfilesInput>
 }
 
-export type SchoolUpdateWithoutStaffsBankAccountsInput = {
+export type SchoolUpdateWithoutPayrollProfilesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -5428,7 +5428,7 @@ export type SchoolUpdateWithoutStaffsBankAccountsInput = {
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
 }
 
-export type SchoolUncheckedUpdateWithoutStaffsBankAccountsInput = {
+export type SchoolUncheckedUpdateWithoutPayrollProfilesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -5509,7 +5509,7 @@ export type SchoolCreateWithoutSalaryPaymentsInput = {
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutSalaryPaymentsInput = {
@@ -5551,7 +5551,7 @@ export type SchoolUncheckedCreateWithoutSalaryPaymentsInput = {
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutSalaryPaymentsInput = {
@@ -5609,7 +5609,7 @@ export type SchoolUpdateWithoutSalaryPaymentsInput = {
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutSalaryPaymentsInput = {
@@ -5651,7 +5651,7 @@ export type SchoolUncheckedUpdateWithoutSalaryPaymentsInput = {
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutEventsInput = {
@@ -5693,7 +5693,7 @@ export type SchoolCreateWithoutEventsInput = {
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutEventsInput = {
@@ -5735,7 +5735,7 @@ export type SchoolUncheckedCreateWithoutEventsInput = {
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutEventsInput = {
@@ -5793,7 +5793,7 @@ export type SchoolUpdateWithoutEventsInput = {
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutEventsInput = {
@@ -5835,7 +5835,7 @@ export type SchoolUncheckedUpdateWithoutEventsInput = {
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutAnnouncementsInput = {
@@ -5877,7 +5877,7 @@ export type SchoolCreateWithoutAnnouncementsInput = {
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutAnnouncementsInput = {
@@ -5919,7 +5919,7 @@ export type SchoolUncheckedCreateWithoutAnnouncementsInput = {
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutAnnouncementsInput = {
@@ -5977,7 +5977,7 @@ export type SchoolUpdateWithoutAnnouncementsInput = {
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutAnnouncementsInput = {
@@ -6019,7 +6019,7 @@ export type SchoolUncheckedUpdateWithoutAnnouncementsInput = {
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutStudentClassHistoryInput = {
@@ -6061,7 +6061,7 @@ export type SchoolCreateWithoutStudentClassHistoryInput = {
   salaryPayments?: Prisma.PayrollTransactionsCreateNestedManyWithoutSchoolInput
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutStudentClassHistoryInput = {
@@ -6103,7 +6103,7 @@ export type SchoolUncheckedCreateWithoutStudentClassHistoryInput = {
   salaryPayments?: Prisma.PayrollTransactionsUncheckedCreateNestedManyWithoutSchoolInput
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutStudentClassHistoryInput = {
@@ -6161,7 +6161,7 @@ export type SchoolUpdateWithoutStudentClassHistoryInput = {
   salaryPayments?: Prisma.PayrollTransactionsUpdateManyWithoutSchoolNestedInput
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutStudentClassHistoryInput = {
@@ -6203,7 +6203,7 @@ export type SchoolUncheckedUpdateWithoutStudentClassHistoryInput = {
   salaryPayments?: Prisma.PayrollTransactionsUncheckedUpdateManyWithoutSchoolNestedInput
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   teacherSubjectAssignments?: Prisma.TeacherSubjectAssignmentUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolCreateWithoutTeacherSubjectAssignmentsInput = {
@@ -6245,7 +6245,7 @@ export type SchoolCreateWithoutTeacherSubjectAssignmentsInput = {
   salaryPayments?: Prisma.PayrollTransactionsCreateNestedManyWithoutSchoolInput
   payments?: Prisma.InvoicePaymentCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolUncheckedCreateWithoutTeacherSubjectAssignmentsInput = {
@@ -6287,7 +6287,7 @@ export type SchoolUncheckedCreateWithoutTeacherSubjectAssignmentsInput = {
   salaryPayments?: Prisma.PayrollTransactionsUncheckedCreateNestedManyWithoutSchoolInput
   payments?: Prisma.InvoicePaymentUncheckedCreateNestedManyWithoutSchoolInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedCreateNestedManyWithoutSchoolInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedCreateNestedManyWithoutSchoolInput
 }
 
 export type SchoolCreateOrConnectWithoutTeacherSubjectAssignmentsInput = {
@@ -6345,7 +6345,7 @@ export type SchoolUpdateWithoutTeacherSubjectAssignmentsInput = {
   salaryPayments?: Prisma.PayrollTransactionsUpdateManyWithoutSchoolNestedInput
   payments?: Prisma.InvoicePaymentUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUpdateManyWithoutSchoolNestedInput
 }
 
 export type SchoolUncheckedUpdateWithoutTeacherSubjectAssignmentsInput = {
@@ -6387,7 +6387,7 @@ export type SchoolUncheckedUpdateWithoutTeacherSubjectAssignmentsInput = {
   salaryPayments?: Prisma.PayrollTransactionsUncheckedUpdateManyWithoutSchoolNestedInput
   payments?: Prisma.InvoicePaymentUncheckedUpdateManyWithoutSchoolNestedInput
   studentClassHistory?: Prisma.StudentClassHistoryUncheckedUpdateManyWithoutSchoolNestedInput
-  staffsBankAccounts?: Prisma.StaffPayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
+  payrollProfiles?: Prisma.PayrollProfileUncheckedUpdateManyWithoutSchoolNestedInput
 }
 
 
@@ -6424,7 +6424,7 @@ export type SchoolCountOutputType = {
   payments: number
   teacherSubjectAssignments: number
   studentClassHistory: number
-  staffsBankAccounts: number
+  payrollProfiles: number
 }
 
 export type SchoolCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -6456,7 +6456,7 @@ export type SchoolCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   payments?: boolean | SchoolCountOutputTypeCountPaymentsArgs
   teacherSubjectAssignments?: boolean | SchoolCountOutputTypeCountTeacherSubjectAssignmentsArgs
   studentClassHistory?: boolean | SchoolCountOutputTypeCountStudentClassHistoryArgs
-  staffsBankAccounts?: boolean | SchoolCountOutputTypeCountStaffsBankAccountsArgs
+  payrollProfiles?: boolean | SchoolCountOutputTypeCountPayrollProfilesArgs
 }
 
 /**
@@ -6668,8 +6668,8 @@ export type SchoolCountOutputTypeCountStudentClassHistoryArgs<ExtArgs extends ru
 /**
  * SchoolCountOutputType without action
  */
-export type SchoolCountOutputTypeCountStaffsBankAccountsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.StaffPayrollProfileWhereInput
+export type SchoolCountOutputTypeCountPayrollProfilesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PayrollProfileWhereInput
 }
 
 
@@ -6713,7 +6713,7 @@ export type SchoolSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   payments?: boolean | Prisma.School$paymentsArgs<ExtArgs>
   teacherSubjectAssignments?: boolean | Prisma.School$teacherSubjectAssignmentsArgs<ExtArgs>
   studentClassHistory?: boolean | Prisma.School$studentClassHistoryArgs<ExtArgs>
-  staffsBankAccounts?: boolean | Prisma.School$staffsBankAccountsArgs<ExtArgs>
+  payrollProfiles?: boolean | Prisma.School$payrollProfilesArgs<ExtArgs>
   _count?: boolean | Prisma.SchoolCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["school"]>
 
@@ -6789,7 +6789,7 @@ export type SchoolInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   payments?: boolean | Prisma.School$paymentsArgs<ExtArgs>
   teacherSubjectAssignments?: boolean | Prisma.School$teacherSubjectAssignmentsArgs<ExtArgs>
   studentClassHistory?: boolean | Prisma.School$studentClassHistoryArgs<ExtArgs>
-  staffsBankAccounts?: boolean | Prisma.School$staffsBankAccountsArgs<ExtArgs>
+  payrollProfiles?: boolean | Prisma.School$payrollProfilesArgs<ExtArgs>
   _count?: boolean | Prisma.SchoolCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SchoolIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -6826,7 +6826,7 @@ export type $SchoolPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     payments: Prisma.$InvoicePaymentPayload<ExtArgs>[]
     teacherSubjectAssignments: Prisma.$TeacherSubjectAssignmentPayload<ExtArgs>[]
     studentClassHistory: Prisma.$StudentClassHistoryPayload<ExtArgs>[]
-    staffsBankAccounts: Prisma.$StaffPayrollProfilePayload<ExtArgs>[]
+    payrollProfiles: Prisma.$PayrollProfilePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -7262,7 +7262,7 @@ export interface Prisma__SchoolClient<T, Null = never, ExtArgs extends runtime.T
   payments<T extends Prisma.School$paymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.School$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InvoicePaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   teacherSubjectAssignments<T extends Prisma.School$teacherSubjectAssignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.School$teacherSubjectAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeacherSubjectAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   studentClassHistory<T extends Prisma.School$studentClassHistoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.School$studentClassHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StudentClassHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  staffsBankAccounts<T extends Prisma.School$staffsBankAccountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.School$staffsBankAccountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StaffPayrollProfilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  payrollProfiles<T extends Prisma.School$payrollProfilesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.School$payrollProfilesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PayrollProfilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8363,27 +8363,27 @@ export type School$studentClassHistoryArgs<ExtArgs extends runtime.Types.Extensi
 }
 
 /**
- * School.staffsBankAccounts
+ * School.payrollProfiles
  */
-export type School$staffsBankAccountsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type School$payrollProfilesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the StaffPayrollProfile
+   * Select specific fields to fetch from the PayrollProfile
    */
-  select?: Prisma.StaffPayrollProfileSelect<ExtArgs> | null
+  select?: Prisma.PayrollProfileSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the StaffPayrollProfile
+   * Omit specific fields from the PayrollProfile
    */
-  omit?: Prisma.StaffPayrollProfileOmit<ExtArgs> | null
+  omit?: Prisma.PayrollProfileOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.StaffPayrollProfileInclude<ExtArgs> | null
-  where?: Prisma.StaffPayrollProfileWhereInput
-  orderBy?: Prisma.StaffPayrollProfileOrderByWithRelationInput | Prisma.StaffPayrollProfileOrderByWithRelationInput[]
-  cursor?: Prisma.StaffPayrollProfileWhereUniqueInput
+  include?: Prisma.PayrollProfileInclude<ExtArgs> | null
+  where?: Prisma.PayrollProfileWhereInput
+  orderBy?: Prisma.PayrollProfileOrderByWithRelationInput | Prisma.PayrollProfileOrderByWithRelationInput[]
+  cursor?: Prisma.PayrollProfileWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.StaffPayrollProfileScalarFieldEnum | Prisma.StaffPayrollProfileScalarFieldEnum[]
+  distinct?: Prisma.PayrollProfileScalarFieldEnum | Prisma.PayrollProfileScalarFieldEnum[]
 }
 
 /**

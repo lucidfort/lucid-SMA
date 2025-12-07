@@ -9,6 +9,10 @@ import Link from "next/link";
 type AttendanceList = {
   id: string;
   name: string;
+  grade: {
+    id: string;
+    name: string;
+  }
   date: Date;
   attendancePresentCount: number;
   studentCount: number
@@ -16,9 +20,9 @@ type AttendanceList = {
 
 export const attendanceColumn: ColumnDef<AttendanceList>[] = [
   {
-    accessorKey: "class",
+    accessorFn: (row) => `${row.grade.name} ${row.name}`,
     header: "Class",
-    cell: ({ row: { original } }) => <span>{original.name}</span>,
+    cell: ({ row: { original } }) => <span>{original.grade.name} {original.name}</span>,
   },
   {
     accessorKey: "present",
@@ -32,17 +36,19 @@ export const attendanceColumn: ColumnDef<AttendanceList>[] = [
   {
     id: "actions",
     cell: ({ row: { original } }) => {
-      return (
-        <DropdownOptions>
-          <DropdownMenuItem asChild>
-            <Link
-              href={`/list/attendance/class/${original.id}?date=${original.date}`}
-            >
-              View
-            </Link>
-          </DropdownMenuItem>
-        </DropdownOptions>
-      );
+      if (original.studentCount > 0) {
+        return (
+          <DropdownOptions>
+            <DropdownMenuItem asChild>
+              <Link
+                href={`/list/attendance/class/${original.id}?date=${original.date}`}
+              >
+                View
+              </Link>
+            </DropdownMenuItem>
+          </DropdownOptions>
+        );
+      }
     },
     enableSorting: false,
     enableGlobalFilter: false,

@@ -12,7 +12,6 @@ import {
 } from "@/lib/generated/graphql/client";
 import { getFirstCharacters, handleGraphqlClientErrors } from "@/lib/utils";
 import { schoolSchema, SchoolSchema } from "@/lib/validation";
-import { schoolDefaultValues } from "@/lib/zod/defaultValues";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Check,
@@ -51,11 +50,26 @@ const SchoolOnboardingForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const form = useForm<SchoolSchema>({
     resolver: zodResolver(schoolSchema),
-    defaultValues: schoolDefaultValues,
+    defaultValues: {
+      slug: "",
+      name: "",
+      email: "",
+      phone: "",
+      address: "",
+      motto: null,
+      programs: [],
+      grades: [],
+      manager: {
+        email: "",
+        name: "",
+        surname: "",
+        phone: "",
+        password: "",
+        username: "",
+      }
+    }
   });
   const [result, createSchool] = useCreateSchoolMutation();
-
-  console.log(result)
 
   const selectedPrograms = form.watch("programs");
 

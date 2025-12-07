@@ -63,8 +63,4 @@ export {
   updateAcademicYearStatusAction,
   updateTermStatusAction,
 } from "./academic-session";
-export {
-  createPayrollProfileAction,
-  updatePayrollProfileAction,
-  deletePayrollProfileAction,
-} from "./payroll";
+export { deletePayrollProfileAction } from "./payroll";

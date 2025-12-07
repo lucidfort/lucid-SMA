@@ -1,3 +1,26 @@
+query GetStandardBanks {
+  standardBanks {
+    id
+    name
+    code
+  }
+}
+
+query ResolveRecipientAccount($accountNumber: String!, $bankCode: String!) {
+  resolveRecipientAccount(accountNumber: $accountNumber, bankCode: $bankCode) {
+    __typename
+
+    ... on AppError {
+      __typename
+      message
+    }
+
+    ... on QueryResolveRecipientAccountSuccess {
+      data
+    }
+  }
+}
+
 mutation CreatePayrollProfile($input: PayrollProfileInput!) {
   createPayrollProfile(input: $input) {
     __typename
@@ -31,6 +54,38 @@ mutation UpdatePayrollProfile($input: PayrollProfileInput!) {
     }
 
     ... on NotFoundError {
+      __typename
+      message
+    }
+  }
+}
+
+mutation GeneratePayrollReference($input: PayrollTransactionInput!) {
+  generatePayrollReference(input: $input) {
+    __typename
+
+    ... on MutationGeneratePayrollReferenceSuccess {
+      data {
+        id
+      }
+    }
+
+    ... on AppError {
+      __typename
+      message
+    }
+  }
+}
+
+mutation InitiatePayrollTransfer($input: PayrollTransactionInput!) {
+  initiatePayrollTransfer(input: $input) {
+    __typename
+
+    ... on MutationInitiatePayrollTransferSuccess {
+      data
+    }
+
+    ... on AppError {
       __typename
       message
     }

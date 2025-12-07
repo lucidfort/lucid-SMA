@@ -56,12 +56,13 @@ const deleteActionMap = {
   attendance: deleteSubjectAction,
   invoice: deleteInvoiceAction,
   program: deleteProgramAction,
-  // TRANSACTION DOESN'T HAVE A DELETE ACTION SINCE YOU SHOULDN'T DELETE A TRANSACTION HISTORY. THIS IS JUST TO AVOID TYPESCRIPT ERRORS, IT WON'T DO ANYTHING
-  transaction: deleteInvoiceAction,
-  timetable: deleteInvoiceAction,
-  term: deleteInvoiceAction,
-  "academic-year": deleteInvoiceAction,
   "payroll-profile": deletePayrollProfileAction,
+  // TRANSACTION DOESN'T HAVE A DELETE ACTION SINCE YOU SHOULDN'T DELETE A TRANSACTION HISTORY. THIS IS JUST TO AVOID TYPESCRIPT ERRORS, IT WON'T DO ANYTHING
+  transaction: () => { },
+  timetable: () => { },
+  term: () => { },
+  "academic-year": () => { },
+  "payroll-transaction": () => { },
 };
 
 const DeleteModal = ({

@@ -65,6 +65,9 @@ const TermForm = dynamic(() => import("./forms/TermForm"), {
 const PayrollProfileForm = dynamic(() => import("./forms/PayrollProfileForm"), {
   loading: () => <h1>Loading...</h1>,
 });
+const PayrollInitializer = dynamic(() => import("./forms/PayrollInitializer"), {
+  loading: () => <h1>Loading...</h1>,
+});
 
 const forms: {
   [key: string]: (
@@ -143,12 +146,16 @@ const forms: {
   "payroll-profile": (setOpen, type, data) => (
     <PayrollProfileForm type={type} data={data} setOpen={setOpen} />
   ),
+  "payroll-transaction": (setOpen, type, data) => (
+    <PayrollInitializer type={type} data={data} setOpen={setOpen} />
+  ),
 };
 
 const FormModal = ({
   table,
   type,
   data,
+  formTitle,
   triggerTitle,
   relatedData,
   children,
@@ -177,7 +184,7 @@ const FormModal = ({
 
         <AlertDialogHeader>
           <AlertDialogTitle className="capitalize">
-            {type} {table}
+            {formTitle ? formTitle : `${type} ${table}`}
           </AlertDialogTitle>
           <AlertDialogDescription>
             Fill out the form below

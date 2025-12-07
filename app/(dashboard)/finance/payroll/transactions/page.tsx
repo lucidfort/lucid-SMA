@@ -1,6 +1,7 @@
 import EventCalendar from '@/components/EventCalendar';
 import { DataTable } from '@/components/tables/data-table';
-import { payrollProfileColumns } from '@/components/tables/payrollProfileColumns';
+import { payrollTransactionsColumn } from '@/components/tables/payrollTransactionsColumn';
+import { GetPayrollTransactionsQuery, GetPayrollTransactionsQueryVariables } from '@/lib/generated/graphql/server';
 import { getCurrentUser } from '@/lib/server/utils';
 import { createUrqlServerClient } from '@/lib/urql/clients/server.client';
 import { SearchParams } from '@/types';
@@ -8,17 +9,22 @@ import { gql } from '@urql/core';
 import { format, getMonth, getYear } from 'date-fns';
 
 const GET_PAYROLL_TRANSACTIONS = gql(`
-    query GetPayrollTransactions($month: Int!, $year: Int!, $paymentDate: DateTime) {
-        payrollTransactions (month: $month, year: $year, paymentDate: $paymentDate) {
+    query GetPayrollTransactions($salaryFilter: SalaryFilterInput!) {
+        payrollProfile{
             id
-            netAmount
-            grossAmount
-            paymentDate
-            createdAt
-            reference
-            status
+            salary
+            recipientCode
+            accountName
+            accountNumber
             staff {
-                id name surname
+                id
+                name
+                surname
+            }
+            transactions(filter: $salaryFilter) {
+                id
+                amount
+                status
             }
         }
     }
@@ -31,10 +37,20 @@ const PayrollTransactionsPage = async ({ searchParams }: SearchParams) => {
     const targetDate = date ? new Date(`${date}T08:12:00Z`) : new Date();
 
     const { client } = await createUrqlServerClient()
-    const { data } = await client.query(GET_PAYROLL_TRANSACTIONS, {
-        month: getMonth(targetDate),
-        year: getYear(targetDate)
+    const { data } = await client.query<GetPayrollTransactionsQuery, GetPayrollTransactionsQueryVariables>(GET_PAYROLL_TRANSACTIONS, {
+        salaryFilter: {
+            month: getMonth(targetDate),
+            year: getYear(targetDate)
+        },
     })
+
+    const formattedDate = format(targetDate, "MMMM yyy")
+
+    const formattedData = data?.payrollProfile?.map(({ transactions, ...profile }) => ({
+        ...profile,
+        transaction: transactions?.[0],
+        date: formattedDate
+    })) || []
 
     return (
         <div className="mt-0 w-full p-4 space-y-8">
@@ -45,10 +61,10 @@ const PayrollTransactionsPage = async ({ searchParams }: SearchParams) => {
             <div className="bg-white rounded-md w-full p-4">
                 <DataTable
                     accessLevel={accessLevel!}
-                    columns={payrollProfileColumns}
-                    data={data?.payrollTransactions ?? []}
+                    columns={payrollTransactionsColumn}
+                    data={formattedData}
                     tableFor="payroll-transaction"
-                    title={`Transactions for ${format(targetDate, "MMMM yyy")}`}
+                    title={`Transactions for ${formattedDate}`}
                 />
             </div>
         </div>

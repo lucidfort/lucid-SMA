@@ -1,6 +1,8 @@
 import Announcements from "@/components/Announcements";
 import AttendanceChartContainer from "@/components/AttendanceChartContainer";
 import CountChartContainer from "@/components/CountChartContainer";
+import EventList from "@/components/EventList";
+import FeeSummary from "@/components/FeeSummary";
 import FinanceChartContainer from "@/components/FinanceChartContainer";
 import UserCard from "@/components/UserCard";
 import {
@@ -11,9 +13,6 @@ import { getCurrentUser } from "@/lib/server/utils";
 import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
 import { gql } from "@urql/core";
 import { startOfWeek } from "date-fns";
-import EventList from "@/components/EventList";
-import FeeSummary from "@/components/FeeSummary";
-import { getCurrentSession } from "@/lib/utils";
 
 const GET_SCHOOL_DETAILS = gql(`
   query GetSchoolDetails($id: ID!, $attendanceFilter: AttendanceFilter!) {
@@ -25,7 +24,7 @@ const GET_SCHOOL_DETAILS = gql(`
         sex
         _count
       }
-      studentAttendances(attendanceFilter: $attendanceFilter) {
+      studentAttendances(filter: $attendanceFilter) {
         date present
       }
     }
@@ -48,8 +47,6 @@ const AdminPage = async () => {
   });
 
   const school = data?.school;
-
-  console.log(getCurrentSession())
 
   return (
     <div className="flex flex-col gap-4 md:flex-row">

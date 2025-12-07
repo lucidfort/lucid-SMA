@@ -6,6 +6,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { format } from "date-fns";
 import { Calendar, Megaphone } from "lucide-react";
 import { ReactNode } from "react";
 
@@ -43,7 +44,9 @@ const MessageBoard = ({
 
           <div className="flex-center flex-col gap-1">
             <DialogTitle className="text-xl font-bold">{title}</DialogTitle>
-            <p className="text-sm text-gray-600">{date}</p>
+            <p className="text-sm text-gray-600">
+              {format(new Date(date), "dd/MM/yyyy - hh:mm a")}
+            </p>
           </div>
         </DialogHeader>
 

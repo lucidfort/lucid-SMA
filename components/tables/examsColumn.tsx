@@ -25,10 +25,10 @@ export const examsColumn: ColumnDef<Exam>[] = [
     cell: ({ row: { original } }) => <span>{original.grade.name}</span>,
   },
   {
-    accessorFn: (row) => row.term.term,
+    accessorFn: (row) => row.term.session,
     header: "Term",
     cell: ({ row: { original } }) => (
-      <span>{schoolTerms.find((t) => t.id === original.term.term)?.name}</span>
+      <span>{schoolTerms.find((t) => t.id === original.term.session)?.name}</span>
     ),
   },
   {

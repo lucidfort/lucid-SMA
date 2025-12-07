@@ -61,7 +61,6 @@ const EventForm = ({ type, data, setOpen }: FormProps) => {
       const error = handleGraphqlClientErrors(mutationResult);
       toast.error(error ?? "Something went wrong");
     }
-    console.log(formData);
   });
 
   const isLoading = createResult.fetching || updateResult.fetching;
@@ -84,21 +83,6 @@ const EventForm = ({ type, data, setOpen }: FormProps) => {
             fieldType={FormFieldType.TEXTAREA}
           />
 
-          <InputField
-            control={form.control}
-            fieldType={FormFieldType.SELECT}
-            label="Grade"
-            name="gradeId"
-          >
-            <SelectContent>
-              {gradesResult.data?.grades?.map(({ id, name }) => (
-                <SelectItem key={id} value={id!}>
-                  {name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </InputField>
-
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <InputField
               label="Start Date"
@@ -116,7 +100,7 @@ const EventForm = ({ type, data, setOpen }: FormProps) => {
             />
           </div>
 
-          <div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <InputField
               label="End Date"
               name="endDate"
@@ -132,7 +116,21 @@ const EventForm = ({ type, data, setOpen }: FormProps) => {
               type="time"
             />
           </div>
-          {/*toDatetimeLocal(data?.startTime)*/}
+
+          <InputField
+            control={form.control}
+            fieldType={FormFieldType.SELECT}
+            label="Grade"
+            name="gradeId"
+          >
+            <SelectContent>
+              {gradesResult.data?.grades?.map(({ id, name }) => (
+                <SelectItem key={id} value={id!}>
+                  {name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </InputField>
         </div>
 
         <button

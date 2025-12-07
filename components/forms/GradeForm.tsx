@@ -21,7 +21,7 @@ import {
 import { toast } from "sonner";
 import { handleGraphqlClientErrors } from "@/lib/utils";
 
-const ClassForm = ({ type, data, setOpen }: FormProps) => {
+const GradeForm = ({ type, data, setOpen }: FormProps) => {
   const router = useRouter();
   const [programsResult] = useGetProgramsQuery();
   const [gradesResult] = useGetGradesQuery();
@@ -148,4 +148,4 @@ const ClassForm = ({ type, data, setOpen }: FormProps) => {
   );
 };
 
-export default ClassForm;
+export default GradeForm;

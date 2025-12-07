@@ -14,7 +14,7 @@ query GetStaffsAttendance($filter: StaffFilterInput, $attendanceFilter: Attendan
     id
     name
     surname
-    attendances(attendanceFilter: $attendanceFilter) {
+    attendances(filter: $attendanceFilter) {
       id
       clockInTime
       reasonForAbsence

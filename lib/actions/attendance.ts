@@ -6,6 +6,7 @@ import {
 } from "@/lib/generated/graphql/server";
 import { getCurrentUser, handleGraphqlServerErrors } from "@/lib/server/utils";
 import prisma from "../prisma";
+import { revalidatePath } from "next/cache";
 
 export const markStudentAttendance = async (data: StudentAttendanceInput) => {
   try {
@@ -13,7 +14,7 @@ export const markStudentAttendance = async (data: StudentAttendanceInput) => {
 
     const { records, date, classId, termId } = data;
 
-    return await Promise.all(
+    const response = await Promise.all(
       records.map((record) =>
         prisma.studentAttendance.upsert({
           where: {
@@ -38,6 +39,10 @@ export const markStudentAttendance = async (data: StudentAttendanceInput) => {
         }),
       ),
     );
+
+    revalidatePath("/list/attendances/class");
+
+    return response;
   } catch (error) {
     handleGraphqlServerErrors(error);
   }

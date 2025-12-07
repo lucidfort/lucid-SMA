@@ -355,14 +355,18 @@ export const eventSchema = z
       .string()
       .min(5, { message: "Description is too short" })
       .max(500, { message: "Description is too long" }),
-    startTime: z.coerce.date({ message: "Start time is required" }),
-    endTime: z.coerce.date({ message: "End Time is required" }),
+    startTime: z.string().min(1),
+    endTime: z.string().min(1),
     gradeId: z.string().optional().nullable(),
   })
-  .refine((data) => data.endTime >= data.startTime, {
-    path: ["endTime"],
-    message: "End Time cannot be before start time",
-  });
+  .refine(
+    (data) =>
+      data.endTime.split(":").join("") >= data.startTime.split(":").join(""),
+    {
+      path: ["endTime"],
+      message: "End Time cannot be before start time",
+    },
+  );
 
 export type EventSchema = z.infer<typeof eventSchema>;
 
@@ -420,9 +424,17 @@ export const payrollProfileSchema = z.object({
     },
     { message: "Staff is required" },
   ),
-  bankName: z.string().min(1),
-  accountName: z.string().min(1),
-  accountNumber: z.string().min(10).max(11),
+  bankName: z.string().min(1, "Select the customer's bank"),
+  accountNumber: z
+    .string({ message: "Provide the customer's account number" })
+    .min(10, "Invalid account number")
+    .max(11, "Invalid account number"),
+  accountName: z
+    .string()
+    .min(
+      1,
+      "Select the customer's bank and provide it's associated account number",
+    ),
   salary: z.coerce.number(),
 });
 

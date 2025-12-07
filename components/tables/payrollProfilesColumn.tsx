@@ -1,17 +1,22 @@
 "use client"
 
-import { StaffPayrollProfile } from "@/lib/generated/graphql/client";
+import { PayrollProfile } from "@/lib/generated/graphql/client";
 import { ColumnDef } from "@tanstack/react-table";
 import DeleteModal from "../DeleteModal";
 import DropdownOptions from "../DropdownOptions";
 import FormModal from "../FormModal";
 import { DropdownMenuItem } from "../ui/dropdown-menu";
 
-export const payrollProfileColumns: ColumnDef<StaffPayrollProfile>[] = [
+export const payrollProfileColumns: ColumnDef<PayrollProfile>[] = [
     {
         accessorFn: (row) => `${row.staff.name} ${row.staff.surname}`,
         header: 'Staff',
         cell: ({ row: { original: { staff } } }) => <div>{staff.name} {staff.surname}</div>
+    },
+    {
+        accessorKey: "bankName",
+        header: 'Bank Name',
+        cell: ({ row: { original } }) => <span>{original.bankName}</span>
     },
     {
         accessorKey: "accountNumber",
@@ -24,14 +29,16 @@ export const payrollProfileColumns: ColumnDef<StaffPayrollProfile>[] = [
         cell: ({ row: { original } }) => <span>{original.accountName}</span>
     },
     {
-        accessorKey: "bankName",
-        header: 'Bank Name',
-        cell: ({ row: { original } }) => <span>{original.bankName}</span>
-    },
-    {
         accessorKey: "salary",
         header: 'Salary',
-        cell: ({ row: { original } }) => <span>{original.salary}</span>
+        cell: ({ row: { original } }) => <span>₦{original.salary}</span>
+    },
+    {
+        accessorKey: "recipientCode",
+        header: 'Recipient Code',
+        cell: ({ row: { original } }) => <span>{original.recipientCode}</span>,
+        enableSorting: false,
+        enableGlobalFilter: false
     },
     {
         id: "actions",
@@ -57,6 +64,6 @@ export const payrollProfileColumns: ColumnDef<StaffPayrollProfile>[] = [
         enableSorting: false,
         enableGlobalFilter: false,
         enableHiding: false,
-        meta: { visibility: ["manager", "administration"] },
+        meta: { visibility: ["manager", "finance"] },
     },
 ]

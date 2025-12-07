@@ -73,28 +73,11 @@ builder.prismaObject("Student", {
       nullable: true,
       authScopes: { manager: true, teacher: true },
       unauthorizedResolver: () => null,
-
       args: {
-        attendanceFilter: t.arg({
+        filter: t.arg({
           type: AttendanceFilter,
           required: true,
         }),
-      },
-
-      query: (args, ctx) => {
-        const { termId, startDate, endDate } = args.attendanceFilter;
-
-        return {
-          where: {
-            schoolId: ctx.schoolId!,
-            termId: termId ? termId : ctx.currentTerm!,
-            date: {
-              ...(startDate && { gte: startDate }),
-              ...(endDate && { lte: endDate }),
-            },
-          },
-          orderBy: { date: "desc" },
-        };
       },
     }),
   }),

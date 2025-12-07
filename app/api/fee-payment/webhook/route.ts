@@ -1,5 +1,6 @@
-import { type NextRequest, NextResponse } from "next/server";
+import { updatePayrollTransfer } from "@/lib/actions/payroll";
 import crypto from "crypto";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,27 +27,43 @@ export async function POST(request: NextRequest) {
 
     const event = JSON.parse(body);
 
-    // Handle different webhook events
-    switch (event.event) {
-      case "charge.success":
-        console.log("Payment successful:", event.data);
-        // Here you would typically:
-        // 1. Update your database
-        // 2. Send confirmation email
-        // 3. Update user account
-        // 4. Log the transaction
-        break;
+    const type = event.event;
+    const data = event.data;
 
-      case "charge.failed":
-        console.log("Payment failed:", event.data);
-        // Handle failed payment
-        break;
+    console.log(event);
 
-      default:
-        console.log("Unhandled webhook event:", event.event);
+    try {
+      if (type.startsWith("transfer.")) {
+        await updatePayrollTransfer({ type, data });
+      }
+    } catch (error) {
+      console.error("Webhook error:", error);
     }
 
-    return NextResponse.json({ status: "success" });
+    // Handle different webhook events
+    // switch (event.event) {
+    //   case "charge.success":
+    //     console.log("Payment successful:", event.data);
+    //     // await prisma.payrollTransactions.update({
+
+    //     // })
+    //     // Here you would typically:
+    //     // 1. Update your database
+    //     // 2. Send confirmation email
+    //     // 3. Update user account
+    //     // 4. Log the transaction
+    //     break;
+
+    //   case "charge.failed":
+    //     console.log("Payment failed:", event.data);
+    //     // Handle failed payment
+    //     break;
+
+    //   default:
+    //     console.log("Unhandled webhook event:", event.event);
+    // }
+
+    return NextResponse.json({ status: "ok" });
   } catch (error) {
     console.error("Webhook error:", error);
     return NextResponse.json(

@@ -3,11 +3,12 @@ import { invoicesColumn } from "@/components/tables/invoicesColumn"
 import { GetInvoicesQuery, GetInvoicesQueryVariables } from "@/lib/generated/graphql/server"
 import { getCurrentUser } from "@/lib/server/utils"
 import { createUrqlServerClient } from "@/lib/urql/clients/server.client"
+import { SearchParams } from "@/types"
 import { gql } from "@urql/core"
 
 const GET_INVOICES = gql(`
-  query GetInvoices {
-    invoices {
+  query GetInvoices($filter: InvoiceFilter) {
+    invoices(filter: $filter) {
       id 
       number 
       title 
@@ -27,11 +28,14 @@ const GET_INVOICES = gql(`
   }
 `)
 
-const InvoicesList = async () => {
+const InvoicesList = async ({ searchParams }: SearchParams) => {
+  const { term, grade } = await searchParams
   const { accessLevel } = await getCurrentUser()
 
   const { client } = await createUrqlServerClient();
-  const { data } = await client.query<GetInvoicesQuery, GetInvoicesQueryVariables>(GET_INVOICES, {})
+  const { data } = await client.query<GetInvoicesQuery, GetInvoicesQueryVariables>(GET_INVOICES, {
+    filter: { termId: term, gradeId: grade }
+  })
 
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
@@ -41,6 +45,9 @@ const InvoicesList = async () => {
         accessLevel={accessLevel!}
         tableFor="invoice"
         title="Recent Invoices"
+        filters={{
+          termFilter: true
+        }}
       />
     </div>
   )

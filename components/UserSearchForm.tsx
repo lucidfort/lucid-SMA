@@ -1,10 +1,9 @@
 "use client";
 
-import { FormEvent, MouseEvent, useState } from "react";
+import React, { useState } from "react";
 
+import InputField, { FormFieldType } from "@/components/InputField";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { Loader2, Search, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -15,14 +14,15 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "./ui/label";
-import InputField, { FormFieldType } from "@/components/InputField";
-import { useController } from "react-hook-form";
 import {
   useGetParentsQuery,
   useGetStaffsQuery,
   useGetStudentsQuery,
 } from "@/lib/generated/graphql/client";
+import { cn } from "@/lib/utils";
+import { Loader2, Search, X } from "lucide-react";
+import { useController } from "react-hook-form";
+import { Label } from "./ui/label";
 
 type UserSearchProps = {
   type: "parent" | "student" | "staff";
@@ -63,7 +63,7 @@ const UserSearchForm = ({
     field: { value, onChange },
   } = useController({ name, control });
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -83,7 +83,7 @@ const UserSearchForm = ({
     setOpen(false);
   };
 
-  const handleRemoveUser = (e: MouseEvent<SVGElement>) => {
+  const handleRemoveUser = (e: React.MouseEvent<SVGElement>) => {
     e.stopPropagation();
     onChange(null);
   };
@@ -187,4 +187,4 @@ const UserSearchForm = ({
   );
 };
 
-export default UserSearchForm;
+export default React.memo(UserSearchForm);

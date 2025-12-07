@@ -91,21 +91,21 @@ builder.prismaObject("School", {
         admin: true,
       },
       args: {
-        attendanceFilter: t.arg({
+        filter: t.arg({
           type: AttendanceFilter,
           required: true,
         }),
       },
-      query: (args, ctx) => {
-        const { termId, startDate, endDate } = args.attendanceFilter;
+      query(args, ctx) {
+        const { termId, startDate, endDate } = args.filter;
 
         return {
           where: {
             schoolId: ctx.schoolId!,
-            termId: termId ? termId : ctx.currentTerm!,
+            termId: termId ?? ctx.currentTerm!,
             date: {
-              ...(startDate && { gte: startDate }),
-              ...(endDate && { lte: endDate }),
+              gte: new Date(startDate),
+              ...(endDate && { lte: new Date(endDate) }),
             },
           },
           orderBy: { date: "desc" },

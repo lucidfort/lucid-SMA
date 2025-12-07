@@ -11,7 +11,11 @@ const GET_CLASS_ATTENDANCE = gql(`
     class(id: $id) {
       id 
       name
-      attendances(attendanceFilter: $attendanceFilter) {
+      grade {
+        id
+        name
+      }
+      attendances(filter: $attendanceFilter) {
         id
         present
         studentId
@@ -21,7 +25,6 @@ const GET_CLASS_ATTENDANCE = gql(`
         id
         name
         surname
-        sex
       }
     }
   }
@@ -49,18 +52,23 @@ const ClassAttendanceInfo = async ({ params, searchParams }: SearchParams) => {
         Attendance for {date}
       </h1>
       <div>
+        <p className="pr-2 text-right text-sm md:text-base">
+          Class: <span>{data.class.grade.name} {data.class.name}</span>
+        </p>
+
         {lastUpdated && (
           <p className="pr-2 text-right text-sm md:text-base">
             Updated: <span>{format(lastUpdated, "PP - p")}</span>
           </p>
         )}
-        <AttendanceMarker
-          classId={classId}
-          date={start}
-          students={data.class.students}
-          attendanceState={data.class.attendances}
-        />
       </div>
+
+      <AttendanceMarker
+        classId={classId}
+        date={start}
+        students={data.class.students}
+        attendanceState={data.class.attendances}
+      />
     </div>
   );
 };

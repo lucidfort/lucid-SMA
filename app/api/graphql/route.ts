@@ -21,8 +21,7 @@ const yoga = createYoga({
 
   graphiql: {
     subscriptionsProtocol: "GRAPHQL_SSE",
-    title: "School App",
-    logo: "http://localhost:3000/ffs.png",
+    title: "Learnix",
   },
 
   logging: true,

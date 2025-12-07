@@ -145,12 +145,12 @@ export type Class = {
 
 
 export type ClassAttendancePresentCountArgs = {
-  attendanceFilter: AttendanceFilter;
+  filter: AttendanceFilter;
 };
 
 
 export type ClassAttendancesArgs = {
-  attendanceFilter: AttendanceFilter;
+  filter: AttendanceFilter;
 };
 
 export type ClassFilterInput = {
@@ -203,8 +203,8 @@ export type Error = {
 
 export type Event = {
   __typename?: 'Event';
-  description: Scalars['String']['output'];
-  endTime: Scalars['DateTime']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  endTime?: Maybe<Scalars['DateTime']['output']>;
   grade?: Maybe<Grade>;
   group: EventGroupEnum;
   id: Scalars['ID']['output'];
@@ -419,7 +419,9 @@ export type Mutation = {
   createStaff?: Maybe<MutationCreateStaffResult>;
   createStudent?: Maybe<MutationCreateStudentResult>;
   createSubject?: Maybe<MutationCreateSubjectResult>;
+  generatePayrollReference?: Maybe<MutationGeneratePayrollReferenceResult>;
   initiateFeePayment?: Maybe<MutationInitiateFeePaymentResult>;
+  initiatePayrollTransfer?: Maybe<MutationInitiatePayrollTransferResult>;
   markStaffAttendance?: Maybe<MutationMarkStaffAttendanceResult>;
   markStudentAttendance?: Maybe<MutationMarkStudentAttendanceResult>;
   mutateAcademicYear?: Maybe<MutationMutateAcademicYearResult>;
@@ -535,8 +537,18 @@ export type MutationCreateSubjectArgs = {
 };
 
 
+export type MutationGeneratePayrollReferenceArgs = {
+  input: PayrollTransactionInput;
+};
+
+
 export type MutationInitiateFeePaymentArgs = {
   input: FeePaymentInput;
+};
+
+
+export type MutationInitiatePayrollTransferArgs = {
+  input: PayrollTransactionInput;
 };
 
 
@@ -725,7 +737,7 @@ export type MutationCreatePayrollProfileResult = BaseAppError | BaseError | Muta
 
 export type MutationCreatePayrollProfileSuccess = {
   __typename?: 'MutationCreatePayrollProfileSuccess';
-  data: StaffPayrollProfile;
+  data: PayrollProfile;
 };
 
 export type MutationCreateProgramResult = BaseAppError | BaseError | MutationCreateProgramSuccess;
@@ -770,11 +782,25 @@ export type MutationCreateSubjectSuccess = {
   data: Subject;
 };
 
+export type MutationGeneratePayrollReferenceResult = BaseAppError | BaseError | MutationGeneratePayrollReferenceSuccess;
+
+export type MutationGeneratePayrollReferenceSuccess = {
+  __typename?: 'MutationGeneratePayrollReferenceSuccess';
+  data: PayrollTransactions;
+};
+
 export type MutationInitiateFeePaymentResult = BaseAppError | BaseError | MutationInitiateFeePaymentSuccess;
 
 export type MutationInitiateFeePaymentSuccess = {
   __typename?: 'MutationInitiateFeePaymentSuccess';
   data: FeePaymentResponse;
+};
+
+export type MutationInitiatePayrollTransferResult = BaseAppError | BaseError | MutationInitiatePayrollTransferSuccess | NotFoundError;
+
+export type MutationInitiatePayrollTransferSuccess = {
+  __typename?: 'MutationInitiatePayrollTransferSuccess';
+  data: Scalars['Boolean']['output'];
 };
 
 export type MutationMarkStaffAttendanceResult = BaseAppError | BaseError | MutationMarkStaffAttendanceSuccess;
@@ -872,7 +898,7 @@ export type MutationUpdatePayrollProfileResult = BaseAppError | BaseError | Muta
 
 export type MutationUpdatePayrollProfileSuccess = {
   __typename?: 'MutationUpdatePayrollProfileSuccess';
-  data: StaffPayrollProfile;
+  data: PayrollProfile;
 };
 
 export type MutationUpdatePeriodSlotResult = BaseAppError | BaseError | MutationUpdatePeriodSlotSuccess | UniqueConstraintError;
@@ -993,27 +1019,50 @@ export enum PaymentStatus {
   Success = 'SUCCESS'
 }
 
+export type PayrollProfile = {
+  __typename?: 'PayrollProfile';
+  accountName: Scalars['String']['output'];
+  accountNumber: Scalars['String']['output'];
+  bankCode: Scalars['String']['output'];
+  bankName: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  recipientCode: Scalars['String']['output'];
+  salary: Scalars['Int']['output'];
+  staff: Staff;
+  transactions?: Maybe<Array<PayrollTransactions>>;
+};
+
+
+export type PayrollProfileTransactionsArgs = {
+  filter: SalaryFilterInput;
+};
+
 export type PayrollProfileInput = {
-  accountName: Scalars['String']['input'];
   accountNumber: Scalars['String']['input'];
-  bankName: Scalars['String']['input'];
+  bankCode: Scalars['String']['input'];
   id?: InputMaybe<Scalars['ID']['input']>;
   salary: Scalars['Int']['input'];
   staffId: Scalars['ID']['input'];
 };
 
+export type PayrollTransactionInput = {
+  amount: Scalars['Int']['input'];
+  month: Scalars['Int']['input'];
+  profileId: Scalars['ID']['input'];
+  reference?: InputMaybe<Scalars['String']['input']>;
+  year: Scalars['Int']['input'];
+};
+
 export type PayrollTransactions = {
   __typename?: 'PayrollTransactions';
+  amount: Scalars['Int']['output'];
   createdAt: Scalars['DateTime']['output'];
-  grossAmount: Scalars['Int']['output'];
   id: Scalars['ID']['output'];
-  netAmount: Scalars['Int']['output'];
-  payMonth: Scalars['Int']['output'];
-  payYear: Scalars['Int']['output'];
+  month: Scalars['Int']['output'];
   paymentDate?: Maybe<Scalars['DateTime']['output']>;
-  reference: Scalars['String']['output'];
-  staff: Staff;
+  profile: PayrollProfile;
   status: PaymentStatus;
+  year: Scalars['Int']['output'];
 };
 
 export type PeriodSlot = {
@@ -1064,20 +1113,27 @@ export type Query = {
   invoices?: Maybe<Array<Invoice>>;
   parent?: Maybe<Parent>;
   parents?: Maybe<Array<Parent>>;
-  payrollProfile?: Maybe<Array<StaffPayrollProfile>>;
+  payrollProfile?: Maybe<Array<PayrollProfile>>;
   payrollTransactions?: Maybe<Array<PayrollTransactions>>;
   programs?: Maybe<Array<Program>>;
+  resolveRecipientAccount?: Maybe<QueryResolveRecipientAccountResult>;
   results?: Maybe<Array<Result>>;
   school?: Maybe<School>;
   schools?: Maybe<Array<School>>;
   staff?: Maybe<Staff>;
   staffs?: Maybe<Array<Staff>>;
+  standardBanks?: Maybe<Array<StandardBanks>>;
   student?: Maybe<Student>;
   studentAttendances?: Maybe<Array<StudentAttendance>>;
   students?: Maybe<Array<Student>>;
   subjects?: Maybe<Array<Subject>>;
   terms?: Maybe<Array<Term>>;
   timetable?: Maybe<Array<TimetablePeriod>>;
+};
+
+
+export type QueryAcademicYearsArgs = {
+  take?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -1153,9 +1209,13 @@ export type QueryParentsArgs = {
 
 
 export type QueryPayrollTransactionsArgs = {
-  month: Scalars['Int']['input'];
-  paymentDate?: InputMaybe<Scalars['DateTime']['input']>;
-  year: Scalars['Int']['input'];
+  filter: SalaryFilterInput;
+};
+
+
+export type QueryResolveRecipientAccountArgs = {
+  accountNumber: Scalars['String']['input'];
+  bankCode: Scalars['String']['input'];
 };
 
 
@@ -1214,6 +1274,13 @@ export type QueryTimetableArgs = {
   classId: Scalars['ID']['input'];
 };
 
+export type QueryResolveRecipientAccountResult = BaseAppError | BaseError | QueryResolveRecipientAccountSuccess;
+
+export type QueryResolveRecipientAccountSuccess = {
+  __typename?: 'QueryResolveRecipientAccountSuccess';
+  data: Scalars['String']['output'];
+};
+
 export type RateLimitError = AppError & Error & {
   __typename?: 'RateLimitError';
   code?: Maybe<Scalars['String']['output']>;
@@ -1260,6 +1327,12 @@ export enum ResultType {
   Exam = 'EXAM'
 }
 
+export type SalaryFilterInput = {
+  month: Scalars['Int']['input'];
+  paymentDate?: InputMaybe<Scalars['DateTime']['input']>;
+  year: Scalars['Int']['input'];
+};
+
 export type School = {
   __typename?: 'School';
   activeStaffCount: Scalars['Int']['output'];
@@ -1286,7 +1359,7 @@ export type SchoolAnnouncementsCountArgs = {
 
 
 export type SchoolStudentAttendancesArgs = {
-  attendanceFilter: AttendanceFilter;
+  filter: AttendanceFilter;
 };
 
 export type SchoolGradeInput = {
@@ -1339,7 +1412,7 @@ export type Staff = {
 
 
 export type StaffAttendancesArgs = {
-  attendanceFilter: AttendanceFilter;
+  filter: AttendanceFilter;
 };
 
 export type StaffAttendance = {
@@ -1391,14 +1464,11 @@ export type StaffInput = {
   surname: Scalars['String']['input'];
 };
 
-export type StaffPayrollProfile = {
-  __typename?: 'StaffPayrollProfile';
-  accountName: Scalars['String']['output'];
-  accountNumber: Scalars['String']['output'];
-  bankName: Scalars['String']['output'];
+export type StandardBanks = {
+  __typename?: 'StandardBanks';
+  code: Scalars['String']['output'];
   id: Scalars['ID']['output'];
-  salary: Scalars['Int']['output'];
-  staff: Staff;
+  name: Scalars['String']['output'];
 };
 
 export type Student = {
@@ -1421,7 +1491,7 @@ export type Student = {
 
 
 export type StudentAttendancesArgs = {
-  attendanceFilter: AttendanceFilter;
+  filter: AttendanceFilter;
 };
 
 export type StudentAttendance = {
@@ -1554,17 +1624,19 @@ export type UniqueConstraintError = AppError & Error & {
   message?: Maybe<Scalars['String']['output']>;
 };
 
-export type GetAcademicYearsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetAcademicYearsQueryVariables = Exact<{
+  take?: InputMaybe<Scalars['Int']['input']>;
+}>;
 
 
-export type GetAcademicYearsQuery = { __typename?: 'Query', academicYears?: Array<{ __typename?: 'AcademicYear', id: string, year: string, isCurrent: boolean, terms: Array<{ __typename?: 'Term', session: number }> }> | null };
+export type GetAcademicYearsQuery = { __typename?: 'Query', academicYears?: Array<{ __typename?: 'AcademicYear', id: string, year: string, isCurrent: boolean, terms: Array<{ __typename?: 'Term', id: string, session: number, isCurrent: boolean, startDate: any, endDate?: any | null }> }> | null };
 
 export type GetTermsQueryVariables = Exact<{
   take?: InputMaybe<Scalars['Int']['input']>;
 }>;
 
 
-export type GetTermsQuery = { __typename?: 'Query', terms?: Array<{ __typename?: 'Term', id: string, session: number, isCurrent: boolean, academicYear: { __typename?: 'AcademicYear', year: string } }> | null };
+export type GetTermsQuery = { __typename?: 'Query', terms?: Array<{ __typename?: 'Term', id: string, session: number, isCurrent: boolean, academicYear: { __typename?: 'AcademicYear', id: string, year: string } }> | null };
 
 export type MutateAcademicYearMutationVariables = Exact<{
   input: AcademicYearInput;
@@ -1939,6 +2011,23 @@ export type UpdateParentMutation = { __typename?: 'Mutation', updateParent?:
     | { __typename: 'UniqueConstraintError', message?: string | null }
    | null };
 
+export type GetStandardBanksQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetStandardBanksQuery = { __typename?: 'Query', standardBanks?: Array<{ __typename?: 'StandardBanks', id: string, name: string, code: string }> | null };
+
+export type ResolveRecipientAccountQueryVariables = Exact<{
+  accountNumber: Scalars['String']['input'];
+  bankCode: Scalars['String']['input'];
+}>;
+
+
+export type ResolveRecipientAccountQuery = { __typename?: 'Query', resolveRecipientAccount?:
+    | { __typename: 'BaseAppError', message?: string | null }
+    | { __typename: 'BaseError' }
+    | { __typename: 'QueryResolveRecipientAccountSuccess', data: string }
+   | null };
+
 export type CreatePayrollProfileMutationVariables = Exact<{
   input: PayrollProfileInput;
 }>;
@@ -1947,7 +2036,7 @@ export type CreatePayrollProfileMutationVariables = Exact<{
 export type CreatePayrollProfileMutation = { __typename?: 'Mutation', createPayrollProfile?:
     | { __typename: 'BaseAppError', message?: string | null }
     | { __typename: 'BaseError' }
-    | { __typename: 'MutationCreatePayrollProfileSuccess', data: { __typename?: 'StaffPayrollProfile', id: string } }
+    | { __typename: 'MutationCreatePayrollProfileSuccess', data: { __typename?: 'PayrollProfile', id: string } }
     | { __typename: 'UniqueConstraintError', message?: string | null }
    | null };
 
@@ -1959,9 +2048,32 @@ export type UpdatePayrollProfileMutationVariables = Exact<{
 export type UpdatePayrollProfileMutation = { __typename?: 'Mutation', updatePayrollProfile?:
     | { __typename: 'BaseAppError', message?: string | null }
     | { __typename: 'BaseError' }
-    | { __typename: 'MutationUpdatePayrollProfileSuccess', data: { __typename?: 'StaffPayrollProfile', id: string } }
+    | { __typename: 'MutationUpdatePayrollProfileSuccess', data: { __typename?: 'PayrollProfile', id: string } }
     | { __typename: 'NotFoundError', message?: string | null }
     | { __typename: 'UniqueConstraintError', message?: string | null }
+   | null };
+
+export type GeneratePayrollReferenceMutationVariables = Exact<{
+  input: PayrollTransactionInput;
+}>;
+
+
+export type GeneratePayrollReferenceMutation = { __typename?: 'Mutation', generatePayrollReference?:
+    | { __typename: 'BaseAppError', message?: string | null }
+    | { __typename: 'BaseError' }
+    | { __typename: 'MutationGeneratePayrollReferenceSuccess', data: { __typename?: 'PayrollTransactions', id: string } }
+   | null };
+
+export type InitiatePayrollTransferMutationVariables = Exact<{
+  input: PayrollTransactionInput;
+}>;
+
+
+export type InitiatePayrollTransferMutation = { __typename?: 'Mutation', initiatePayrollTransfer?:
+    | { __typename: 'BaseAppError', message?: string | null }
+    | { __typename: 'BaseError' }
+    | { __typename: 'MutationInitiatePayrollTransferSuccess', data: boolean }
+    | { __typename: 'NotFoundError', message?: string | null }
    | null };
 
 export type GetSchoolSlugQueryVariables = Exact<{
@@ -2138,13 +2250,17 @@ export type VerifyPaymentStatusMutation = { __typename?: 'Mutation', verifyPayme
 
 
 export const GetAcademicYearsDocument = gql`
-    query GetAcademicYears {
-  academicYears {
+    query GetAcademicYears($take: Int) {
+  academicYears(take: $take) {
     id
     year
     isCurrent
     terms {
+      id
       session
+      isCurrent
+      startDate
+      endDate
     }
   }
 }
@@ -2160,6 +2276,7 @@ export const GetTermsDocument = gql`
     session
     isCurrent
     academicYear {
+      id
       year
     }
   }
@@ -2849,6 +2966,37 @@ export const UpdateParentDocument = gql`
 export function useUpdateParentMutation() {
   return Urql.useMutation<UpdateParentMutation, UpdateParentMutationVariables>(UpdateParentDocument);
 };
+export const GetStandardBanksDocument = gql`
+    query GetStandardBanks {
+  standardBanks {
+    id
+    name
+    code
+  }
+}
+    `;
+
+export function useGetStandardBanksQuery(options?: Omit<Urql.UseQueryArgs<GetStandardBanksQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetStandardBanksQuery, GetStandardBanksQueryVariables>({ query: GetStandardBanksDocument, ...options });
+};
+export const ResolveRecipientAccountDocument = gql`
+    query ResolveRecipientAccount($accountNumber: String!, $bankCode: String!) {
+  resolveRecipientAccount(accountNumber: $accountNumber, bankCode: $bankCode) {
+    __typename
+    ... on AppError {
+      __typename
+      message
+    }
+    ... on QueryResolveRecipientAccountSuccess {
+      data
+    }
+  }
+}
+    `;
+
+export function useResolveRecipientAccountQuery(options: Omit<Urql.UseQueryArgs<ResolveRecipientAccountQueryVariables>, 'query'>) {
+  return Urql.useQuery<ResolveRecipientAccountQuery, ResolveRecipientAccountQueryVariables>({ query: ResolveRecipientAccountDocument, ...options });
+};
 export const CreatePayrollProfileDocument = gql`
     mutation CreatePayrollProfile($input: PayrollProfileInput!) {
   createPayrollProfile(input: $input) {
@@ -2892,6 +3040,44 @@ export const UpdatePayrollProfileDocument = gql`
 
 export function useUpdatePayrollProfileMutation() {
   return Urql.useMutation<UpdatePayrollProfileMutation, UpdatePayrollProfileMutationVariables>(UpdatePayrollProfileDocument);
+};
+export const GeneratePayrollReferenceDocument = gql`
+    mutation GeneratePayrollReference($input: PayrollTransactionInput!) {
+  generatePayrollReference(input: $input) {
+    __typename
+    ... on MutationGeneratePayrollReferenceSuccess {
+      data {
+        id
+      }
+    }
+    ... on AppError {
+      __typename
+      message
+    }
+  }
+}
+    `;
+
+export function useGeneratePayrollReferenceMutation() {
+  return Urql.useMutation<GeneratePayrollReferenceMutation, GeneratePayrollReferenceMutationVariables>(GeneratePayrollReferenceDocument);
+};
+export const InitiatePayrollTransferDocument = gql`
+    mutation InitiatePayrollTransfer($input: PayrollTransactionInput!) {
+  initiatePayrollTransfer(input: $input) {
+    __typename
+    ... on MutationInitiatePayrollTransferSuccess {
+      data
+    }
+    ... on AppError {
+      __typename
+      message
+    }
+  }
+}
+    `;
+
+export function useInitiatePayrollTransferMutation() {
+  return Urql.useMutation<InitiatePayrollTransferMutation, InitiatePayrollTransferMutationVariables>(InitiatePayrollTransferDocument);
 };
 export const GetSchoolSlugDocument = gql`
     query GetSchoolSlug($id: ID!) {

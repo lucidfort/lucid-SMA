@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 interface AttendanceMarkerProps {
   classId: string;
   date: Date;
-  students: { id: string; name: string; surname: string; sex: string }[];
+  students: { id: string; name: string; surname: string }[];
   attendanceState: { present: boolean; studentId: string }[];
 }
 
@@ -64,10 +64,10 @@ const AttendanceMarker = ({
 
     if (result?.__typename === "MutationMarkStudentAttendanceSuccess") {
       toast.success("Attendance updated!");
+      router.refresh()
     } else {
       const error = handleGraphqlClientErrors(result)
       toast.error(error)
-      router.refresh()
     }
   };
 
@@ -77,11 +77,6 @@ const AttendanceMarker = ({
       accessor: "name",
       className: "min-w-56 lg:min-w-40",
       cell: (item: Student) => <span>{item.name} {item.surname}</span>
-    },
-    {
-      header: "Sex",
-      accessor: "sex",
-      cell: (item: Student) => <span>{item.sex[0]}</span>
     },
     {
       header: "",
@@ -118,8 +113,6 @@ const AttendanceMarker = ({
       )
     }
   ]
-
-  console.log(mutationResult)
 
   return (
     <Card className="h-fit flex-1">

@@ -1,5 +1,6 @@
 "use client";
 
+import { isWeekend } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Calendar from "react-calendar";
@@ -9,10 +10,8 @@ type ValuePiece = Date | null;
 
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
-const EventCalendar = ({ view = "month" }: { view?: "month" | "year" | "decade" | "century" }) => {
+const EventCalendar = ({ view = "month", minDate, maxDate, disableWeekends = false }: { view?: "month" | "year" | "decade" | "century"; minDate?: Date; maxDate?: Date; disableWeekends?: boolean }) => {
   const [value, onChange] = useState<Value>(new Date());
-
-  console.log({ value })
 
   const router = useRouter();
 
@@ -38,7 +37,10 @@ const EventCalendar = ({ view = "month" }: { view?: "month" | "year" | "decade" 
     }}
     value={value}
     view={view}
-    maxDate={new Date()}
+    minDate={minDate}
+    maxDate={maxDate}
+    tileDisabled={({ date }) => disableWeekends && isWeekend(date)}
+    tileClassName={({ date }) => (disableWeekends && isWeekend(date)) ? "hidden" : ""}
   />;
 };
 

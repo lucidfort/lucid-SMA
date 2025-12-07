@@ -8,6 +8,7 @@ import {
 import "dotenv/config";
 import { clerkClient } from "@clerk/nextjs/server";
 import { withAccelerate } from "@prisma/extension-accelerate";
+import { addDays, subDays } from "date-fns";
 
 const prisma = new PrismaClient().$extends(withAccelerate());
 
@@ -37,6 +38,13 @@ function randomBirthday(minAge: number, maxAge: number) {
   );
 }
 
+function randomDate(interval = 30, direction: "future" | "past") {
+  const now = new Date();
+  const offset = Math.floor(Math.random() * interval);
+
+  return direction === "future" ? addDays(now, offset) : subDays(now, offset);
+}
+
 async function main() {
   const schoolId = "5aa305c3-4aa5-4a49-9d32-920413ed43d4";
   // console.log("Deleting users...");
@@ -54,9 +62,13 @@ async function main() {
     select: { id: true, slug: true },
   });
 
-  // const grades = await prisma.grade.findMany({
-  //   where: { schoolId },
-  // });
+  const grades = await prisma.grade.findMany({
+    where: { schoolId },
+  });
+
+  const terms = await prisma.term.findMany({
+    where: { schoolId, isCurrent: true },
+  });
 
   // const classes = [];
   // for (const grade of grades) {
@@ -73,9 +85,7 @@ async function main() {
   // }
 
   const classes = await prisma.class.findMany({
-    where: {
-      schoolId,
-    },
+    where: { schoolId },
   });
 
   const parents = await prisma.parent.findMany({
@@ -126,7 +136,7 @@ async function main() {
   for (let i = 0; i < 8; i++) {
     const name = faker.person.firstName();
     const surname = faker.person.lastName();
-    const regNo = `${school?.slug}-s${String(i + 1).padStart(2, "0")}`;
+    const regNo = `${school?.slug}-s${String(i + 20).padStart(2, "0")}`;
 
     const cls = classes[i % classes.length];
     const parent = parents[i % parents.length];
@@ -155,6 +165,36 @@ async function main() {
           i % 2 === 0
             ? ParentStudentRelationship.FATHER
             : ParentStudentRelationship.MOTHER,
+      },
+    });
+  }
+
+  for (let i = 0; i < 4; i++) {
+    const gradeId = grades[i].id;
+    await prisma.event.create({
+      data: {
+        title: faker.lorem.slug(2),
+        description: faker.lorem.sentences(2),
+        startTime: addDays(new Date(), 2),
+        endTime: addDays(new Date(), 3),
+        gradeId: i % 2 === 0 ? gradeId : null,
+        termId: terms[0].id,
+        schoolId,
+      },
+    });
+  }
+
+  for (let i = 0; i < 4; i++) {
+    const gradeId = grades[i + 1].id;
+
+    await prisma.announcement.create({
+      data: {
+        title: faker.lorem.slug(2),
+        content: faker.lorem.sentence(),
+        publishedAt: addDays(new Date(), 2),
+        gradeId: i % 2 !== 0 ? gradeId : null,
+        termId: terms[0].id,
+        schoolId,
       },
     });
   }

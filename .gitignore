@@ -43,6 +43,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Prisma Client + query engine
+# Generated files
+introspectedSchema.json
 /lib/generated/
 /prisma/migrations 

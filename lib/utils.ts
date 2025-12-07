@@ -216,7 +216,7 @@ export function getCurrentSession() {
   return { academicYear, currentTerm, academicYearStartDate, termStartDate };
 }
 
-export function generateUuid(length = 5) {
+export function generateUuid(length = 8) {
   const alphabet =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   const bytes = crypto.getRandomValues(new Uint8Array(length));

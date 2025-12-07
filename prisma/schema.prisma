@@ -73,7 +73,7 @@ model School {
   payments                  InvoicePayment[]
   teacherSubjectAssignments TeacherSubjectAssignment[]
   studentClassHistory       StudentClassHistory[]
-  staffsBankAccounts        StaffPayrollProfile[]
+  payrollProfiles        PayrollProfile[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -329,11 +329,10 @@ model Staff {
   class   Class?  @relation(fields: [classId], references: [id], onDelete: SetNull)
   clubId  String?
   club    Club?   @relation(fields: [clubId], references: [id], onDelete: SetNull)
-  salaryInfo StaffPayrollProfile?
+  payrollProfile PayrollProfile?
 
   timetableAssignments      TimetableAssignment[]
   attendances               StaffAttendance[]
-  salaries                  PayrollTransactions[]
   teacherSubjectAssignments TeacherSubjectAssignment[]
 
   createdAt DateTime @default(now())
@@ -568,11 +567,13 @@ model InvoicePayment {
   @@unique([schoolId, reference])
 }
 
-model StaffPayrollProfile {
+model PayrollProfile {
   id            String @id @default(uuid())
+  accountName   String
   accountNumber String
   bankName      String
-  accountName   String
+  bankCode String
+  recipientCode String
   salary Int
 
   schoolId String
@@ -581,28 +582,28 @@ model StaffPayrollProfile {
   staffId  String @unique
   staff    Staff  @relation(fields: [staffId], references: [id], onDelete: Cascade)
 
-  @@unique([staffId, accountNumber, bankName])
+  transactions                  PayrollTransactions[]
 }
 
 model PayrollTransactions {
   id              String        @id @default(uuid())
-  reference       String @unique
-  grossAmount Int // Before deductions
-  netAmount Int // After deductions
-  payYear Int
-  payMonth Int
+  amount Int
+  year Int
+  month Int
   paymentDate DateTime?
   status          PaymentStatus @default(PENDING)
 
   schoolId String
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
-  staffId  String
-  staff    Staff  @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  profileId  String
+  profile    PayrollProfile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  lastSyncedAt DateTime @updatedAt
 
   lineItems PayrollTransactionLine[]
+
+  @@unique([profileId, month, year])
 }
 
 model PayrollTransactionLine {
@@ -620,9 +621,9 @@ model PayrollTransactionLine {
 model Event {
   id          String     @id @default(uuid())
   title       String
-  description String
+  description String?
   startTime   DateTime
-  endTime     DateTime
+  endTime     DateTime?
   group       EventGroup @default(PUBLIC)
 
   schoolId String
@@ -630,7 +631,7 @@ model Event {
   termId   String
   term     Term   @relation(fields: [termId], references: [id], onDelete: Cascade)
 
-  // If the event is for a specific grade, class or students
+  // Grade specific
   gradeId String?
   grade   Grade?  @relation(fields: [gradeId], references: [id], onDelete: SetNull)
 

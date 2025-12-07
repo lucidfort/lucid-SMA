@@ -44,7 +44,7 @@ export const ModelName = {
   TermlyResult: 'TermlyResult',
   Invoice: 'Invoice',
   InvoicePayment: 'InvoicePayment',
-  StaffPayrollProfile: 'StaffPayrollProfile',
+  PayrollProfile: 'PayrollProfile',
   PayrollTransactions: 'PayrollTransactions',
   PayrollTransactionLine: 'PayrollTransactionLine',
   Event: 'Event',
@@ -439,32 +439,32 @@ export const InvoicePaymentScalarFieldEnum = {
 export type InvoicePaymentScalarFieldEnum = (typeof InvoicePaymentScalarFieldEnum)[keyof typeof InvoicePaymentScalarFieldEnum]
 
 
-export const StaffPayrollProfileScalarFieldEnum = {
+export const PayrollProfileScalarFieldEnum = {
   id: 'id',
+  accountName: 'accountName',
   accountNumber: 'accountNumber',
   bankName: 'bankName',
-  accountName: 'accountName',
+  bankCode: 'bankCode',
+  recipientCode: 'recipientCode',
   salary: 'salary',
   schoolId: 'schoolId',
   staffId: 'staffId'
 } as const
 
-export type StaffPayrollProfileScalarFieldEnum = (typeof StaffPayrollProfileScalarFieldEnum)[keyof typeof StaffPayrollProfileScalarFieldEnum]
+export type PayrollProfileScalarFieldEnum = (typeof PayrollProfileScalarFieldEnum)[keyof typeof PayrollProfileScalarFieldEnum]
 
 
 export const PayrollTransactionsScalarFieldEnum = {
   id: 'id',
-  reference: 'reference',
-  grossAmount: 'grossAmount',
-  netAmount: 'netAmount',
-  payYear: 'payYear',
-  payMonth: 'payMonth',
+  amount: 'amount',
+  year: 'year',
+  month: 'month',
   paymentDate: 'paymentDate',
   status: 'status',
   schoolId: 'schoolId',
-  staffId: 'staffId',
+  profileId: 'profileId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  lastSyncedAt: 'lastSyncedAt'
 } as const
 
 export type PayrollTransactionsScalarFieldEnum = (typeof PayrollTransactionsScalarFieldEnum)[keyof typeof PayrollTransactionsScalarFieldEnum]

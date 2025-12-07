@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Event } from "@/lib/generated/prisma/client";
 import { Checkbox } from "@/components/ui/checkbox";
+import { format } from "date-fns";
+import MessageBoard from "../MessageBoard";
 
 type EventsList = Event & { grade: { name: string } | null };
 
@@ -40,7 +42,15 @@ export const eventsColumn: ColumnDef<EventsList>[] = [
   {
     accessorKey: "title",
     header: "Title",
-    cell: ({ row: { original } }) => <span>{original.title}</span>,
+    cell: ({ row: { original } }) => (
+      <MessageBoard
+        title={original.title}
+        description={original.description || ""}
+        date={original.startTime.toString()}
+        type="event"
+        trigger={original.title}
+      />
+    ),
   },
   {
     accessorFn: (row) => row.grade?.name || "grade",
@@ -48,22 +58,11 @@ export const eventsColumn: ColumnDef<EventsList>[] = [
     cell: ({ row: { original } }) => <span>{original.grade?.name || "-"}</span>,
   },
   {
-    accessorKey: "date",
-    header: "Date",
-    cell: ({ row: { original } }) => (
-      <span>{new Intl.DateTimeFormat("en-NG").format(original.startTime)}</span>
-    ),
-  },
-  {
     accessorKey: "startTime",
-    header: "Starts",
+    header: "Start Date",
     cell: ({ row: { original } }) => (
       <span>
-        {original.startTime.toLocaleTimeString("en-NG", {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-        })}
+        {format(new Date(original.startTime), "dd/MM/yyyy - hh:mm a")}
       </span>
     ),
   },
@@ -72,11 +71,7 @@ export const eventsColumn: ColumnDef<EventsList>[] = [
     header: "Ends",
     cell: ({ row: { original } }) => (
       <span>
-        {original.endTime.toLocaleTimeString("en-NG", {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-        })}
+        {original?.endTime ? format(new Date(original.endTime), "dd/MM/yyyy - hh:mm a") : "-"}
       </span>
     ),
   },

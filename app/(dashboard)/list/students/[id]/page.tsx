@@ -45,7 +45,7 @@ const GET_STUDENT = gql(`
             id name surname email phone address
           }
         }
-        attendances(attendanceFilter: $attendanceFilter) {
+        attendances(filter: $attendanceFilter) {
           date present
         }
     }

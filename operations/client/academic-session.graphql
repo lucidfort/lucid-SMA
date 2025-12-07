@@ -1,10 +1,14 @@
-query GetAcademicYears {
-  academicYears {
+query GetAcademicYears($take: Int) {
+  academicYears(take: $take) {
     id
     year
     isCurrent
     terms {
+      id
       session
+      isCurrent
+      startDate
+      endDate
     }
   }
 }
@@ -15,6 +19,7 @@ query GetTerms($take: Int) {
     session
     isCurrent
     academicYear {
+      id
       year
     }
   }

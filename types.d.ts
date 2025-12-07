@@ -63,6 +63,7 @@ declare type FormModalProps = {
   table: Table;
   type: "create" | "update";
   data?: any;
+  formTitle?: string;
   studentId?: string;
   triggerTitle?: string;
   relatedData?: any;
@@ -179,13 +180,21 @@ declare interface DataTableProps {
   data: any[];
   accessLevel: RoleAccessLevel;
   title?: string;
-  termFilter?: TermSelectorProps;
   tableFor: Table;
   filters?: {
     listCreation?: boolean;
     termFilter?: boolean;
     selectCount?: boolean;
+    sortFilter?: boolean;
   };
   relatedData?: any;
   paginate?: boolean;
+}
+
+declare interface GraphQLContext {
+  schoolId: string | null;
+  currentTerm: string | null;
+  accessLevel: RoleAccessLevel;
+  slug: string | null;
+  userId: string | null;
 }

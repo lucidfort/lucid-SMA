@@ -185,9 +185,9 @@ export type EventGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 export type EventGroupByOutputType = {
   id: string
   title: string
-  description: string
+  description: string | null
   startTime: Date
-  endTime: Date
+  endTime: Date | null
   group: $Enums.EventGroup
   schoolId: string
   termId: string
@@ -220,9 +220,9 @@ export type EventWhereInput = {
   NOT?: Prisma.EventWhereInput | Prisma.EventWhereInput[]
   id?: Prisma.StringFilter<"Event"> | string
   title?: Prisma.StringFilter<"Event"> | string
-  description?: Prisma.StringFilter<"Event"> | string
+  description?: Prisma.StringNullableFilter<"Event"> | string | null
   startTime?: Prisma.DateTimeFilter<"Event"> | Date | string
-  endTime?: Prisma.DateTimeFilter<"Event"> | Date | string
+  endTime?: Prisma.DateTimeNullableFilter<"Event"> | Date | string | null
   group?: Prisma.EnumEventGroupFilter<"Event"> | $Enums.EventGroup
   schoolId?: Prisma.StringFilter<"Event"> | string
   termId?: Prisma.StringFilter<"Event"> | string
@@ -237,9 +237,9 @@ export type EventWhereInput = {
 export type EventOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
-  description?: Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
   startTime?: Prisma.SortOrder
-  endTime?: Prisma.SortOrder
+  endTime?: Prisma.SortOrderInput | Prisma.SortOrder
   group?: Prisma.SortOrder
   schoolId?: Prisma.SortOrder
   termId?: Prisma.SortOrder
@@ -257,9 +257,9 @@ export type EventWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.EventWhereInput[]
   NOT?: Prisma.EventWhereInput | Prisma.EventWhereInput[]
   title?: Prisma.StringFilter<"Event"> | string
-  description?: Prisma.StringFilter<"Event"> | string
+  description?: Prisma.StringNullableFilter<"Event"> | string | null
   startTime?: Prisma.DateTimeFilter<"Event"> | Date | string
-  endTime?: Prisma.DateTimeFilter<"Event"> | Date | string
+  endTime?: Prisma.DateTimeNullableFilter<"Event"> | Date | string | null
   group?: Prisma.EnumEventGroupFilter<"Event"> | $Enums.EventGroup
   schoolId?: Prisma.StringFilter<"Event"> | string
   termId?: Prisma.StringFilter<"Event"> | string
@@ -274,9 +274,9 @@ export type EventWhereUniqueInput = Prisma.AtLeast<{
 export type EventOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
-  description?: Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
   startTime?: Prisma.SortOrder
-  endTime?: Prisma.SortOrder
+  endTime?: Prisma.SortOrderInput | Prisma.SortOrder
   group?: Prisma.SortOrder
   schoolId?: Prisma.SortOrder
   termId?: Prisma.SortOrder
@@ -294,9 +294,9 @@ export type EventScalarWhereWithAggregatesInput = {
   NOT?: Prisma.EventScalarWhereWithAggregatesInput | Prisma.EventScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Event"> | string
   title?: Prisma.StringWithAggregatesFilter<"Event"> | string
-  description?: Prisma.StringWithAggregatesFilter<"Event"> | string
+  description?: Prisma.StringNullableWithAggregatesFilter<"Event"> | string | null
   startTime?: Prisma.DateTimeWithAggregatesFilter<"Event"> | Date | string
-  endTime?: Prisma.DateTimeWithAggregatesFilter<"Event"> | Date | string
+  endTime?: Prisma.DateTimeNullableWithAggregatesFilter<"Event"> | Date | string | null
   group?: Prisma.EnumEventGroupWithAggregatesFilter<"Event"> | $Enums.EventGroup
   schoolId?: Prisma.StringWithAggregatesFilter<"Event"> | string
   termId?: Prisma.StringWithAggregatesFilter<"Event"> | string
@@ -308,9 +308,9 @@ export type EventScalarWhereWithAggregatesInput = {
 export type EventCreateInput = {
   id?: string
   title: string
-  description: string
+  description?: string | null
   startTime: Date | string
-  endTime: Date | string
+  endTime?: Date | string | null
   group?: $Enums.EventGroup
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -322,9 +322,9 @@ export type EventCreateInput = {
 export type EventUncheckedCreateInput = {
   id?: string
   title: string
-  description: string
+  description?: string | null
   startTime: Date | string
-  endTime: Date | string
+  endTime?: Date | string | null
   group?: $Enums.EventGroup
   schoolId: string
   termId: string
@@ -336,9 +336,9 @@ export type EventUncheckedCreateInput = {
 export type EventUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   group?: Prisma.EnumEventGroupFieldUpdateOperationsInput | $Enums.EventGroup
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -350,9 +350,9 @@ export type EventUpdateInput = {
 export type EventUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   group?: Prisma.EnumEventGroupFieldUpdateOperationsInput | $Enums.EventGroup
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   termId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -364,9 +364,9 @@ export type EventUncheckedUpdateInput = {
 export type EventCreateManyInput = {
   id?: string
   title: string
-  description: string
+  description?: string | null
   startTime: Date | string
-  endTime: Date | string
+  endTime?: Date | string | null
   group?: $Enums.EventGroup
   schoolId: string
   termId: string
@@ -378,9 +378,9 @@ export type EventCreateManyInput = {
 export type EventUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   group?: Prisma.EnumEventGroupFieldUpdateOperationsInput | $Enums.EventGroup
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -389,9 +389,9 @@ export type EventUpdateManyMutationInput = {
 export type EventUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   group?: Prisma.EnumEventGroupFieldUpdateOperationsInput | $Enums.EventGroup
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   termId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -585,9 +585,9 @@ export type EnumEventGroupFieldUpdateOperationsInput = {
 export type EventCreateWithoutSchoolInput = {
   id?: string
   title: string
-  description: string
+  description?: string | null
   startTime: Date | string
-  endTime: Date | string
+  endTime?: Date | string | null
   group?: $Enums.EventGroup
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -598,9 +598,9 @@ export type EventCreateWithoutSchoolInput = {
 export type EventUncheckedCreateWithoutSchoolInput = {
   id?: string
   title: string
-  description: string
+  description?: string | null
   startTime: Date | string
-  endTime: Date | string
+  endTime?: Date | string | null
   group?: $Enums.EventGroup
   termId: string
   gradeId?: string | null
@@ -640,9 +640,9 @@ export type EventScalarWhereInput = {
   NOT?: Prisma.EventScalarWhereInput | Prisma.EventScalarWhereInput[]
   id?: Prisma.StringFilter<"Event"> | string
   title?: Prisma.StringFilter<"Event"> | string
-  description?: Prisma.StringFilter<"Event"> | string
+  description?: Prisma.StringNullableFilter<"Event"> | string | null
   startTime?: Prisma.DateTimeFilter<"Event"> | Date | string
-  endTime?: Prisma.DateTimeFilter<"Event"> | Date | string
+  endTime?: Prisma.DateTimeNullableFilter<"Event"> | Date | string | null
   group?: Prisma.EnumEventGroupFilter<"Event"> | $Enums.EventGroup
   schoolId?: Prisma.StringFilter<"Event"> | string
   termId?: Prisma.StringFilter<"Event"> | string
@@ -654,9 +654,9 @@ export type EventScalarWhereInput = {
 export type EventCreateWithoutTermInput = {
   id?: string
   title: string
-  description: string
+  description?: string | null
   startTime: Date | string
-  endTime: Date | string
+  endTime?: Date | string | null
   group?: $Enums.EventGroup
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -667,9 +667,9 @@ export type EventCreateWithoutTermInput = {
 export type EventUncheckedCreateWithoutTermInput = {
   id?: string
   title: string
-  description: string
+  description?: string | null
   startTime: Date | string
-  endTime: Date | string
+  endTime?: Date | string | null
   group?: $Enums.EventGroup
   schoolId: string
   gradeId?: string | null
@@ -706,9 +706,9 @@ export type EventUpdateManyWithWhereWithoutTermInput = {
 export type EventCreateWithoutGradeInput = {
   id?: string
   title: string
-  description: string
+  description?: string | null
   startTime: Date | string
-  endTime: Date | string
+  endTime?: Date | string | null
   group?: $Enums.EventGroup
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -719,9 +719,9 @@ export type EventCreateWithoutGradeInput = {
 export type EventUncheckedCreateWithoutGradeInput = {
   id?: string
   title: string
-  description: string
+  description?: string | null
   startTime: Date | string
-  endTime: Date | string
+  endTime?: Date | string | null
   group?: $Enums.EventGroup
   schoolId: string
   termId: string
@@ -758,9 +758,9 @@ export type EventUpdateManyWithWhereWithoutGradeInput = {
 export type EventCreateManySchoolInput = {
   id?: string
   title: string
-  description: string
+  description?: string | null
   startTime: Date | string
-  endTime: Date | string
+  endTime?: Date | string | null
   group?: $Enums.EventGroup
   termId: string
   gradeId?: string | null
@@ -771,9 +771,9 @@ export type EventCreateManySchoolInput = {
 export type EventUpdateWithoutSchoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   group?: Prisma.EnumEventGroupFieldUpdateOperationsInput | $Enums.EventGroup
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -784,9 +784,9 @@ export type EventUpdateWithoutSchoolInput = {
 export type EventUncheckedUpdateWithoutSchoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   group?: Prisma.EnumEventGroupFieldUpdateOperationsInput | $Enums.EventGroup
   termId?: Prisma.StringFieldUpdateOperationsInput | string
   gradeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -797,9 +797,9 @@ export type EventUncheckedUpdateWithoutSchoolInput = {
 export type EventUncheckedUpdateManyWithoutSchoolInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   group?: Prisma.EnumEventGroupFieldUpdateOperationsInput | $Enums.EventGroup
   termId?: Prisma.StringFieldUpdateOperationsInput | string
   gradeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -810,9 +810,9 @@ export type EventUncheckedUpdateManyWithoutSchoolInput = {
 export type EventCreateManyTermInput = {
   id?: string
   title: string
-  description: string
+  description?: string | null
   startTime: Date | string
-  endTime: Date | string
+  endTime?: Date | string | null
   group?: $Enums.EventGroup
   schoolId: string
   gradeId?: string | null
@@ -823,9 +823,9 @@ export type EventCreateManyTermInput = {
 export type EventUpdateWithoutTermInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   group?: Prisma.EnumEventGroupFieldUpdateOperationsInput | $Enums.EventGroup
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -836,9 +836,9 @@ export type EventUpdateWithoutTermInput = {
 export type EventUncheckedUpdateWithoutTermInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   group?: Prisma.EnumEventGroupFieldUpdateOperationsInput | $Enums.EventGroup
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   gradeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -849,9 +849,9 @@ export type EventUncheckedUpdateWithoutTermInput = {
 export type EventUncheckedUpdateManyWithoutTermInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   group?: Prisma.EnumEventGroupFieldUpdateOperationsInput | $Enums.EventGroup
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   gradeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -862,9 +862,9 @@ export type EventUncheckedUpdateManyWithoutTermInput = {
 export type EventCreateManyGradeInput = {
   id?: string
   title: string
-  description: string
+  description?: string | null
   startTime: Date | string
-  endTime: Date | string
+  endTime?: Date | string | null
   group?: $Enums.EventGroup
   schoolId: string
   termId: string
@@ -875,9 +875,9 @@ export type EventCreateManyGradeInput = {
 export type EventUpdateWithoutGradeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   group?: Prisma.EnumEventGroupFieldUpdateOperationsInput | $Enums.EventGroup
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -888,9 +888,9 @@ export type EventUpdateWithoutGradeInput = {
 export type EventUncheckedUpdateWithoutGradeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   group?: Prisma.EnumEventGroupFieldUpdateOperationsInput | $Enums.EventGroup
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   termId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -901,9 +901,9 @@ export type EventUncheckedUpdateWithoutGradeInput = {
 export type EventUncheckedUpdateManyWithoutGradeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   group?: Prisma.EnumEventGroupFieldUpdateOperationsInput | $Enums.EventGroup
   schoolId?: Prisma.StringFieldUpdateOperationsInput | string
   termId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1005,9 +1005,9 @@ export type $EventPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     title: string
-    description: string
+    description: string | null
     startTime: Date
-    endTime: Date
+    endTime: Date | null
     group: $Enums.EventGroup
     schoolId: string
     termId: string

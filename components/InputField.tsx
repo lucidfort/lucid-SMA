@@ -1,3 +1,4 @@
+import React from "react";
 import { Button } from "@/components/ui/button";
 import {
   FormControl,
@@ -18,11 +19,11 @@ import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { ChevronDown, ChevronDownIcon, Eye, EyeOff } from "lucide-react";
-import * as React from "react";
 import { useState } from "react";
 import { ControllerRenderProps, FieldValues } from "react-hook-form";
 import { Calendar } from "./ui/calendar";
 import { Checkbox } from "./ui/checkbox";
+import Combobox from "./Combobox";
 
 export enum FormFieldType {
   INPUT = "input",
@@ -32,6 +33,7 @@ export enum FormFieldType {
   DATE_PICKER = "datePicker",
   SELECT = "select",
   MULTI_SELECT = "multiSelect",
+  COMBOBOX = "combobox",
 }
 
 interface InputFieldProps {
@@ -280,6 +282,8 @@ const InputField = ({
             </RadioGroup>
           </FormControl>
         );
+      case FormFieldType.COMBOBOX:
+        return <Combobox options={options || []} open={open} setOpen={setOpen} value={field.value} onChange={field.onChange} placeholder={placeholder} disabled={disabled} />
       default:
         return null;
     }
@@ -313,4 +317,4 @@ const InputField = ({
   );
 };
 
-export default InputField;
+export default React.memo(InputField)

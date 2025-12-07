@@ -414,7 +414,7 @@ export const ModelName = {
   TermlyResult: 'TermlyResult',
   Invoice: 'Invoice',
   InvoicePayment: 'InvoicePayment',
-  StaffPayrollProfile: 'StaffPayrollProfile',
+  PayrollProfile: 'PayrollProfile',
   PayrollTransactions: 'PayrollTransactions',
   PayrollTransactionLine: 'PayrollTransactionLine',
   Event: 'Event',
@@ -436,7 +436,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "auditLog" | "school" | "program" | "academicYear" | "term" | "grade" | "class" | "subject" | "timetablePeriod" | "periodSlot" | "timetableAssignment" | "manager" | "student" | "staff" | "parent" | "parentStudent" | "club" | "exam" | "assignment" | "studentAttendance" | "staffAttendance" | "result" | "termlyResult" | "invoice" | "invoicePayment" | "staffPayrollProfile" | "payrollTransactions" | "payrollTransactionLine" | "event" | "announcement" | "studentClassHistory" | "teacherSubjectAssignment"
+    modelProps: "auditLog" | "school" | "program" | "academicYear" | "term" | "grade" | "class" | "subject" | "timetablePeriod" | "periodSlot" | "timetableAssignment" | "manager" | "student" | "staff" | "parent" | "parentStudent" | "club" | "exam" | "assignment" | "studentAttendance" | "staffAttendance" | "result" | "termlyResult" | "invoice" | "invoicePayment" | "payrollProfile" | "payrollTransactions" | "payrollTransactionLine" | "event" | "announcement" | "studentClassHistory" | "teacherSubjectAssignment"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2290,77 +2290,77 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    StaffPayrollProfile: {
-      payload: Prisma.$StaffPayrollProfilePayload<ExtArgs>
-      fields: Prisma.StaffPayrollProfileFieldRefs
+    PayrollProfile: {
+      payload: Prisma.$PayrollProfilePayload<ExtArgs>
+      fields: Prisma.PayrollProfileFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.StaffPayrollProfileFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$StaffPayrollProfilePayload> | null
+          args: Prisma.PayrollProfileFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollProfilePayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.StaffPayrollProfileFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$StaffPayrollProfilePayload>
+          args: Prisma.PayrollProfileFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollProfilePayload>
         }
         findFirst: {
-          args: Prisma.StaffPayrollProfileFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$StaffPayrollProfilePayload> | null
+          args: Prisma.PayrollProfileFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollProfilePayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.StaffPayrollProfileFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$StaffPayrollProfilePayload>
+          args: Prisma.PayrollProfileFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollProfilePayload>
         }
         findMany: {
-          args: Prisma.StaffPayrollProfileFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$StaffPayrollProfilePayload>[]
+          args: Prisma.PayrollProfileFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollProfilePayload>[]
         }
         create: {
-          args: Prisma.StaffPayrollProfileCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$StaffPayrollProfilePayload>
+          args: Prisma.PayrollProfileCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollProfilePayload>
         }
         createMany: {
-          args: Prisma.StaffPayrollProfileCreateManyArgs<ExtArgs>
+          args: Prisma.PayrollProfileCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.StaffPayrollProfileCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$StaffPayrollProfilePayload>[]
+          args: Prisma.PayrollProfileCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollProfilePayload>[]
         }
         delete: {
-          args: Prisma.StaffPayrollProfileDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$StaffPayrollProfilePayload>
+          args: Prisma.PayrollProfileDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollProfilePayload>
         }
         update: {
-          args: Prisma.StaffPayrollProfileUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$StaffPayrollProfilePayload>
+          args: Prisma.PayrollProfileUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollProfilePayload>
         }
         deleteMany: {
-          args: Prisma.StaffPayrollProfileDeleteManyArgs<ExtArgs>
+          args: Prisma.PayrollProfileDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.StaffPayrollProfileUpdateManyArgs<ExtArgs>
+          args: Prisma.PayrollProfileUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.StaffPayrollProfileUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$StaffPayrollProfilePayload>[]
+          args: Prisma.PayrollProfileUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollProfilePayload>[]
         }
         upsert: {
-          args: Prisma.StaffPayrollProfileUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$StaffPayrollProfilePayload>
+          args: Prisma.PayrollProfileUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollProfilePayload>
         }
         aggregate: {
-          args: Prisma.StaffPayrollProfileAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateStaffPayrollProfile>
+          args: Prisma.PayrollProfileAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePayrollProfile>
         }
         groupBy: {
-          args: Prisma.StaffPayrollProfileGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.StaffPayrollProfileGroupByOutputType>[]
+          args: Prisma.PayrollProfileGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PayrollProfileGroupByOutputType>[]
         }
         count: {
-          args: Prisma.StaffPayrollProfileCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.StaffPayrollProfileCountAggregateOutputType> | number
+          args: Prisma.PayrollProfileCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PayrollProfileCountAggregateOutputType> | number
         }
       }
     }
@@ -3218,32 +3218,32 @@ export const InvoicePaymentScalarFieldEnum = {
 export type InvoicePaymentScalarFieldEnum = (typeof InvoicePaymentScalarFieldEnum)[keyof typeof InvoicePaymentScalarFieldEnum]
 
 
-export const StaffPayrollProfileScalarFieldEnum = {
+export const PayrollProfileScalarFieldEnum = {
   id: 'id',
+  accountName: 'accountName',
   accountNumber: 'accountNumber',
   bankName: 'bankName',
-  accountName: 'accountName',
+  bankCode: 'bankCode',
+  recipientCode: 'recipientCode',
   salary: 'salary',
   schoolId: 'schoolId',
   staffId: 'staffId'
 } as const
 
-export type StaffPayrollProfileScalarFieldEnum = (typeof StaffPayrollProfileScalarFieldEnum)[keyof typeof StaffPayrollProfileScalarFieldEnum]
+export type PayrollProfileScalarFieldEnum = (typeof PayrollProfileScalarFieldEnum)[keyof typeof PayrollProfileScalarFieldEnum]
 
 
 export const PayrollTransactionsScalarFieldEnum = {
   id: 'id',
-  reference: 'reference',
-  grossAmount: 'grossAmount',
-  netAmount: 'netAmount',
-  payYear: 'payYear',
-  payMonth: 'payMonth',
+  amount: 'amount',
+  year: 'year',
+  month: 'month',
   paymentDate: 'paymentDate',
   status: 'status',
   schoolId: 'schoolId',
-  staffId: 'staffId',
+  profileId: 'profileId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  lastSyncedAt: 'lastSyncedAt'
 } as const
 
 export type PayrollTransactionsScalarFieldEnum = (typeof PayrollTransactionsScalarFieldEnum)[keyof typeof PayrollTransactionsScalarFieldEnum]
@@ -3694,7 +3694,7 @@ export type GlobalOmitConfig = {
   termlyResult?: Prisma.TermlyResultOmit
   invoice?: Prisma.InvoiceOmit
   invoicePayment?: Prisma.InvoicePaymentOmit
-  staffPayrollProfile?: Prisma.StaffPayrollProfileOmit
+  payrollProfile?: Prisma.PayrollProfileOmit
   payrollTransactions?: Prisma.PayrollTransactionsOmit
   payrollTransactionLine?: Prisma.PayrollTransactionLineOmit
   event?: Prisma.EventOmit

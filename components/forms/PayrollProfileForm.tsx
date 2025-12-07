@@ -5,6 +5,8 @@ import {
   CreatePayrollProfileMutation,
   UpdatePayrollProfileMutation,
   useCreatePayrollProfileMutation,
+  useGetStandardBanksQuery,
+  useResolveRecipientAccountQuery,
   useUpdatePayrollProfileMutation
 } from "@/lib/generated/graphql/client";
 import { handleGraphqlClientErrors } from "@/lib/utils";
@@ -13,36 +15,75 @@ import { FormProps } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import InputField, { FormFieldType } from "../InputField";
 import UserSearchForm from "../UserSearchForm";
+import { useEffect, useMemo } from "react";
 
-const ClassForm = ({ type, data, setOpen }: FormProps) => {
+const PayrollProfileForm = ({ type, data, setOpen }: FormProps) => {
   const router = useRouter();
+
   const form = useForm<PayrollProfileSchema>({
     resolver: zodResolver(payrollProfileSchema),
     defaultValues: {
       id: data?.id,
       staff: {
-        id: data?.staff.id ?? "",
+        id: data?.staff ? data.staff.id : "",
         name: data?.staff ? `${data.staff.name} ${data.staff.surname}` : ""
       },
-      bankName: data?.bankName ?? "",
+      bankName: data?.bankCode ?? "",
       accountNumber: data?.accountNumber ?? "",
       accountName: data?.accountName ?? "",
-      salary: data?.salary ?? "",
+      salary: data?.salary ?? 0,
     },
   });
+
+  const [banksResult] = useGetStandardBanksQuery()
+
+  const banks = useMemo(() => banksResult.data?.standardBanks || [], [banksResult.data])
+
+  const bankName = useWatch({ control: form.control, name: "bankName" })
+  const accountNumber = useWatch({ control: form.control, name: "accountNumber" })
+  const bankCode = banks.find(bank => bank.id === bankName)?.code ?? ""
+
+  const [resolveResult, runQuery] = useResolveRecipientAccountQuery({
+    pause: true,
+    variables: { accountNumber, bankCode },
+  })
 
   const [createResult, createPayrollProfile] = useCreatePayrollProfileMutation()
   const [updateResult, updatePayrollProfile] = useUpdatePayrollProfileMutation()
 
-  const onSubmit = form.handleSubmit(async ({ staff, ...values }) => {
+  useEffect(() => {
+    if (!accountNumber || accountNumber.length < 10 || !bankCode) return;
+
+    const handler = setTimeout(() => {
+      runQuery({ requestPolicy: "cache-and-network" })
+    }, 400)
+
+    return () => clearTimeout(handler)
+  }, [bankCode, accountNumber])
+
+  useEffect(() => {
+    const accountName = resolveResult.data?.resolveRecipientAccount
+    if (accountName?.__typename === "QueryResolveRecipientAccountSuccess") {
+      if (form.getValues("accountName") !== accountName.data) {
+        form.setValue("accountName", accountName.data)
+      }
+    }
+
+  }, [resolveResult.data, form])
+
+  const onSubmit = form.handleSubmit(async ({ staff, bankName, ...values }) => {
     const formData = {
-      ...(type === "update" && { id: data.id }),
+      ...(type === "update" && {
+        id: data.id,
+        recipientCode: data.recipientCode
+      }),
       ...values,
-      staffId: staff.id
+      staffId: staff.id,
+      bankCode: banks.find(bank => bank.id === bankName)?.code ?? "",
     };
 
     const response =
@@ -81,11 +122,26 @@ const ClassForm = ({ type, data, setOpen }: FormProps) => {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <UserSearchForm control={form.control} name="staff" label="Staff" type="staff" />
 
-          <InputField control={form.control} fieldType={FormFieldType.INPUT} name="bankName" label="Bank Name" />
+          <InputField
+            control={form.control}
+            fieldType={FormFieldType.COMBOBOX}
+            name="bankName"
+            label="Bank"
+            options={banks}
+            disabled={type === "update"}
+            placeholder={data?.bankName}
+          />
 
-          <InputField control={form.control} fieldType={FormFieldType.INPUT} name="accountNumber" label="Account Number" />
+          <InputField control={form.control} fieldType={FormFieldType.INPUT} name="accountNumber" label="Account Number" disabled={type === "update"} />
 
-          <InputField control={form.control} fieldType={FormFieldType.INPUT} name="accountName" label="Account Name" />
+          <InputField
+            control={form.control}
+            fieldType={FormFieldType.INPUT}
+            name="accountName"
+            label="Account Name"
+            disabled
+            placeholder={resolveResult.fetching ? "Getting account info..." : ""}
+          />
 
           <InputField control={form.control} fieldType={FormFieldType.INPUT} name="salary" label="Salary" type="number" inputProps={{ step: 1000 }} />
         </div>
@@ -106,4 +162,4 @@ const ClassForm = ({ type, data, setOpen }: FormProps) => {
   );
 };
 
-export default ClassForm;
+export default PayrollProfileForm;

@@ -1,5 +1,5 @@
 /* eslint-disable */
-import type { Prisma, AuditLog, School, Program, AcademicYear, Term, Grade, Class, Subject, TimetablePeriod, PeriodSlot, TimetableAssignment, Manager, Student, Staff, Parent, ParentStudent, Club, Exam, Assignment, StudentAttendance, StaffAttendance, Result, TermlyResult, Invoice, InvoicePayment, StaffPayrollProfile, PayrollTransactions, PayrollTransactionLine, Event, Announcement, StudentClassHistory, TeacherSubjectAssignment } from "./prisma/client.js";
+import type { Prisma, AuditLog, School, Program, AcademicYear, Term, Grade, Class, Subject, TimetablePeriod, PeriodSlot, TimetableAssignment, Manager, Student, Staff, Parent, ParentStudent, Club, Exam, Assignment, StudentAttendance, StaffAttendance, Result, TermlyResult, Invoice, InvoicePayment, PayrollProfile, PayrollTransactions, PayrollTransactionLine, Event, Announcement, StudentClassHistory, TeacherSubjectAssignment } from "./prisma/client.js";
 export default interface PrismaTypes {
     AuditLog: {
         Name: "AuditLog";
@@ -36,8 +36,8 @@ export default interface PrismaTypes {
         Where: Prisma.SchoolWhereInput;
         Create: {};
         Update: {};
-        RelationName: "auditLogs" | "programs" | "academicYears" | "terms" | "students" | "managers" | "staffs" | "parents" | "grades" | "classes" | "subjects" | "timetablePeriods" | "periodSlots" | "timetableAssignments" | "exams" | "clubs" | "assignments" | "results" | "termlyResults" | "events" | "studentAttendances" | "staffAttendances" | "announcements" | "invoices" | "salaryPayments" | "payments" | "teacherSubjectAssignments" | "studentClassHistory" | "staffsBankAccounts";
-        ListRelations: "auditLogs" | "programs" | "academicYears" | "terms" | "students" | "managers" | "staffs" | "parents" | "grades" | "classes" | "subjects" | "timetablePeriods" | "periodSlots" | "timetableAssignments" | "exams" | "clubs" | "assignments" | "results" | "termlyResults" | "events" | "studentAttendances" | "staffAttendances" | "announcements" | "invoices" | "salaryPayments" | "payments" | "teacherSubjectAssignments" | "studentClassHistory" | "staffsBankAccounts";
+        RelationName: "auditLogs" | "programs" | "academicYears" | "terms" | "students" | "managers" | "staffs" | "parents" | "grades" | "classes" | "subjects" | "timetablePeriods" | "periodSlots" | "timetableAssignments" | "exams" | "clubs" | "assignments" | "results" | "termlyResults" | "events" | "studentAttendances" | "staffAttendances" | "announcements" | "invoices" | "salaryPayments" | "payments" | "teacherSubjectAssignments" | "studentClassHistory" | "payrollProfiles";
+        ListRelations: "auditLogs" | "programs" | "academicYears" | "terms" | "students" | "managers" | "staffs" | "parents" | "grades" | "classes" | "subjects" | "timetablePeriods" | "periodSlots" | "timetableAssignments" | "exams" | "clubs" | "assignments" | "results" | "termlyResults" | "events" | "studentAttendances" | "staffAttendances" | "announcements" | "invoices" | "salaryPayments" | "payments" | "teacherSubjectAssignments" | "studentClassHistory" | "payrollProfiles";
         Relations: {
             auditLogs: {
                 Shape: AuditLog[];
@@ -179,9 +179,9 @@ export default interface PrismaTypes {
                 Name: "StudentClassHistory";
                 Nullable: false;
             };
-            staffsBankAccounts: {
-                Shape: StaffPayrollProfile[];
-                Name: "StaffPayrollProfile";
+            payrollProfiles: {
+                Shape: PayrollProfile[];
+                Name: "PayrollProfile";
                 Nullable: false;
             };
         };
@@ -641,8 +641,8 @@ export default interface PrismaTypes {
         Where: Prisma.StaffWhereInput;
         Create: {};
         Update: {};
-        RelationName: "school" | "auditLogs" | "class" | "club" | "salaryInfo" | "timetableAssignments" | "attendances" | "salaries" | "teacherSubjectAssignments";
-        ListRelations: "auditLogs" | "timetableAssignments" | "attendances" | "salaries" | "teacherSubjectAssignments";
+        RelationName: "school" | "auditLogs" | "class" | "club" | "payrollProfile" | "timetableAssignments" | "attendances" | "teacherSubjectAssignments";
+        ListRelations: "auditLogs" | "timetableAssignments" | "attendances" | "teacherSubjectAssignments";
         Relations: {
             school: {
                 Shape: School;
@@ -664,9 +664,9 @@ export default interface PrismaTypes {
                 Name: "Club";
                 Nullable: true;
             };
-            salaryInfo: {
-                Shape: StaffPayrollProfile | null;
-                Name: "StaffPayrollProfile";
+            payrollProfile: {
+                Shape: PayrollProfile | null;
+                Name: "PayrollProfile";
                 Nullable: true;
             };
             timetableAssignments: {
@@ -677,11 +677,6 @@ export default interface PrismaTypes {
             attendances: {
                 Shape: StaffAttendance[];
                 Name: "StaffAttendance";
-                Nullable: false;
-            };
-            salaries: {
-                Shape: PayrollTransactions[];
-                Name: "PayrollTransactions";
                 Nullable: false;
             };
             teacherSubjectAssignments: {
@@ -1046,18 +1041,18 @@ export default interface PrismaTypes {
             };
         };
     };
-    StaffPayrollProfile: {
-        Name: "StaffPayrollProfile";
-        Shape: StaffPayrollProfile;
-        Include: Prisma.StaffPayrollProfileInclude;
-        Select: Prisma.StaffPayrollProfileSelect;
-        OrderBy: Prisma.StaffPayrollProfileOrderByWithRelationInput;
-        WhereUnique: Prisma.StaffPayrollProfileWhereUniqueInput;
-        Where: Prisma.StaffPayrollProfileWhereInput;
+    PayrollProfile: {
+        Name: "PayrollProfile";
+        Shape: PayrollProfile;
+        Include: Prisma.PayrollProfileInclude;
+        Select: Prisma.PayrollProfileSelect;
+        OrderBy: Prisma.PayrollProfileOrderByWithRelationInput;
+        WhereUnique: Prisma.PayrollProfileWhereUniqueInput;
+        Where: Prisma.PayrollProfileWhereInput;
         Create: {};
         Update: {};
-        RelationName: "school" | "staff";
-        ListRelations: never;
+        RelationName: "school" | "staff" | "transactions";
+        ListRelations: "transactions";
         Relations: {
             school: {
                 Shape: School;
@@ -1067,6 +1062,11 @@ export default interface PrismaTypes {
             staff: {
                 Shape: Staff;
                 Name: "Staff";
+                Nullable: false;
+            };
+            transactions: {
+                Shape: PayrollTransactions[];
+                Name: "PayrollTransactions";
                 Nullable: false;
             };
         };
@@ -1081,7 +1081,7 @@ export default interface PrismaTypes {
         Where: Prisma.PayrollTransactionsWhereInput;
         Create: {};
         Update: {};
-        RelationName: "school" | "staff" | "lineItems";
+        RelationName: "school" | "profile" | "lineItems";
         ListRelations: "lineItems";
         Relations: {
             school: {
@@ -1089,9 +1089,9 @@ export default interface PrismaTypes {
                 Name: "School";
                 Nullable: false;
             };
-            staff: {
-                Shape: Staff;
-                Name: "Staff";
+            profile: {
+                Shape: PayrollProfile;
+                Name: "PayrollProfile";
                 Nullable: false;
             };
             lineItems: {

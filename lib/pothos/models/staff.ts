@@ -72,26 +72,23 @@ builder.prismaObject("Staff", {
     class: t.relation("class"),
     attendances: t.relation("attendances", {
       nullable: false,
-      authScopes: {
-        manager: true,
-        admin: true,
-      },
+      authScopes: { manager: true },
       args: {
-        attendanceFilter: t.arg({
+        filter: t.arg({
           type: AttendanceFilter,
           required: true,
         }),
       },
-      query: (args, ctx) => {
-        const { termId, startDate, endDate } = args.attendanceFilter;
+      query(args, ctx) {
+        const { termId, startDate, endDate } = args.filter;
 
         return {
           where: {
             schoolId: ctx.schoolId!,
-            termId: termId ? termId : ctx.currentTerm!,
+            termId: termId ?? ctx.currentTerm!,
             date: {
-              gte: startDate,
-              ...(endDate && { lte: endDate }),
+              gte: new Date(startDate),
+              ...(endDate && { lte: new Date(endDate) }),
             },
           },
           orderBy: { date: "desc" },

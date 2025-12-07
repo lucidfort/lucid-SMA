@@ -13,14 +13,18 @@ const GET_CLASSES_ATTENDANCE = gql(`
     classes {
       id
       name
+      grade {
+        id 
+        name
+      }
       studentCount
-      attendancePresentCount(attendanceFilter: $attendanceFilter)
+      attendancePresentCount(filter: $attendanceFilter)
     }
   }
 `)
 
 const ClassAttendanceListPage = async ({ searchParams }: SearchParams) => {
-  const { date, classId } = await searchParams;
+  const { date, classId, term, tsd, ted } = await searchParams;
 
   const targetDate = date ? new Date(`${date}T08:12:00Z`) : new Date();
 
@@ -30,7 +34,7 @@ const ClassAttendanceListPage = async ({ searchParams }: SearchParams) => {
   const { accessLevel } = await getCurrentUser();
 
   const { client } = await createUrqlServerClient()
-  const { data } = await client.query<GetClassesAttendanceQuery, GetClassesAttendanceQueryVariables>(GET_CLASSES_ATTENDANCE, { attendanceFilter: { startDate: start, endDate: end, classId } })
+  const { data } = await client.query<GetClassesAttendanceQuery, GetClassesAttendanceQueryVariables>(GET_CLASSES_ATTENDANCE, { attendanceFilter: { startDate: start, endDate: end, classId, termId: term } })
 
   const formattedData = data?.classes?.map((item) => ({
     ...item,
@@ -38,17 +42,25 @@ const ClassAttendanceListPage = async ({ searchParams }: SearchParams) => {
   }));
 
   return (
-    <div className="m-4 mt-0 flex-1 space-y-12 rounded-md bg-white p-4">
-      <EventCalendar />
+    <div className="mt-0 w-full p-4 flex flex-col gap-4 items-center md:items-start md:flex-row-reverse">
+      <div className="bg-white rounded-md w-full p-4 md:w-1/3">
+        <EventCalendar
+          minDate={new Date(tsd)}
+          maxDate={new Date(ted)}
+          disableWeekends
+        />
+      </div>
 
-      <DataTable
-        columns={attendanceColumn}
-        data={formattedData ?? []}
-        accessLevel={accessLevel!}
-        title={`Attendance Records for ${date ?? "-"}`}
-        tableFor="attendance"
-        filters={{ selectCount: false }}
-      />
+      <div className="bg-white rounded-md w-full p-4 md:w-2/3">
+        <DataTable
+          columns={attendanceColumn}
+          data={formattedData ?? []}
+          accessLevel={accessLevel!}
+          title={`Attendance Records for ${date ?? "-"}`}
+          tableFor="attendance"
+          filters={{ selectCount: false, termFilter: true, sortFilter: false }}
+        />
+      </div>
     </div>
   );
 };
