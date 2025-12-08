@@ -8,6 +8,7 @@ import DeveloperSidebar from "./DeveloperSidebar";
 import FAQ from "./faq";
 import Security from "./Security";
 import Footer from "./Footer";
+import MenuSidebar from "./MenuSidebar";
 
 export {
   Hero,
@@ -20,4 +21,5 @@ export {
   FAQ,
   Security,
   Footer,
+  MenuSidebar,
 };

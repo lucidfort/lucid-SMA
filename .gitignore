@@ -45,5 +45,5 @@ next-env.d.ts
 
 # Generated files
 introspectedSchema.json
-/lib/generated/
+/lib/generated
 /prisma/migrations 
