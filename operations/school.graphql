@@ -1,0 +1,28 @@
+query GetSchoolSlug($id: ID!) {
+  school(id: $id) {
+    id
+    slug
+  }
+}
+
+mutation CreateSchool($input: SchoolInput!) {
+  createSchool(input: $input) {
+    __typename
+
+    ... on UniqueConstraintError {
+      __typename
+      message
+    }
+
+    ... on MutationCreateSchoolSuccess {
+      data {
+        id
+      }
+    }
+
+    ... on AppError {
+      __typename
+      message
+    }
+  }
+}

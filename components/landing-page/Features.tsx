@@ -1,82 +1,50 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import {
-  Workflow,
-  GraduationCap,
-  Users,
-  UserPlus,
-  Baby,
-  Upload,
-  Code,
-} from "lucide-react";
+import { Baby, BarChart, GraduationCap, UserPlus, Users } from "lucide-react";
 
 const features = [
-  {
-    icon: Workflow,
-    title: "Onboarding Wizard",
-    description:
-      "Multi-step form for school details, programs, and grade selection with review & confirm step.",
-    devNote:
-      "Uses React Hook Form + Zod; server-side validation mirrors client",
-  },
   {
     icon: GraduationCap,
     title: "Programs & Grade Management",
     description:
-      "Map programs to available grades with gradeMap. Prevent duplicate grade assignments across programs.",
-    devNote: "Compute availableGrades by selectedPrograms.flatMap(...)",
+      "Map programs to available grades. Prevent duplicate grade assignments across programs and streamline student management.",
   },
   {
     icon: Users,
-    title: "Staff & Manager Provisioning",
+    title: "Staff & Manager Management",
     description:
-      "Create Clerk users, store clerkUserId, and run manager onboarding flow with transactional integrity.",
-    devNote:
-      "Transactional creation (Prisma tx) + Clerk user; pass emailAddress or phoneNumber",
+      "Create and manage staff accounts with different permission levels. Easily onboard new staff members.",
   },
   {
     icon: UserPlus,
     title: "Parent & Guardian Accounts",
     description:
-      "Separate parent accounts with primary vs secondary guardian relationships. Per-ward access control.",
-    devNote:
-      "Primary guardian default, secondary optional with explicit approval flow",
+      "Separate parent accounts with primary vs secondary guardian relationships. Per-ward access control for better security.",
   },
   {
     icon: Baby,
     title: "Student Lifecycle",
     description:
-      "Seed students with DOB validation (18+ for staff, age rules for students). Automatic grade assignment.",
-    devNote: "Zod date checks with date-fns subYears + isAfter/isBefore",
+      "Manage students with age validation and automatic grade assignment. Track student progress throughout their education.",
   },
   {
-    icon: Upload,
-    title: "File & Media",
+    icon: BarChart,
+    title: "Reports & Analytics",
     description:
-      "Cloudinary uploader for school logos and manager photos. Controller-backed React Hook Form integration.",
-    devNote: "Use CldUploadWidget, Controller and field.onChange(result.info)",
-  },
-  {
-    icon: Code,
-    title: "APIs & Integrations",
-    description:
-      "GraphQL with Pothos, Prisma ORM, Clerk auth, and urql client for frontend queries and mutations.",
-    devNote:
-      "useMutation(CREATE_SCHOOL) with correct variable shape { input: { ... } }",
+      "Generate comprehensive reports on attendance, grades, and financial data. Make data-driven decisions for your school.",
   },
 ];
 
 const Features = () => {
   return (
-    <section className="bg-muted/30 py-20">
+    <section id="features" className="py-20">
       <div className="container mx-auto px-4">
         <div className="mb-12 space-y-4 text-center">
           <h2 className="text-3xl font-bold tracking-tight text-balance sm:text-4xl">
             Powerful features for modern schools
           </h2>
-          <p className="mx-auto max-w-2xl text-lg text-pretty text-muted-foreground">
+          <p className="text-muted-foreground mx-auto max-w-2xl text-lg text-pretty">
             From onboarding to daily operations, every feature is designed for
-            efficiency and developer experience
+            efficiency and ease of use
           </p>
         </div>
 
@@ -87,23 +55,15 @@ const Features = () => {
               className="group transition-shadow hover:shadow-lg"
             >
               <CardHeader>
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 transition-colors group-hover:bg-primary/20">
-                  <feature.icon className="h-6 w-6 text-primary" />
+                <div className="bg-primary/10 group-hover:bg-primary/20 mb-4 flex h-12 w-12 items-center justify-center rounded-lg transition-colors">
+                  <feature.icon className="text-primary h-6 w-6" />
                 </div>
                 <CardTitle className="text-lg">{feature.title}</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
-                <p className="text-sm text-muted-foreground">
+              <CardContent>
+                <p className="text-muted-foreground text-sm">
                   {feature.description}
                 </p>
-                <div className="border-t pt-2">
-                  <Badge variant="secondary" className="font-mono text-xs">
-                    Dev note
-                  </Badge>
-                  <p className="mt-2 text-xs text-muted-foreground">
-                    {feature.devNote}
-                  </p>
-                </div>
               </CardContent>
             </Card>
           ))}

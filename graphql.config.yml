@@ -1,4 +1,4 @@
-schema: schema.graphql
+schema: ./server/graphql/schema.graphql
 documents:
   - "**/*.graphql"
   - "**/*.{ts,tsx}"

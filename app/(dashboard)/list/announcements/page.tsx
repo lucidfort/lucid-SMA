@@ -1,18 +1,43 @@
-import { announcementsColumn } from "@/components/tables/announcementsColumn";
-import { DataTable } from "@/components/tables/data-table";
-import { GetAnnouncementsQuery, GetAnnouncementsQueryVariables } from "@/lib/generated/graphql/server";
-import { getCurrentUser } from "@/lib/server/utils";
-import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
-import { GET_ANNOUNCEMENTS } from "@/operations/server/shared";
+import { announcementsColumn } from "@/components/table/column/announcementsColumn";
+import { DataTable } from "@/components/table/column/data-table";
+import {
+  GetAnnouncementsQuery,
+  GetAnnouncementsQueryVariables,
+} from "@/lib/generated/graphql/server";
+import { getCurrentUser } from "@/lib/utils/server.utils";
+import { createUrqlServerClient } from "@/lib/urql/server.client";
+import { gql } from "@urql/core";
+import { SearchParams } from "@/types";
 
-const AnnouncementsListPage = async () => {
-  const { client } = await createUrqlServerClient()
-  const { data } = await client.query<GetAnnouncementsQuery, GetAnnouncementsQueryVariables>(
-    GET_ANNOUNCEMENTS,
-    {
-      filter: {},
-      skipGrade: false
-    })
+const GET_ANNOUNCEMENTS = gql(`
+  query GetAnnouncements($filter: AnnouncementFilter!, $take: Int) {
+    announcements(filter: $filter, take: $take) {
+      id
+      content
+      title
+      publishedAt
+      grade {
+        id
+        name
+      }
+    }
+  }
+`);
+
+const AnnouncementsListPage = async ({ searchParams }: SearchParams) => {
+  const { term } = await searchParams;
+
+  const { client } = await createUrqlServerClient();
+  const { data } = await client
+    .query<GetAnnouncementsQuery, GetAnnouncementsQueryVariables>(
+      GET_ANNOUNCEMENTS,
+      {
+        filter: {
+          termId: term,
+        },
+      },
+    )
+    .toPromise();
 
   const { accessLevel } = await getCurrentUser();
 
@@ -23,7 +48,11 @@ const AnnouncementsListPage = async () => {
         columns={announcementsColumn}
         data={data?.announcements ?? []}
         tableFor="announcement"
-        title="Recent Announcements"
+        title="Announcements"
+        filters={{
+          selectCount: accessLevel === "manager",
+          termFilter: true,
+        }}
       />
     </div>
   );

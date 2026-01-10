@@ -15,5 +15,7 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["lib/pothos/schema.ts"]
+  "include": [
+    "server/graphql/schema.ts"
+  ]
 }

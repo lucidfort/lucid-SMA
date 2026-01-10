@@ -1,0 +1,45 @@
+query GetTerms($take: Int) {
+    terms(take: $take) {
+        id
+        session
+        isCurrent
+        academicYear {
+            id
+            year
+        }
+    }
+}
+
+mutation MutateTerm($input: TermInput!) {
+    upsertTerm(input: $input) {
+        __typename
+
+        ... on MutationUpsertTermSuccess {
+            data {
+                id
+            }
+        }
+
+        ... on AppError {
+            __typename
+            message
+        }
+    }
+}
+
+mutation ActivateTerm($termId: ID!, $academicYearId: ID!) {
+    activateTerm(termId: $termId, academicYearId: $academicYearId) {
+        __typename
+
+        ... on AppError {
+            __typename
+            message
+        }
+
+        ... on MutationActivateTermSuccess {
+            data {
+                id
+            }
+        }
+    }
+}

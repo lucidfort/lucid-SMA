@@ -1,4 +1,4 @@
-export const ITEMS_PER_PAGE = 10;
+export const ITEMS_PER_PAGE = 20;
 
 type RouteAccessMap = {
   [key: string]: string[];
@@ -10,50 +10,33 @@ export const defaultHome: { [key: string]: string } = {
   manager: "/admin",
   teacher: "/teacher",
   parent: "/parent",
-  student: "/student",
 };
 
 export const routeAccessMap: RouteAccessMap = {
+  "/finance/invoice(.*)": ["parent", "finance", "manager"],
+  "/finance(.*)": ["finance", "manager"],
+
   "/admin(.*)": ["manager"],
   "/teacher(.*)": ["teacher"],
   "/parent(.*)": ["parent"],
-  "/finance(.*)": ["finance", "manager"],
-  "/list/staffs(.*)": ["administration", "manager"],
-  "/list/students(.*)": ["administration", "manager", "finance"],
-  "/list/parents": ["administration", "manager"],
-  "/list/subjects": ["administration", "manager"],
+
+  "/list/staffs(.*)": ["manager"],
+  "/list/students(.*)": ["manager", "finance"],
+  "/list/parents": ["manager"],
+  "/list/subjects": ["manager"],
   "/list/programs": ["manager"],
   "/list/academic-years": ["manager"],
   "/list/terms": ["manager"],
   "/list/grades": ["manager"],
-  "/list/classes": ["administration", "manager"],
+  "/list/classes": ["manager"],
   "/list/exams": ["teachers", "manager", "parent"],
-  "/list/clubs": ["teacher", "manager", "parent"],
   "/list/assignments": ["teacher", "manager", "parent"],
-  "/list/results": ["administration", "manager", "parent"],
-  "/list/attendance(.*)": ["administration", "manager"],
-  "/list/fees": ["administration", "manager", "finance", "student", "parent"],
-  "/list/transactions": ["administration", "manager", "finance"],
-  "/list/events": [
-    "administration",
-    "manager",
-    "academics",
-    "finance",
-    "student",
-    "parent",
-    "teacher",
-  ],
-  "/list/announcements": [
-    "administration",
-    "manager",
-    "finance",
-    "academics",
-    "student",
-    "parent",
-    "teacher",
-  ],
-  "/account/profile": ["administration", "manager", "student", "parent"],
-  "/account/settings": ["administration", "manager", "student", "parent"],
+  "/list/results": ["manager", "parent"],
+  "/list/attendance(.*)": ["manager"],
+  "/list/events": ["manager", "finance", "parent", "teacher"],
+  "/list/announcements": ["manager", "finance", "parent", "teacher"],
+  "/account/profile": ["manager", "parent"],
+  "/account/settings": ["manager", "parent"],
 };
 
 export const listCreationAccess: { [key: string]: string[] } = {
@@ -77,7 +60,31 @@ export const listCreationAccess: { [key: string]: string[] } = {
     "payroll-profile",
   ],
   finance: ["invoice", "payroll-profile"],
-  teacher: ["assignment", "exam", "result"],
-  student: [],
+  teacher: ["assignment", "exam", "exam-result", "assessment-result"],
+  parent: [],
+};
+
+export const resourceDeletionAccess: { [key: string]: string[] } = {
+  manager: [
+    "assignment",
+    "event",
+    "announcement",
+    "exam",
+    "subject",
+    "class",
+    "staff",
+    "student",
+    "parent",
+    "grade",
+    "result",
+    "club",
+    "program",
+    "term",
+    "academic-year",
+    "invoice",
+    "payroll-profile",
+  ],
+  finance: [],
+  teacher: [],
   parent: [],
 };

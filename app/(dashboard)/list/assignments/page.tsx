@@ -1,23 +1,20 @@
-import { assignmentsColumn } from "@/components/tables/assignmentsColumn";
-import { getCurrentUser } from "@/lib/server/utils";
+import { assignmentsColumn } from "@/components/table/column/assignmentsColumn";
+import { getCurrentUser } from "@/lib/utils/server.utils";
 import { gql } from "@urql/core";
-import { DataTable } from "@/components/tables/data-table";
+import { DataTable } from "@/components/table/column/data-table";
 import {
   GetAssignmentsQuery,
   GetAssignmentsQueryVariables,
 } from "@/lib/generated/graphql/server";
-import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
+import { createUrqlServerClient } from "@/lib/urql/server.client";
+import { SearchParams } from "@/types";
 
 const GET_ASSIGNMENTS = gql(`
-  query GetAssignments($filter: AssignmentFilter) {
+  query GetAssignments($filter: AssignmentFilter!) {
     assignments(filter: $filter) {
       id
-      startDate
       dueDate
       maxScore
-      term {
-        id session
-      }
       class {
         id 
         name 
@@ -27,23 +24,26 @@ const GET_ASSIGNMENTS = gql(`
         }
       }
       subject {
-        id name
+        id 
+        name
       }
     }
   }
 `);
 
-const AssignmentsListPage = async () => {
-  const { accessLevel } = await getCurrentUser();
+const AssignmentsListPage = async ({ searchParams }: SearchParams) => {
+  const { term } = await searchParams;
 
   const { client } = await createUrqlServerClient();
-
   const { data } = await client
-    .query<
-      GetAssignmentsQuery,
-      GetAssignmentsQueryVariables
-    >(GET_ASSIGNMENTS, {})
+    .query<GetAssignmentsQuery, GetAssignmentsQueryVariables>(GET_ASSIGNMENTS, {
+      filter: {
+        termId: term,
+      },
+    })
     .toPromise();
+
+  const { accessLevel } = await getCurrentUser();
 
   return (
     <div className="m-4 mt-0 flex-1 rounded-md bg-white p-4">
@@ -53,7 +53,7 @@ const AssignmentsListPage = async () => {
         accessLevel={accessLevel!}
         tableFor="assignment"
         title="Assignments"
-        filters={{ selectCount: false }}
+        filters={{ selectCount: false, termFilter: true }}
       />
     </div>
   );

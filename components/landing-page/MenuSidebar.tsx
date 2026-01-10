@@ -1,33 +1,28 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getCurrentUser } from "@/lib/server/utils";
+import { getCurrentUser } from "@/lib/utils/server.utils";
 import { defaultHome } from "@/lib/settings";
-import { Separator } from "@/components/ui/separator";
 
 const MenuSidebar = async () => {
-  const { currentUserId, accessLevel } = await getCurrentUser();
+  const { isAuthenticated: isLoggedIn, accessLevel } = await getCurrentUser();
+
+  const isAuthenticated = isLoggedIn && !!accessLevel;
 
   return (
     <div className="flex items-center justify-between p-4">
       <Image
-        src={"/logo.svg"}
+        src="/logo.webp"
         alt="Logo"
         width={100}
         height={100}
-        className="h-14 w-14 rounded-full object-center"
+        className="w-24 rounded-full object-center"
       />
 
       <div className="flex w-full items-center justify-end gap-4">
-        <Link href="/">Developers</Link>
-
-        <Separator orientation="vertical" className="bg-black" />
-
         <Link
-          href={
-            currentUserId && accessLevel ? defaultHome[accessLevel] : "/sign-in"
-          }
+          href={isAuthenticated ? defaultHome[accessLevel] : "/auth/sign-in"}
         >
-          {currentUserId ? "Dashboard" : "Sign in"}
+          {isAuthenticated ? "Dashboard" : "Sign in"}
         </Link>
       </div>
     </div>

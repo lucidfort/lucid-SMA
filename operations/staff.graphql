@@ -1,0 +1,102 @@
+query GetStaffs($filter: StaffFilter!) {
+  staffs(filter: $filter) {
+    id
+    name
+    surname
+    employeeId
+  }
+}
+
+mutation CreateStaff($input: StaffInput!) {
+  createStaff(input: $input) {
+    __typename
+
+    ... on MutationCreateStaffSuccess {
+      data {
+        id
+      }
+    }
+
+    ... on UniqueConstraintError {
+      __typename
+      message
+    }
+
+    ... on AppError {
+      __typename
+      message
+    }
+  }
+}
+
+mutation UpdateStaff($input: StaffInput!) {
+  updateStaff(input: $input) {
+    __typename
+
+    ... on MutationUpdateStaffSuccess {
+      data {
+        id
+      }
+    }
+
+    ... on UniqueConstraintError {
+      __typename
+      message
+    }
+
+    ... on AppError {
+      __typename
+      message
+    }
+  }
+}
+
+mutation AssignSubject($subjectId: ID!, $staffId: ID!, $grades: [ID!]!) {
+  assignSubject(staffId: $staffId, subjectId: $subjectId, grades: $grades) {
+    __typename
+
+    ... on AppError {
+      __typename
+      message
+    }
+
+    ...on MutationAssignSubjectSuccess {
+      data {
+        id
+      }
+    }
+  }
+}
+
+mutation AssignClass($classId: ID!, $staffId: ID!) {
+  assignClass(classId: $classId, staffId: $staffId) {
+    __typename
+
+    ... on AppError {
+      __typename
+      message
+    }
+
+    ...on MutationAssignClassSuccess {
+      data {
+        classId
+      }
+    }
+  }
+}
+
+mutation DeactivateStaff($staffId: ID!, $clerkUserId: ID, $activate: Boolean!) {
+  deactivateStaff(staffId: $staffId, clerkUserId: $clerkUserId, activate: $activate ) {
+    __typename
+
+    ...on MutationDeactivateStaffSuccess {
+      __typename
+      data
+    }
+
+    ...on AppError {
+      __typename
+      message
+    }
+  }
+}

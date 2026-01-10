@@ -1,12 +1,17 @@
-import { DataTable } from "@/components/tables/data-table";
-import { parentsColumn } from "@/components/tables/parentsColumn";
+import { DataTable } from "@/components/table/column/data-table";
+import { parentsColumn } from "@/components/table/column/parentsColumn";
 import {
   GetParentsQuery,
-  GetParentsQueryVariables
+  GetParentsQueryVariables,
 } from "@/lib/generated/graphql/server";
-import { getCurrentUser } from "@/lib/server/utils";
-import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
+import { getCurrentUser } from "@/lib/utils/server.utils";
+import { createUrqlServerClient } from "@/lib/urql/server.client";
 import { gql } from "@urql/core";
+import {
+  getRetryAfterSeconds,
+  isRateLimitError,
+} from "@/lib/utils/client.utils";
+import RateLimitNotice from "@/components/RateLimitNotice";
 
 const GET_PARENTS = gql(`
   query GetParents {
@@ -18,18 +23,30 @@ const GET_PARENTS = gql(`
         primaryId
         email
         address
+      children {
+        student {
+          id
+          name
+        }
+      }
         childrenCount
     }
   }
 `);
 
 const ParentsList = async () => {
-  const { accessLevel } = await getCurrentUser();
-
   const { client } = await createUrqlServerClient();
-  const { data } = await client
+  const { data, error } = await client
     .query<GetParentsQuery, GetParentsQueryVariables>(GET_PARENTS, {})
     .toPromise();
+
+  if (error && isRateLimitError(error)) {
+    const retryAfter = getRetryAfterSeconds(error) ?? 60;
+
+    return <RateLimitNotice retryAfter={retryAfter} />;
+  }
+
+  const { accessLevel } = await getCurrentUser();
 
   return (
     <div className="m-4 mt-0 flex-1 rounded-md bg-white p-4">

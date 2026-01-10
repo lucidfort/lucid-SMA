@@ -1,14 +1,9 @@
-import { schema } from "@/lib/pothos/schema";
+import { schema } from "@/server/graphql/schema";
 import prisma from "@/lib/prisma";
 import { RoleAccessLevel } from "@/types";
 import { auth } from "@clerk/nextjs/server";
-import { createYoga, createPubSub } from "graphql-yoga";
+import { createYoga } from "graphql-yoga";
 import { useGraphQLSSE } from "@graphql-yoga/plugin-graphql-sse";
-
-const pubSub = createPubSub<{
-  "announcement:created": [{ schoolId: string; payload?: any }];
-  "announcement:updated": [{ schoolId: string; payload?: any }];
-}>();
 
 const yoga = createYoga({
   schema,
@@ -21,7 +16,7 @@ const yoga = createYoga({
 
   graphiql: {
     subscriptionsProtocol: "GRAPHQL_SSE",
-    title: "Learnix",
+    title: "Eduvia",
   },
 
   logging: true,
@@ -29,7 +24,7 @@ const yoga = createYoga({
   fetchAPI: { Response },
 
   cors: {
-    origin: process.env.NEXT_PUBLIC_BASE_URL,
+    origin: ["http://localhost:3000", "https://learnix.plugnpros.com"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -39,17 +34,23 @@ const yoga = createYoga({
   context: async () => {
     const { userId, sessionClaims } = await auth();
 
-    const user = sessionClaims?.metadata as {
+    const metadata = sessionClaims?.metadata as {
       accessLevel?: RoleAccessLevel;
       schoolId?: string;
     };
 
-    if (!user || !user.accessLevel || !user.schoolId) return null;
+    if (!userId || !metadata?.accessLevel || !metadata?.schoolId) {
+      return {
+        userId,
+        schoolId: metadata?.schoolId,
+        accessLevel: metadata?.accessLevel,
+        currentTerm: null,
+        slug: null,
+      };
+    }
 
     const school = await prisma.school.findUnique({
-      where: {
-        id: user.schoolId,
-      },
+      where: { id: metadata.schoolId },
       select: {
         slug: true,
         terms: {
@@ -61,11 +62,10 @@ const yoga = createYoga({
 
     return {
       userId,
-      schoolId: user.schoolId,
-      accessLevel: user.accessLevel,
-      currentTerm: school?.terms?.[0]?.id,
-      slug: school?.slug,
-      pubSub,
+      schoolId: metadata.schoolId,
+      accessLevel: metadata.accessLevel,
+      currentTerm: school?.terms?.[0]?.id ?? null,
+      slug: school?.slug ?? null,
     };
   },
 });

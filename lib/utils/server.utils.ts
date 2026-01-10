@@ -1,0 +1,110 @@
+"use server";
+
+import {
+  AppError,
+  ForeignKeyError,
+  IdentifierExistsError,
+  NotFoundError,
+  PasswordPwnedError,
+  PasswordTooShortError,
+  RateLimitError,
+  ServerBusyError,
+  UniqueConstraintError,
+} from "@/server/graphql/errors";
+import { RoleAccessLevel, UserAuth } from "@/types";
+import { auth } from "@clerk/nextjs/server";
+
+export async function getCurrentUser(): Promise<UserAuth> {
+  const { userId, sessionClaims } = await auth();
+
+  if (!userId) {
+    return { isAuthenticated: false };
+  }
+
+  const metadata = sessionClaims?.metadata as
+    | {
+        accessLevel: RoleAccessLevel;
+        schoolId: string;
+      }
+    | undefined;
+
+  if (!metadata) {
+    return { isAuthenticated: false };
+  }
+
+  return {
+    ...metadata,
+    currentUserId: userId,
+    isAuthenticated: true,
+  };
+}
+
+export const handleGraphqlServerErrors = async (error: any) => {
+  console.log(error);
+
+  // CLERK ERRORS
+  if (error?.errors && Array.isArray(error.errors)) {
+    const primaryError = error.errors[0];
+    console.log(primaryError);
+
+    switch (primaryError.code) {
+      case "form_password_pwned":
+        throw new PasswordPwnedError();
+
+      case "form_password_length_too_short":
+        throw new PasswordTooShortError();
+
+      case "form_identifier_exists":
+        throw new IdentifierExistsError();
+
+      case "unexpected_error":
+        throw new AppError("Something went wrong. Please try again later.", "");
+
+      case "form_param_format_invalid":
+        throw new AppError(
+          `${primaryError.longMessage || `Invalid ${primaryError.meta.paramName}`}`,
+          "",
+        );
+
+      case "form_param_unknown":
+        throw new AppError(
+          `Unknown argument ${primaryError.meta.paramName}`,
+          "",
+        );
+
+      case "resource_not_found":
+        throw new NotFoundError();
+
+      default:
+        throw new AppError("Something went wrong. Please try again later.", "");
+    }
+  }
+
+  // PRISMA ERRORS
+  if (error?.code) {
+    const errorCode = error.code;
+    const meta = error?.meta;
+
+    console.log({ meta });
+
+    switch (errorCode) {
+      case "P2002":
+        throw new UniqueConstraintError();
+
+      case "P2003":
+        throw new ForeignKeyError();
+
+      case "P2034":
+        throw new ServerBusyError();
+
+      default:
+        break;
+    }
+  }
+
+  if (error.message?.includes("Too many requests")) {
+    throw new RateLimitError();
+  }
+
+  throw new AppError("Something went wrong. Please try again later.", "");
+};

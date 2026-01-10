@@ -1,0 +1,21 @@
+mutation DeleteEntity($id: ID!, $table: Table!) {
+    deleteEntity(id: $id, table: $table) {
+        __typename
+
+        ...on MutationDeleteEntitySuccess {
+            data {
+                success
+            }
+        }
+
+        ...on AuthenticationError {
+            __typename
+            message
+        }
+
+        ...on AppError {
+            __typename
+            message
+        }
+    }
+}

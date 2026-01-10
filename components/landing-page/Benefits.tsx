@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Zap, Shield, Database } from "lucide-react";
+import { Zap, Shield, BarChart3 } from "lucide-react";
 
 const benefits = [
   {
@@ -12,13 +12,13 @@ const benefits = [
     icon: Shield,
     title: "Secure role-based access",
     description:
-      "Parent/student/teacher/manager roles with Clerk-based authentication. Soft-deactivate users with banUser without data loss.",
+      "Parent/student/teacher/manager roles with secure authentication. Easily manage user access without data loss.",
   },
   {
-    icon: Database,
-    title: "Data-first operations",
+    icon: BarChart3,
+    title: "Data-driven insights",
     description:
-      "Prisma-backed transactional creation (programs → grades → manager). Built-in audit trails and referential integrity.",
+      "Comprehensive reporting and analytics for attendance, grades, and financial data. Make informed decisions for your school.",
   },
 ];
 
@@ -31,7 +31,7 @@ const Benefits = () => {
             Everything you need to manage your school
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-pretty text-muted-foreground">
-            Built for administrators, loved by developers
+            Built for school administrators and educators
           </p>
         </div>
 

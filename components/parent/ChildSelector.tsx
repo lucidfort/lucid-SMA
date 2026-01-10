@@ -1,55 +1,60 @@
-"use client"
+"use client";
 
-import { Student } from "@/lib/generated/graphql/client"
-import { useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useState } from "react"
-import { UserAvatar } from "../shareable"
-import { Select, SelectContent, SelectItem, SelectTrigger } from "../ui/select"
+import { Student } from "@/lib/generated/graphql/client";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "../ui/select";
 
-const ChildSelector = ({ students, selectedChild }: { students: Student[]; selectedChild?: string; }) => {
-    const [selectedStudent, setSelectedStudent] = useState<string | undefined>(selectedChild || students?.[0].id)
+const ChildSelector = ({ students }: { students: Student[] }) => {
+  const router = useRouter();
+  const [selectedFilter, setSelectedFilter] = useState("general");
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-    const router = useRouter()
-    const searchParams = useSearchParams()
+  const filters = [
+    { label: "General Overview", value: "general" },
+    ...students.map((s) => ({
+      label: `${s.name} ${s.surname}`,
+      value: s.id,
+    })),
+  ];
 
-    useEffect(() => {
-        if (selectedStudent) {
-            const params = new URLSearchParams(searchParams.toString());
-            params.set("childId", selectedStudent);
+  const handleFilterChange = (value: string) => {
+    if (value === selectedFilter) return;
 
-            router.push(`?${params.toString()}`);
-        }
-    }, [router, selectedStudent, searchParams])
+    const params = new URLSearchParams(searchParams.toString());
 
-    const selected = students?.find(child => child.id === selectedStudent)
+    if (value === "general") {
+      params.delete("child");
+    } else {
+      params.set("child", value);
+    }
 
-    return (
-        <Select
-            value={selectedStudent}
-            onValueChange={(value) => {
-                setSelectedStudent(value)
-            }}
-        >
-            <SelectTrigger className="w-full rounded-md p-2 text-sm ring-[1.5px] ring-gray-300">
-                <div>
-                    {selected?.name} {selected?.surname} - {selected?.class.grade.name}
-                </div>
-            </SelectTrigger>
-            <SelectContent>
-                {students.map((child) => (
-                    <SelectItem key={child.id} value={child.id}>
-                        <div className="flex items-center gap-2">
-                            <UserAvatar
-                                img={child?.img}
-                                name={child.name}
-                            />
-                            {child.name} - {child.class.grade.name}
-                        </div>
-                    </SelectItem>
-                ))}
-            </SelectContent>
-        </Select>
-    )
-}
+    const query = params.toString();
+    const url = query ? `?${query}` : pathname;
 
-export default ChildSelector
+    setSelectedFilter(value);
+    router.replace(url, { scroll: false });
+  };
+
+  return (
+    <Select
+      defaultValue={"all"}
+      value={selectedFilter}
+      onValueChange={(value) => handleFilterChange(value)}
+    >
+      <SelectTrigger className="w-full rounded-md p-2 text-sm ring-[1.5px] ring-gray-300 md:max-w-[250px]">
+        {filters.find((f) => f.value === selectedFilter)?.label || "All"}
+      </SelectTrigger>
+      <SelectContent>
+        {filters.map((filter, idx) => (
+          <SelectItem key={idx} value={filter.value}>
+            {filter.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+};
+
+export default ChildSelector;

@@ -42,8 +42,6 @@ export async function POST(request: NextRequest) {
       ...(body.metadata && { metadata: body.metadata }),
     };
 
-    console.log({ payload });
-
     const response = await fetch(
       "https://api.paystack.co/transaction/initialize",
       {
@@ -56,12 +54,9 @@ export async function POST(request: NextRequest) {
       },
     );
 
-    console.log({ response });
-
     const data: PaystackResponse = await response.json();
 
     if (!response.ok) {
-      console.error("Paystack API Error:", data);
       return NextResponse.json(
         {
           status: false,
@@ -77,8 +72,6 @@ export async function POST(request: NextRequest) {
       data: data.data,
     });
   } catch (error) {
-    console.error("Payment initialization error:", error);
-
     // Handle JSON parsing errors
     if (error instanceof SyntaxError) {
       return NextResponse.json(

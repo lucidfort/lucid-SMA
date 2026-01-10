@@ -1,43 +1,46 @@
-import { examsColumn } from "@/components/tables/examsColumn";
-import { getCurrentUser } from "@/lib/server/utils";
+import { examsColumn } from "@/components/table/column/examsColumn";
+import { getCurrentUser } from "@/lib/utils/server.utils";
 import { gql } from "@urql/core";
-import { DataTable } from "@/components/tables/data-table";
+import { DataTable } from "@/components/table/column/data-table";
 import {
   GetExamsQuery,
   GetExamsQueryVariables,
 } from "@/lib/generated/graphql/server";
-import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
+import { createUrqlServerClient } from "@/lib/urql/server.client";
+import { SearchParams } from "@/types";
 
 const GET_EXAMS = gql(`
   query GetExams($filter: ExamFilter) {
     exams(filter: $filter) {
       id
       date
-      startTime
-      endTime
       type
       maxScore
-      term {
-        id session
-      }
       grade {
-        id name
+        id 
+        name
       }
       subject {
-        id name
+        id 
+        name
       }
     }
   }
 `);
 
-const ExamsListPage = async () => {
-  const { accessLevel } = await getCurrentUser();
-
+const ExamsListPage = async ({ searchParams }: SearchParams) => {
+  const { term } = await searchParams;
   const { client } = await createUrqlServerClient();
 
   const { data } = await client
-    .query<GetExamsQuery, GetExamsQueryVariables>(GET_EXAMS, {})
+    .query<GetExamsQuery, GetExamsQueryVariables>(GET_EXAMS, {
+      filter: {
+        termId: term,
+      },
+    })
     .toPromise();
+
+  const { accessLevel } = await getCurrentUser();
 
   return (
     <div className="m-4 mt-0 flex-1 rounded-md bg-white p-4">
@@ -47,7 +50,7 @@ const ExamsListPage = async () => {
         accessLevel={accessLevel!}
         tableFor="exam"
         title="Exams"
-        filters={{ selectCount: false }}
+        filters={{ selectCount: false, termFilter: true }}
       />
     </div>
   );

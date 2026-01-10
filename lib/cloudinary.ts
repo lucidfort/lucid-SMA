@@ -1,6 +1,7 @@
 "use server";
 
 import { v2 as cloudinary } from "cloudinary";
+import { AppError } from "@/server/graphql/errors";
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -12,7 +13,13 @@ export async function deleteImage(publicId: string) {
   try {
     return await cloudinary.uploader.destroy(publicId);
   } catch (error) {
-    console.error("Failed to delete image:", error);
-    return null;
+    if (error instanceof Error) {
+      throw new AppError(
+        error.message ?? "Failed to delete image",
+        "CLOUDINARY_ERROR",
+      );
+    }
+
+    throw new AppError("Failed to delete image", "CLOUDINARY_ERROR");
   }
 }

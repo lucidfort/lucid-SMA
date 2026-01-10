@@ -1,10 +1,9 @@
-import Announcements from "@/components/Announcements";
-import DeleteModal from "@/components/DeleteModal";
-import DropdownOptions from "@/components/DropdownOptions";
-import EventList from "@/components/EventList";
-import FeeSummary from "@/components/FeeSummary";
-import FormModal from "@/components/FormModal";
-import { UserAvatar } from "@/components/shareable";
+import AnnouncementsCard from "@/components/dashboard/cards/AnnouncementsCard";
+import DeleteModal from "@/components/dashboard/DeleteModal";
+import DropdownOptions from "@/components/dashboard/DropdownOptions";
+import UpcomingEventsCard from "@/components/dashboard/cards/UpcomingEventsCard";
+import FeeSummaryCard from "@/components/dashboard/cards/FeeSummaryCard";
+import FormModal from "@/components/form/ui/FormModal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenuItem,
@@ -14,48 +13,92 @@ import {
   GetGradeQuery,
   GetGradeQueryVariables,
 } from "@/lib/generated/graphql/server";
-import { getCurrentUser } from "@/lib/server/utils";
-import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
-import { SearchParams } from "@/types";
+import { getCurrentUser } from "@/lib/utils/server.utils";
+import { createUrqlServerClient } from "@/lib/urql/server.client";
+import { SearchParams, UserAuth } from "@/types";
 import { gql } from "@urql/core";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { startOfDay, subDays } from "date-fns";
 
 const GET_GRADE = gql`
-  query GetGrade($id: ID!) {
+  query GetGrade(
+    $id: ID!
+    $eventFilter: EventFilter!
+    $announcementFilter: AnnouncementFilter!
+    $invoiceSummaryFilter: InvoiceFilter!
+  ) {
     grade(id: $id) {
       id
       name
+      activeStudentsCount
       classes {
         id
         name
-        studentCount
+        activeStudentsCount
         supervisors {
-          id
-          name
-          surname
-          img
+          teacher {
+            id
+            name
+            surname
+          }
         }
       }
+    }
+
+    events(filter: $eventFilter) {
+      id
+      title
+      description
+      date
+    }
+
+    announcements(filter: $announcementFilter) {
+      id
+      content
+      title
+      publishedAt
+    }
+
+    invoices(filter: $invoiceSummaryFilter) {
+      id
+      title
+      paymentCount
+      studentCount
     }
   }
 `;
 
 const GradeDetailsPage = async ({ params }: SearchParams) => {
   const { id } = await params;
-  const { accessLevel } = await getCurrentUser();
+  const user = await getCurrentUser();
+
+  const { accessLevel } = user as UserAuth;
+
+  const today = new Date();
 
   const { client } = await createUrqlServerClient();
   const { data } = await client.query<GetGradeQuery, GetGradeQueryVariables>(
     GET_GRADE,
-    { id },
+    {
+      id,
+      eventFilter: {
+        date: startOfDay(today),
+        take: 3,
+      },
+      announcementFilter: {
+        rangeFrom: subDays(new Date(), 10),
+        take: 3,
+      },
+      invoiceSummaryFilter: {},
+    },
   );
 
-  const grade = data?.grade;
-  if (!grade) notFound();
+  if (!data?.grade) notFound();
 
+  const grade = data.grade;
   const studentCount = grade.classes.reduce((acc, c) => {
-    return acc + c.studentCount;
+    return acc + c.activeStudentsCount;
   }, 0);
 
   const cards = [
@@ -81,7 +124,7 @@ const GradeDetailsPage = async ({ params }: SearchParams) => {
             <CardHeader className="flex items-center justify-between">
               <CardTitle>Grade Information</CardTitle>
 
-              {["manager", "administration"].includes(accessLevel!) && (
+              {["manager"].includes(accessLevel!) && (
                 <DropdownOptions>
                   <DropdownMenuItem asChild>
                     <FormModal
@@ -97,7 +140,7 @@ const GradeDetailsPage = async ({ params }: SearchParams) => {
 
                   <DropdownMenuItem className="text-destructive" asChild>
                     <DeleteModal id={grade.id!} table="grade">
-                      <span className="pl-2.5 text-sm text-destructive">
+                      <span className="text-destructive pl-2.5 text-sm">
                         Delete
                       </span>
                     </DeleteModal>
@@ -115,29 +158,55 @@ const GradeDetailsPage = async ({ params }: SearchParams) => {
             </CardContent>
           </Card>
 
-          {grade.classes.map((item) => (
-            <Card key={item.id}>
-              <CardHeader className="flex items-center justify-between">
-                <CardTitle>Supervisor</CardTitle>
-              </CardHeader>
+          {grade.classes.map(
+            ({ id, name, supervisors, activeStudentsCount }) => (
+              <Card key={id}>
+                <CardHeader className="flex items-center justify-between">
+                  <CardTitle>
+                    {grade.name} {name}
+                  </CardTitle>
 
-              <CardContent className="space-y-6">
-                {item.supervisors.length > 0 &&
-                  item.supervisors.map((supervisor) => (
-                    <Link
-                      key={supervisor.id}
-                      href={`/list/staffs/${supervisor.id}`}
-                      className="flex items-center gap-3"
-                    >
-                      <UserAvatar name="" img={supervisor.img} />
-                      <h3>
-                        {supervisor.name} {supervisor.surname}
-                      </h3>
-                    </Link>
-                  ))}
-              </CardContent>
-            </Card>
-          ))}
+                  <div>
+                    <FormModal
+                      table="class-assignment"
+                      type="create"
+                      data={{ gradeId: grade.id, classId: id }}
+                      triggerTitle="Assign Supervisor"
+                    />
+                  </div>
+                </CardHeader>
+
+                <CardContent>
+                  <div className="flex items-center gap-3">
+                    <div>Supervisor(s): </div>
+                    <div>
+                      {!supervisors || supervisors.length === 0 ? (
+                        <p>Not assigned</p>
+                      ) : (
+                        <>
+                          {supervisors
+                            .map(({ teacher }) => (
+                              <Link
+                                key={teacher.id}
+                                href={`/list/staffs/${teacher.id}`}
+                              >
+                                {teacher.name} {teacher.surname}
+                              </Link>
+                            ))
+                            .join(", ")}
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="mt-2 flex items-center gap-3">
+                    <div>Active Students: </div>
+                    <div>{activeStudentsCount}</div>
+                  </div>
+                </CardContent>
+              </Card>
+            ),
+          )}
         </div>
 
         <div>
@@ -151,9 +220,9 @@ const GradeDetailsPage = async ({ params }: SearchParams) => {
       </div>
 
       <div className="flex w-full flex-col gap-8 lg:w-1/3">
-        <Announcements gradeId={grade.id} />
-        <EventList gradeId={grade.id} />
-        <FeeSummary gradeId={grade.id} />
+        <UpcomingEventsCard events={data?.events || []} />
+        <AnnouncementsCard announcements={data?.announcements || []} />
+        <FeeSummaryCard invoices={data?.invoices || []} />
       </div>
     </div>
   );

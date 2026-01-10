@@ -1,5 +1,6 @@
 import { parse, isBefore, subYears } from "date-fns";
 import { z } from "zod";
+import { RoleAccessLevel } from "@/types";
 
 const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 const phonePattern = /^\+?\d{10,15}$/;
@@ -18,12 +19,28 @@ const birthday = (diff: number) =>
       { message: `User must be at least ${diff} years old` },
     );
 
-export const signInSchema = z.object({
-  username: z.string().min(1, "Username is required"),
-  password: z.string().min(1, "Password is required"),
-});
+export const authSchema = (type: "sign-in" | "sign-up") => {
+  const baseSchema = z.object({
+    email:
+      type === "sign-up"
+        ? z.string().email("Email address is required")
+        : z.null(),
+    username: z.string().min(1, "Username is required"),
+    password: z.string().min(1, "Password is required"),
+    confirmPassword: type === "sign-up" ? z.string().min(8) : z.null(),
+  });
 
-export type SignInSchema = z.infer<typeof signInSchema>;
+  if (type === "sign-up") {
+    return baseSchema.refine((data) => data.password === data.confirmPassword, {
+      message: "Password doesn't match",
+      path: ["confirmPassword"],
+    });
+  }
+
+  return baseSchema;
+};
+
+export type AuthSchema = z.infer<ReturnType<typeof authSchema>>;
 
 export const schoolSchema = z.object({
   slug: z.string().min(3, "This is required"),
@@ -38,18 +55,9 @@ export const schoolSchema = z.object({
     .min(1, "Please select at least one program"),
   grades: z.array(z.string()).min(1, "Please select at least one grade"),
   manager: z.object({
-    username: z.string().min(3).max(20).regex(usernamePattern),
     name: z.string().min(3, { message: "First Name is required" }),
     surname: z.string().min(3, { message: "Surname is required" }),
-    email: z.string().email(),
     phone: z.string().min(10, "Phone number is incorrect"),
-    password: z
-      .string()
-      .min(8)
-      .regex(
-        passwordPattern,
-        "Password must include uppercase, lowercase, number, and special character",
-      ),
   }),
 });
 
@@ -153,29 +161,9 @@ export const staffSchema = z.object({
   img: z.string().optional().nullable(),
   oldImg: z.string().optional().nullable(),
   contractType: z.enum(["CONTRACT", "PART_TIME", "PERMANENT"]),
-  accessLevel: z.enum([
-    "ACADEMICS",
-    "ADMINISTRATION",
-    "FINANCE",
-    "RESTRICTED",
-    "TEACHER",
-  ]),
+  accessLevel: z.enum(["TEACHER", "FINANCE", "RESTRICTED"]),
   role: z.string().min(1, { message: "Role is required" }),
   isActive: z.boolean(),
-  programId: z.string().optional().nullable(),
-
-  // PRIMARY, NURSERY
-  gradeId: z.string().optional().nullable(),
-  classId: z.string().optional().nullable(),
-
-  // SECONDARY
-  assignments: z
-    .object({
-      subjectId: z.string().min(1),
-      gradeIds: z.array(z.string()).min(1),
-    })
-    .optional()
-    .nullable(),
 });
 
 export type StaffSchema = z.infer<typeof staffSchema>;
@@ -213,14 +201,10 @@ export type ClassSchema = z.infer<typeof classSchema>;
 export const examSchema = z.object({
   id: z.string().optional().nullable(),
   date: z.coerce.date({ message: "Date is required" }),
-  startTime: z.string(),
-  endTime: z.string().optional().nullable(),
   type: z.enum(["FINAL", "TEST", "MIDTERM", "QUIZ", "PRACTICAL"]),
   maxScore: z.coerce.number().min(1),
-  files: z.array(z.string()).optional().nullable(),
   subjectId: z.string().min(1, { message: "What subject is this exam for?" }),
   gradeId: z.string().min(1, { message: "Which grade is this exam for?" }),
-  termId: z.string().min(1, { message: "Term is required" }),
 });
 
 export type ExamSchema = z.infer<typeof examSchema>;
@@ -228,62 +212,47 @@ export type ExamSchema = z.infer<typeof examSchema>;
 export const assignmentSchema = z
   .object({
     id: z.string().optional().nullable(),
-    startDate: z.coerce.date({ message: "Start Date is required" }),
     dueDate: z.coerce.date({ message: "When's the due date?" }),
     maxScore: z.coerce.number().min(1),
-    files: z.array(z.string()).optional().nullable(),
     subjectId: z
       .string()
       .min(1, { message: "What subject is this assignment for?" }),
     classId: z
       .string()
       .min(1, { message: "Which class is this assignment for?" }),
-    termId: z.string().min(1, { message: "Term is required" }),
     gradeId: z
       .string({ message: "Which class is this assignment for?" })
       .optional()
       .nullable(),
   })
-  .refine((data) => data.dueDate >= data.startDate, {
+  .refine((data) => data.dueDate >= new Date(), {
     path: ["dueDate"],
-    message: "Due date cannot be before start date",
+    message: "Due date must be after today's date",
   });
 
 export type AssignmentSchema = z.infer<typeof assignmentSchema>;
 
-export const clubSchema = z.object({
-  id: z.string().optional().nullable(),
-  name: z.string().min(2, { message: "Name is required" }),
-  description: z.string().min(2, { message: "Description is required" }),
-  foundedAt: z.coerce
-    .date({ message: "Start Time is required" })
-    .optional()
-    .nullable(),
-});
-
-export type ClubSchema = z.infer<typeof clubSchema>;
-
 export const timetableAssignmentSchema = z
   .object({
     // Period
-    startTime: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
-    endTime: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
-    daysOfWeek: z.array(z.string()),
+    startMinute: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
+    endMinute: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
 
     // Assignment
-    id: z.string().optional(),
+    periodId: z.string().optional().nullable(),
+    dayOfWeek: z.string().optional().nullable(),
     subjectId: z.string().optional().nullable(),
     teacherId: z.string().optional().nullable(),
   })
   .refine(
     (data) => {
-      const start = parse(data.startTime, "HH:mm", new Date("1970-01-01"));
-      const end = parse(data.endTime, "HH:mm", new Date("1970-01-01"));
+      const start = parse(data.startMinute, "HH:mm", new Date("1970-01-01"));
+      const end = parse(data.endMinute, "HH:mm", new Date("1970-01-01"));
       return end > start;
     },
     {
       message: "End time must be after start time",
-      path: ["endTime"],
+      path: ["endMinute"],
     },
   );
 
@@ -328,7 +297,6 @@ export const resultSchema = (maxScore: number) =>
       .number()
       .min(0)
       .max(maxScore, `Score cannot exceed ${maxScore}`),
-    type: z.enum(["exam", "assignment"]),
     testId: z.string().min(1, "Select a test"),
     student: z.object(
       {
@@ -345,28 +313,18 @@ export const resultSchema = (maxScore: number) =>
 
 export type ResultSchema = z.infer<ReturnType<typeof resultSchema>>;
 
-export const eventSchema = z
-  .object({
-    id: z.string().optional().nullable(),
-    title: z
-      .string()
-      .min(1, { message: "Event title must be over 8 characters" }),
-    description: z
-      .string()
-      .min(5, { message: "Description is too short" })
-      .max(500, { message: "Description is too long" }),
-    startTime: z.string().min(1),
-    endTime: z.string().min(1),
-    gradeId: z.string().optional().nullable(),
-  })
-  .refine(
-    (data) =>
-      data.endTime.split(":").join("") >= data.startTime.split(":").join(""),
-    {
-      path: ["endTime"],
-      message: "End Time cannot be before start time",
-    },
-  );
+export const eventSchema = z.object({
+  id: z.string().optional().nullable(),
+  title: z
+    .string()
+    .min(1, { message: "Event title must be over 8 characters" }),
+  description: z
+    .string()
+    .min(5, { message: "Description is too short" })
+    .max(500, { message: "Description is too long" }),
+  date: z.coerce.date(),
+  gradeId: z.string().optional().nullable(),
+});
 
 export type EventSchema = z.infer<typeof eventSchema>;
 
@@ -400,31 +358,29 @@ export const invoiceSchema = z
 
 export type InvoiceSchema = z.infer<typeof invoiceSchema>;
 
-export const transactionSchema = z.object({
-  email: z.string().email({ message: "Enter a valid email" }),
-  student: z.object(
-    {
-      id: z.string().min(1),
-      name: z.string(),
-    },
-    { message: "Student is required" },
-  ),
-  invoiceId: z.string().min(3, { message: "Which fee are you paying for?" }),
-  amount: z.coerce.number().min(1000),
-});
+export const transactionSchema = (role: RoleAccessLevel) =>
+  z.object({
+    email: z.string().email({ message: "Enter a valid email" }),
+    student:
+      role === "parent"
+        ? z.string().min(1)
+        : z.object(
+            {
+              id: z.string().min(1),
+              name: z.string(),
+            },
+            { message: "Student is required" },
+          ),
+    invoiceId: z.string().min(3, { message: "Which fee are you paying for?" }),
+    amount: z.coerce.number().min(1000),
+  });
 
-export type TransactionSchema = z.infer<typeof transactionSchema>;
+export type TransactionSchema = z.infer<ReturnType<typeof transactionSchema>>;
 
 export const payrollProfileSchema = z.object({
   id: z.string().optional().nullable(),
-  staff: z.object(
-    {
-      id: z.string().min(1),
-      name: z.string(),
-    },
-    { message: "Staff is required" },
-  ),
-  bankName: z.string().min(1, "Select the customer's bank"),
+  staffId: z.string().min(1),
+  bankCode: z.string().min(1, "Select the customer's bank"),
   accountNumber: z
     .string({ message: "Provide the customer's account number" })
     .min(10, "Invalid account number")
@@ -440,47 +396,62 @@ export const payrollProfileSchema = z.object({
 
 export type PayrollProfileSchema = z.infer<typeof payrollProfileSchema>;
 
-export const studentAttendanceSchema = z.object({
-  date: z.coerce.date(),
-  records: z.array(
-    z.object({
-      studentId: z.string(),
-      present: z.boolean(),
-    }),
-  ),
+export const termSchema = z
+  .object({
+    id: z.string().optional().nullable(),
+    session: z.string().min(1, "Session is required"),
+    startDate: z.coerce.date({ message: "Start date is required" }),
+    endDate: z.coerce
+      .date({ message: "End date is required" })
+      .optional()
+      .nullable(),
+    academicYearId: z
+      .string({ message: "Please select an academic year" })
+      .min(1, "Please select an academic year"),
+  })
+  .refine((data) => data.endDate == null || data.endDate >= data.startDate, {
+    path: ["endDate"],
+    message: "End Date cannot be before Start Date",
+  });
+
+export type TermSchema = z.infer<typeof termSchema>;
+
+export const academicYearSchema = z
+  .object({
+    id: z.string().optional().nullable(),
+    year: z.string(),
+    startDate: z.coerce.date({ message: "Start date is required" }),
+    endDate: z.coerce
+      .date({ message: "End date is required" })
+      .optional()
+      .nullable(),
+  })
+  .refine((data) => data.endDate == null || data.endDate >= data.startDate, {
+    path: ["endDate"],
+    message: "End Date cannot be before Start Date",
+  });
+
+export type AcademicYearSchema = z.infer<typeof academicYearSchema>;
+
+export const classAssignmentSchema = z.object({
+  gradeId: z.string().min(2, "Grade is required"),
+  classId: z.string().min(2, "Class is required"),
+  staff: z.object({
+    id: z.string().min(1, "Staff is required"),
+    name: z.string(),
+  }),
 });
 
-export type StudentAttendanceSchema = z.infer<typeof studentAttendanceSchema>;
+export type ClassAssignmentSchema = z.infer<typeof classAssignmentSchema>;
 
-export const staffAttendanceSchema = z.object({
-  staffId: z.string(),
-  date: z.coerce.date().default(() => new Date()),
-});
+export const staffAttendanceSchema = (type: "check-in" | "absent") =>
+  z.object({
+    reasonForAbsence:
+      type === "absent"
+        ? z.string().min(1, "What's the reason for absence?")
+        : z.string().optional().nullable(),
+  });
 
-export type StaffAttendanceSchema = z.infer<typeof staffAttendanceSchema>;
-
-export const termSchema = (type: "academic-year" | "term") =>
-  z
-    .object({
-      id: z.string().optional().nullable(),
-      term: type === "term" ? z.string() : z.null(),
-      year: type === "term" ? z.null() : z.string(),
-      startDate: z.coerce.date({ message: "Start date is required" }),
-      endDate: z.coerce
-        .date({ message: "End date is required" })
-        .optional()
-        .nullable(),
-      isCurrent: z.boolean(),
-      academicYearId:
-        type === "term"
-          ? z
-              .string({ message: "Please select an academic year" })
-              .min(1, "Please select an academic year")
-          : z.null(),
-    })
-    .refine((data) => data.endDate == null || data.endDate >= data.startDate, {
-      path: ["endDate"],
-      message: "End Date cannot be before Start Date",
-    });
-
-export type TermSchema = z.infer<ReturnType<typeof termSchema>>;
+export type StaffAttendanceSchema = z.infer<
+  ReturnType<typeof staffAttendanceSchema>
+>;

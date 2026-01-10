@@ -1,0 +1,1192 @@
+type AcademicYear {
+  endDate: DateTime
+  id: ID!
+  isCurrent: Boolean!
+  startDate: DateTime!
+  terms(isCurrent: Boolean): [Term!]!
+  year: String!
+}
+
+input AcademicYearInput {
+  endDate: DateTime
+  id: ID
+  startDate: DateTime!
+  year: String!
+}
+
+enum AccessLevel {
+  ACADEMICS
+  ADMINISTRATION
+  FINANCE
+  RESTRICTED
+  TEACHER
+}
+
+type Announcement {
+  content: String!
+  grade: Grade
+  gradeId: ID
+  id: ID!
+  publishedAt: DateTime!
+  title: String!
+}
+
+input AnnouncementFilter {
+  academicYearId: ID
+  gradeId: ID
+  rangeFrom: DateTime
+  take: Int
+  termId: ID
+}
+
+input AnnouncementInput {
+  content: String!
+  gradeId: ID
+  id: ID
+  staffOnly: Boolean!
+  title: String!
+}
+
+interface AppError implements Error {
+  code: String
+  message: String
+}
+
+type Assessment {
+  class: Class!
+  createdAt: DateTime!
+  dueDate: DateTime!
+  id: ID!
+  maxScore: Int!
+  results: [AssessmentResult!]!
+  subject: Subject!
+  term: Term!
+  termId: String!
+}
+
+type AssessmentResult {
+  assignment: Assessment!
+  id: ID!
+  score: Int!
+  student: Student!
+  studentId: String!
+  uploadedAt: DateTime!
+}
+
+input AssignmentFilter {
+  classId: ID
+  subjectId: ID
+  teacherId: ID
+  termId: ID
+}
+
+input AssignmentInput {
+  classId: String!
+  dueDate: DateTime!
+  id: ID
+  maxScore: Int!
+  subjectId: String!
+}
+
+input AttendanceFilter {
+  academicYearId: ID
+  classId: ID
+  endDate: DateTime
+  gradeId: ID
+  staffId: ID
+  startDate: DateTime
+  studentId: ID
+  termId: ID
+}
+
+input AttendanceRecords {
+  arrivalTime: String
+  note: String
+  status: AttendanceStatus!
+  studentId: ID!
+}
+
+enum AttendanceStatus {
+  ABSENT
+  EXCUSED
+  LATE
+  PRESENT
+}
+
+type AuthenticationError implements AppError & Error {
+  code: String
+  message: String
+}
+
+type BaseAppError implements AppError & Error {
+  code: String
+  message: String
+}
+
+type BaseError implements Error {
+  message: String
+}
+
+type Class {
+  activeStudentsCount: Int!
+  attendancePresentCount(filter: AttendanceFilter!): Int!
+  capacity: Int!
+  grade: Grade!
+  gradeId: String!
+  id: ID!
+  name: String!
+  students: [Student!]!
+  supervisors(isActive: Boolean): [ClassSupervisor!]
+}
+
+type ClassAttendance {
+  arrivalTime: String
+  date: DateTime!
+  id: ID!
+  note: String
+  status: AttendanceStatus!
+  studentId: ID!
+}
+
+input ClassAttendanceInput {
+  classId: ID!
+  date: DateTime!
+  records: [AttendanceRecords!]!
+  termId: ID
+}
+
+input ClassFilter {
+  gradeId: ID
+  name: String
+  programId: ID
+  supervisorId: String
+}
+
+input ClassInput {
+  capacity: Int!
+  gradeId: String!
+  id: ID
+  name: String!
+  supervisors: [String!]
+}
+
+type ClassSupervisor {
+  class: Class!
+  classId: ID!
+  teacher: Staff!
+  teacherId: ID!
+}
+
+enum ContractType {
+  CONTRACT
+  PART_TIME
+  PERMANENT
+}
+
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar DateTime
+
+type DeleteEntityResponse {
+  success: Boolean!
+}
+
+"""
+A field whose value conforms to the standard internet email address format as specified in HTML Spec: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.
+"""
+scalar Email
+
+interface Error {
+  message: String
+}
+
+type Event {
+  date: DateTime!
+  description: String
+  grade: Grade
+  id: ID!
+  title: String!
+  updatedAt: DateTime
+}
+
+input EventFilter {
+  date: DateTime
+  gradeId: ID
+  take: Int
+  termId: ID
+}
+
+input EventInput {
+  date: DateTime!
+  description: String!
+  gradeId: ID
+  id: ID
+  title: String!
+}
+
+type Exam {
+  date: DateTime!
+  grade: Grade!
+  id: ID!
+  maxScore: Int!
+  results: [ExamResult!]!
+  subject: Subject!
+  term: Term!
+  termId: String!
+  type: ExamType!
+}
+
+input ExamFilter {
+  classId: ID
+  gradeId: ID
+  subjectId: ID
+  teacherId: ID
+  termId: ID
+}
+
+input ExamInput {
+  date: DateTime!
+  gradeId: String!
+  id: ID
+  maxScore: Int!
+  subjectId: String!
+  type: ExamType!
+}
+
+type ExamResult {
+  exam: Exam!
+  id: ID!
+  score: Int!
+  student: Student!
+  studentId: String!
+  uploadedAt: DateTime!
+}
+
+enum ExamType {
+  FINAL
+  MIDTERM
+  PRACTICAL
+  QUIZ
+  TEST
+}
+
+input FeePaymentInput {
+  amount: Int!
+  email: Email!
+  invoiceId: ID!
+  studentId: String!
+}
+
+type FeePaymentResponse {
+  access_code: String!
+  authorization_url: String!
+  reference: String!
+}
+
+type ForeignKeyError implements AppError & Error {
+  code: String
+  message: String
+}
+
+type Grade {
+  activeStudentsCount: Int!
+  classes: [Class!]!
+  id: ID!
+  isActive: Boolean!
+  name: String!
+  program: Program!
+  programId: String!
+}
+
+input GradeFilter {
+  programId: ID
+  supervisorId: String
+}
+
+input GradeInput {
+  id: ID
+  name: String!
+  programId: String!
+}
+
+input GuardianInput {
+  id: ID!
+  relation: ParentStudentRelationship!
+}
+
+type IdentifierExistsError implements AppError & Error {
+  code: String
+  message: String
+}
+
+type Invoice {
+  amount: Int!
+  dueDate: DateTime
+  grades: [Grade!]!
+  hasPaid: Boolean
+  id: ID!
+  number: String!
+  paymentCount: Int!
+  payments: [InvoicePayment!]!
+  studentCount: Int
+  term: Term!
+  termId: String!
+  title: String!
+}
+
+input InvoiceFilter {
+  classId: String
+  gradeId: String
+  termId: String
+}
+
+input InvoiceInput {
+  amount: Int!
+  dueDate: DateTime
+  grades: [ID!]
+  id: ID
+  number: String!
+  termId: ID!
+  title: String!
+}
+
+type InvoicePayment {
+  amountPaid: Int!
+  createdAt: DateTime!
+  currency: String!
+  id: ID!
+  invoice: Invoice!
+  method: String
+  paidAt: DateTime
+  payerEmail: String
+  reference: String!
+  status: PaymentStatus!
+  students: [Student!]!
+}
+
+input InvoicePaymentFilter {
+  academicYearId: ID
+  endDate: DateTime
+  invoiceId: ID
+  reference: String
+  skip: Int
+  startDate: DateTime
+  status: PaymentStatus
+  take: Int
+  termId: ID
+}
+
+type Mutation {
+  activateAcademicYear(academicYearId: ID!): MutationActivateAcademicYearResult
+  activateTerm(academicYearId: ID!, termId: ID!): MutationActivateTermResult
+  assignClass(classId: ID!, staffId: ID!): MutationAssignClassResult
+  assignSubject(grades: [ID!]!, staffId: ID!, subjectId: ID!): MutationAssignSubjectResult
+  assignTimetablePeriod(input: TimetableAssignmentInput!): MutationAssignTimetablePeriodResult
+  changeGradeStatus(activate: Boolean!, id: ID!): MutationChangeGradeStatusResult
+  changeProgramStatus(activate: Boolean!, id: ID!): MutationChangeProgramStatusResult
+  createAnnouncement(input: AnnouncementInput!): MutationCreateAnnouncementResult
+  createAssessmentResult(input: ResultInput!): MutationCreateAssessmentResultResult
+  createAssignment(input: AssignmentInput!): MutationCreateAssignmentResult
+  createClass(input: ClassInput!): MutationCreateClassResult
+  createEvent(input: EventInput!): MutationCreateEventResult
+  createExam(input: ExamInput!): MutationCreateExamResult
+  createExamResult(input: ResultInput!): MutationCreateExamResultResult
+  createGrade(input: GradeInput!): MutationCreateGradeResult
+  createInvoice(input: InvoiceInput!): MutationCreateInvoiceResult
+  createParent(input: ParentInput!): MutationCreateParentResult
+  createPayrollProfile(input: PayrollProfileInput!): MutationCreatePayrollProfileResult
+  createProgram(input: ProgramInput!): MutationCreateProgramResult
+  createSchool(input: SchoolInput!): MutationCreateSchoolResult
+  createStaff(input: StaffInput!): MutationCreateStaffResult
+  createStudent(input: StudentInput!): MutationCreateStudentResult
+  createSubject(input: SubjectInput!): MutationCreateSubjectResult
+  createTimetablePeriod(input: TimetablePeriodInput!): MutationCreateTimetablePeriodResult
+  deactivateStaff(activate: Boolean!, clerkUserId: ID, staffId: ID!): MutationDeactivateStaffResult
+  deleteEntity(id: ID!, table: Table!): MutationDeleteEntityResult
+  generatePayrollReference(input: PayrollTransactionInput!): MutationGeneratePayrollReferenceResult
+  initiateFeePayment(input: FeePaymentInput!): MutationInitiateFeePaymentResult
+  initiatePayrollTransfer(input: PayrollTransactionInput!): MutationInitiatePayrollTransferResult
+  markClassAttendance(input: ClassAttendanceInput!): MutationMarkClassAttendanceResult
+  markStaffAttendance(input: StaffAttendanceInput!): MutationMarkStaffAttendanceResult
+  updateAnnouncement(input: AnnouncementInput!): MutationUpdateAnnouncementResult
+  updateAssessmentResult(input: ResultInput!): MutationUpdateAssessmentResultResult
+  updateAssignment(input: AssignmentInput!): MutationUpdateAssignmentResult
+  updateClass(input: ClassInput!): MutationUpdateClassResult
+  updateEvent(input: EventInput!): MutationUpdateEventResult
+  updateExam(input: ExamInput!): MutationUpdateExamResult
+  updateExamResult(input: ResultInput!): MutationUpdateExamResultResult
+  updateInvoice(input: InvoiceInput!): MutationUpdateInvoiceResult
+  updateParent(input: ParentInput!): MutationUpdateParentResult
+  updatePayrollProfile(input: PayrollProfileInput!): MutationUpdatePayrollProfileResult
+  updateStaff(input: StaffInput!): MutationUpdateStaffResult
+  updateStudent(input: StudentInput!): MutationUpdateStudentResult
+  updateSubject(input: SubjectInput!): MutationUpdateSubjectResult
+  upsertAcademicYear(input: AcademicYearInput!): MutationUpsertAcademicYearResult
+  upsertTerm(input: TermInput!): MutationUpsertTermResult
+  verifyPaymentStatus(reference: String!): MutationVerifyPaymentStatusResult
+}
+
+union MutationActivateAcademicYearResult = BaseAppError | BaseError | MutationActivateAcademicYearSuccess
+
+type MutationActivateAcademicYearSuccess {
+  data: AcademicYear!
+}
+
+union MutationActivateTermResult = BaseAppError | BaseError | MutationActivateTermSuccess
+
+type MutationActivateTermSuccess {
+  data: Term!
+}
+
+union MutationAssignClassResult = BaseAppError | BaseError | ForeignKeyError | MutationAssignClassSuccess
+
+type MutationAssignClassSuccess {
+  data: ClassSupervisor!
+}
+
+union MutationAssignSubjectResult = BaseAppError | BaseError | ForeignKeyError | MutationAssignSubjectSuccess
+
+type MutationAssignSubjectSuccess {
+  data: [TeacherSubjectAssignment!]!
+}
+
+union MutationAssignTimetablePeriodResult = BaseAppError | BaseError | MutationAssignTimetablePeriodSuccess | UniqueConstraintError
+
+type MutationAssignTimetablePeriodSuccess {
+  data: TimetableAssignment!
+}
+
+union MutationChangeGradeStatusResult = BaseAppError | BaseError | MutationChangeGradeStatusSuccess | UniqueConstraintError
+
+type MutationChangeGradeStatusSuccess {
+  data: Boolean!
+}
+
+union MutationChangeProgramStatusResult = BaseAppError | BaseError | MutationChangeProgramStatusSuccess | UniqueConstraintError
+
+type MutationChangeProgramStatusSuccess {
+  data: Boolean!
+}
+
+union MutationCreateAnnouncementResult = BaseAppError | BaseError | MutationCreateAnnouncementSuccess | UniqueConstraintError
+
+type MutationCreateAnnouncementSuccess {
+  data: Announcement!
+}
+
+union MutationCreateAssessmentResultResult = BaseAppError | BaseError | MutationCreateAssessmentResultSuccess | UniqueConstraintError
+
+type MutationCreateAssessmentResultSuccess {
+  data: AssessmentResult!
+}
+
+union MutationCreateAssignmentResult = BaseAppError | BaseError | MutationCreateAssignmentSuccess | UniqueConstraintError
+
+type MutationCreateAssignmentSuccess {
+  data: Assessment!
+}
+
+union MutationCreateClassResult = BaseAppError | BaseError | MutationCreateClassSuccess | UniqueConstraintError
+
+type MutationCreateClassSuccess {
+  data: Class!
+}
+
+union MutationCreateEventResult = BaseAppError | BaseError | MutationCreateEventSuccess | UniqueConstraintError
+
+type MutationCreateEventSuccess {
+  data: Event!
+}
+
+union MutationCreateExamResult = BaseAppError | BaseError | MutationCreateExamSuccess | UniqueConstraintError
+
+union MutationCreateExamResultResult = BaseAppError | BaseError | MutationCreateExamResultSuccess | UniqueConstraintError
+
+type MutationCreateExamResultSuccess {
+  data: ExamResult!
+}
+
+type MutationCreateExamSuccess {
+  data: Exam!
+}
+
+union MutationCreateGradeResult = BaseAppError | BaseError | MutationCreateGradeSuccess | UniqueConstraintError
+
+type MutationCreateGradeSuccess {
+  data: Grade!
+}
+
+union MutationCreateInvoiceResult = BaseAppError | BaseError | MutationCreateInvoiceSuccess | UniqueConstraintError
+
+type MutationCreateInvoiceSuccess {
+  data: Invoice!
+}
+
+union MutationCreateParentResult = BaseAppError | BaseError | ForeignKeyError | MutationCreateParentSuccess | UniqueConstraintError
+
+type MutationCreateParentSuccess {
+  data: Parent!
+}
+
+union MutationCreatePayrollProfileResult = BaseAppError | BaseError | MutationCreatePayrollProfileSuccess | UniqueConstraintError
+
+type MutationCreatePayrollProfileSuccess {
+  data: PayrollProfile!
+}
+
+union MutationCreateProgramResult = BaseAppError | BaseError | MutationCreateProgramSuccess
+
+type MutationCreateProgramSuccess {
+  data: Program!
+}
+
+union MutationCreateSchoolResult = BaseAppError | BaseError | MutationCreateSchoolSuccess | UniqueConstraintError
+
+type MutationCreateSchoolSuccess {
+  data: School!
+}
+
+union MutationCreateStaffResult = BaseAppError | BaseError | MutationCreateStaffSuccess | UniqueConstraintError
+
+type MutationCreateStaffSuccess {
+  data: Staff!
+}
+
+union MutationCreateStudentResult = BaseAppError | BaseError | ForeignKeyError | MutationCreateStudentSuccess | UniqueConstraintError
+
+type MutationCreateStudentSuccess {
+  data: Student!
+}
+
+union MutationCreateSubjectResult = BaseAppError | BaseError | MutationCreateSubjectSuccess | UniqueConstraintError
+
+type MutationCreateSubjectSuccess {
+  data: Subject!
+}
+
+union MutationCreateTimetablePeriodResult = BaseAppError | BaseError | MutationCreateTimetablePeriodSuccess | UniqueConstraintError
+
+type MutationCreateTimetablePeriodSuccess {
+  data: TimetablePeriod!
+}
+
+union MutationDeactivateStaffResult = BaseAppError | BaseError | MutationDeactivateStaffSuccess | UniqueConstraintError
+
+type MutationDeactivateStaffSuccess {
+  data: Boolean!
+}
+
+union MutationDeleteEntityResult = AuthenticationError | BaseAppError | BaseError | MutationDeleteEntitySuccess
+
+type MutationDeleteEntitySuccess {
+  data: DeleteEntityResponse!
+}
+
+union MutationGeneratePayrollReferenceResult = BaseAppError | BaseError | MutationGeneratePayrollReferenceSuccess
+
+type MutationGeneratePayrollReferenceSuccess {
+  data: PayrollTransaction!
+}
+
+union MutationInitiateFeePaymentResult = BaseAppError | BaseError | MutationInitiateFeePaymentSuccess
+
+type MutationInitiateFeePaymentSuccess {
+  data: FeePaymentResponse!
+}
+
+union MutationInitiatePayrollTransferResult = BaseAppError | BaseError | MutationInitiatePayrollTransferSuccess | NotFoundError
+
+type MutationInitiatePayrollTransferSuccess {
+  data: PayrollTransaction!
+}
+
+union MutationMarkClassAttendanceResult = BaseAppError | BaseError | MutationMarkClassAttendanceSuccess
+
+type MutationMarkClassAttendanceSuccess {
+  data: [ClassAttendance!]!
+}
+
+union MutationMarkStaffAttendanceResult = BaseAppError | BaseError | MutationMarkStaffAttendanceSuccess
+
+type MutationMarkStaffAttendanceSuccess {
+  data: StaffAttendance!
+}
+
+union MutationUpdateAnnouncementResult = BaseAppError | BaseError | MutationUpdateAnnouncementSuccess | NotFoundError | UniqueConstraintError
+
+type MutationUpdateAnnouncementSuccess {
+  data: Announcement!
+}
+
+union MutationUpdateAssessmentResultResult = BaseAppError | BaseError | MutationUpdateAssessmentResultSuccess | NotFoundError | UniqueConstraintError
+
+type MutationUpdateAssessmentResultSuccess {
+  data: AssessmentResult!
+}
+
+union MutationUpdateAssignmentResult = BaseAppError | BaseError | MutationUpdateAssignmentSuccess | NotFoundError | UniqueConstraintError
+
+type MutationUpdateAssignmentSuccess {
+  data: Assessment!
+}
+
+union MutationUpdateClassResult = BaseAppError | BaseError | ForeignKeyError | MutationUpdateClassSuccess | UniqueConstraintError
+
+type MutationUpdateClassSuccess {
+  data: Class!
+}
+
+union MutationUpdateEventResult = BaseAppError | BaseError | MutationUpdateEventSuccess | NotFoundError | UniqueConstraintError
+
+type MutationUpdateEventSuccess {
+  data: Event!
+}
+
+union MutationUpdateExamResult = BaseAppError | BaseError | MutationUpdateExamSuccess | NotFoundError | UniqueConstraintError
+
+union MutationUpdateExamResultResult = BaseAppError | BaseError | MutationUpdateExamResultSuccess | NotFoundError | UniqueConstraintError
+
+type MutationUpdateExamResultSuccess {
+  data: ExamResult!
+}
+
+type MutationUpdateExamSuccess {
+  data: Exam!
+}
+
+union MutationUpdateInvoiceResult = BaseAppError | BaseError | MutationUpdateInvoiceSuccess | NotFoundError | UniqueConstraintError
+
+type MutationUpdateInvoiceSuccess {
+  data: Invoice!
+}
+
+union MutationUpdateParentResult = AuthenticationError | BaseAppError | BaseError | ForeignKeyError | MutationUpdateParentSuccess | UniqueConstraintError
+
+type MutationUpdateParentSuccess {
+  data: Parent!
+}
+
+union MutationUpdatePayrollProfileResult = BaseAppError | BaseError | MutationUpdatePayrollProfileSuccess | NotFoundError | UniqueConstraintError
+
+type MutationUpdatePayrollProfileSuccess {
+  data: PayrollProfile!
+}
+
+union MutationUpdateStaffResult = BaseAppError | BaseError | MutationUpdateStaffSuccess | UniqueConstraintError
+
+type MutationUpdateStaffSuccess {
+  data: Staff!
+}
+
+union MutationUpdateStudentResult = BaseAppError | BaseError | ForeignKeyError | MutationUpdateStudentSuccess | UniqueConstraintError
+
+type MutationUpdateStudentSuccess {
+  data: Student!
+}
+
+union MutationUpdateSubjectResult = BaseAppError | BaseError | MutationUpdateSubjectSuccess | UniqueConstraintError
+
+type MutationUpdateSubjectSuccess {
+  data: Subject!
+}
+
+union MutationUpsertAcademicYearResult = BaseAppError | BaseError | MutationUpsertAcademicYearSuccess | UniqueConstraintError
+
+type MutationUpsertAcademicYearSuccess {
+  data: AcademicYear!
+}
+
+union MutationUpsertTermResult = BaseAppError | BaseError | MutationUpsertTermSuccess | UniqueConstraintError
+
+type MutationUpsertTermSuccess {
+  data: Term!
+}
+
+union MutationVerifyPaymentStatusResult = BaseAppError | BaseError | MutationVerifyPaymentStatusSuccess
+
+type MutationVerifyPaymentStatusSuccess {
+  data: InvoicePayment!
+}
+
+type NotFoundError implements AppError & Error {
+  code: String
+  message: String
+}
+
+type Parent {
+  address: String!
+  children: [ParentStudent!]!
+  childrenCount: Int!
+  clerkUserId: String
+  email: Email
+  id: ID!
+  name: String!
+  phone: String!
+  primaryId: String
+  surname: String!
+}
+
+input ParentFilter {
+  searchTerm: String
+}
+
+input ParentInput {
+  address: String!
+  clerkUserId: String
+  email: Email
+  id: String
+  name: String!
+  password: String
+  phone: String!
+  primaryId: String
+  surname: String!
+}
+
+type ParentStudent {
+  isPrimary: Boolean!
+  parent: Parent!
+  relation: String!
+  student: Student!
+}
+
+enum ParentStudentRelationship {
+  FATHER
+  GRANDPARENT
+  GUARDIAN
+  MOTHER
+  OTHER
+  SIBLING
+}
+
+type PasswordPwnedError implements AppError & Error {
+  code: String
+  message: String
+}
+
+type PasswordTooShortError implements AppError & Error {
+  code: String
+  message: String
+}
+
+enum PaymentStatus {
+  FAILED
+  PENDING
+  PROCESSING
+  REFUNDED
+  SUCCESS
+}
+
+type PayrollProfile {
+  accountName: String!
+  accountNumber: String!
+  bankCode: String!
+  bankName: String!
+  id: ID!
+  recipientCode: String!
+  salary: Int!
+  staff: Staff!
+  transactions(filter: PayrollTransactionsFilter!): [PayrollTransaction!]
+}
+
+input PayrollProfileInput {
+  accountNumber: String!
+  bankCode: String!
+  id: ID
+  salary: Int!
+  staffId: ID!
+}
+
+type PayrollTransaction {
+  amount: Int!
+  createdAt: DateTime!
+  id: ID!
+  month: Int!
+  paymentDate: DateTime
+  profile: PayrollProfile!
+  status: PaymentStatus!
+  year: Int!
+}
+
+input PayrollTransactionInput {
+  amount: Int!
+  month: Int!
+  profileId: ID!
+  reference: String
+  year: Int!
+}
+
+input PayrollTransactionsFilter {
+  academicYearId: ID
+  month: Int
+  paymentDate: DateTime
+  year: Int
+}
+
+type Program {
+  grades: [Grade!]!
+  id: ID!
+  isActive: Boolean!
+  name: ProgramName!
+}
+
+input ProgramInput {
+  grades: [String!]!
+  name: String!
+}
+
+enum ProgramName {
+  CRECHE
+  NURSERY
+  PRIMARY
+  SECONDARY
+}
+
+type Query {
+  academicYear(id: ID!): AcademicYear
+  academicYears(take: Int): [AcademicYear!]
+  announcements(filter: AnnouncementFilter!, take: Int): [Announcement!]
+  assessmentResults(filter: ResultFilter!, termId: ID): [AssessmentResult!]
+  assignment(id: ID!): Assessment
+  assignments(filter: AssignmentFilter): [Assessment!]
+  class(id: ID!): Class
+  classAttendances(filter: AttendanceFilter!): [ClassAttendance!]
+  classes(filter: ClassFilter): [Class!]
+  events(filter: EventFilter!): [Event!]
+  exam(id: ID!): Exam
+  examResults(filter: ResultFilter!, termId: ID): [ExamResult!]
+  exams(filter: ExamFilter): [Exam!]
+  grade(id: ID!): Grade
+  grades(filter: GradeFilter): [Grade!]
+  invoice(id: ID!): Invoice
+  invoicePayments(filter: InvoicePaymentFilter!): [InvoicePayment!]
+  invoices(filter: InvoiceFilter): [Invoice!]
+  parent(clerkUserId: ID, id: ID): Parent
+  parents(filter: ParentFilter): [Parent!]
+  payrollProfile(active: Boolean!): [PayrollProfile!]
+  payrollTransactions(filter: PayrollTransactionsFilter!): [PayrollTransaction!]
+  programs: [Program!]
+  resolveRecipientAccount(accountNumber: String!, bankCode: String!): QueryResolveRecipientAccountResult
+  results(filter: ResultFilter!): [Result!]
+  school(id: ID!): School
+  staff(clerkUserId: String, id: ID): Staff
+  staffAttendances(filter: AttendanceFilter!): [StaffAttendance!]
+  staffs(filter: StaffFilter): [Staff!]
+  standardBanks: [StandardBanks!]
+  student(id: ID!): Student
+  students(filter: StudentFilter): [Student!]
+  subjects(filter: SubjectFilter): [Subject!]
+  term(id: ID!): Term
+  terms(take: Int): [Term!]
+  timetable(filter: TimetableFilter!): [TimetablePeriod!]
+}
+
+union QueryResolveRecipientAccountResult = BaseAppError | BaseError | QueryResolveRecipientAccountSuccess
+
+type QueryResolveRecipientAccountSuccess {
+  data: String!
+}
+
+type RateLimitError implements AppError & Error {
+  code: String
+  message: String
+}
+
+union Result = AssessmentResult | ExamResult
+
+input ResultFilter {
+  classId: ID
+  studentId: ID
+  termId: ID
+  testId: ID
+}
+
+input ResultInput {
+  id: ID
+  score: Int!
+  studentId: ID!
+  testId: ID!
+}
+
+type School {
+  activeStaffCount: Int!
+  activeStudentsCount: Int!
+  classes: [Class!]
+  currentTerm: [Term!]
+  email: String!
+  id: ID!
+  logo: String
+  motto: String
+  name: String!
+  phone: String!
+  programs: [Program!]
+  recentAnnouncementsCount: Int!
+  slug: String!
+  studentSexDistribution: [StudentSexCount!]!
+}
+
+input SchoolGradeInput {
+  gradeName: String!
+  programName: ProgramName!
+}
+
+input SchoolInput {
+  address: String!
+  email: String!
+  grades: [SchoolGradeInput!]!
+  logo: String
+  manager: SchoolManagerInput!
+  motto: String
+  name: String!
+  phone: String!
+  programs: [ProgramName!]!
+  slug: String!
+}
+
+input SchoolManagerInput {
+  name: String!
+  phone: String!
+  surname: String!
+}
+
+type ServerBusyError implements AppError & Error {
+  code: String
+  message: String
+}
+
+enum Sex {
+  FEMALE
+  MALE
+}
+
+type Staff {
+  accessLevel: AccessLevel!
+  address: String!
+  assignedClass: [ClassSupervisor!]
+  attendances(filter: AttendanceFilter!): [StaffAttendance!]!
+  birthday: DateTime!
+  clerkUserId: String
+  contractType: ContractType!
+  email: Email
+  employeeId: String!
+  id: ID!
+  img: String
+  isActive: Boolean!
+  name: String!
+  payrollProfile: PayrollProfile
+  phone: String!
+  role: String!
+  sex: Sex!
+  subjects: [TeacherSubjectAssignment!]
+  surname: String!
+}
+
+type StaffAttendance {
+  clockInTime: String
+  date: DateTime!
+  id: ID!
+  note: String
+  staffId: ID!
+}
+
+input StaffAttendanceInput {
+  clockInTime: String
+  date: DateTime!
+  note: String
+  staffId: ID!
+}
+
+input StaffFilter {
+  accessLevel: AccessLevel
+  classId: String
+  isActive: Boolean!
+  searchTerm: String
+}
+
+input StaffInput {
+  accessLevel: AccessLevel!
+  address: String!
+  birthday: DateTime!
+  clerkUserId: String
+  contractType: ContractType!
+  email: Email
+  employeeId: String!
+  hireDate: DateTime
+  id: String
+  img: String
+  isActive: Boolean! = true
+  name: String!
+  oldImg: String
+  password: String
+  phone: String!
+  role: String!
+  sex: Sex!
+  surname: String!
+}
+
+type StandardBanks {
+  code: String!
+  id: ID!
+  name: String!
+}
+
+type Student {
+  address: String!
+  admissionDate: DateTime
+  attendances(filter: AttendanceFilter!): [ClassAttendance!]
+  birthday: DateTime!
+  class: Class!
+  classId: String!
+  guardians: [ParentStudent!]
+  id: ID!
+  img: String
+  name: String!
+  registrationNumber: String!
+  sex: Sex!
+  status: StudentStatus!
+  surname: String!
+}
+
+input StudentFilter {
+  classId: ID
+  gradeId: ID
+  grades: [ID!]
+  parentId: ID
+  searchTerm: String
+  skip: Int
+  status: [StudentStatus!]
+  take: Int
+}
+
+input StudentInput {
+  address: String!
+  birthday: DateTime!
+  classId: String!
+  id: ID
+  img: String
+  medicalCondition: String
+  name: String!
+  oldImg: String
+  primaryGuardian: GuardianInput!
+  registrationNumber: String!
+  secondaryGuardian: GuardianInput
+  sex: Sex!
+  surname: String!
+}
+
+type StudentSexCount {
+  _count: Int
+  sex: Sex
+}
+
+enum StudentStatus {
+  ACTIVE
+  EXPELLED
+  GRADUATED
+  SUSPENDED
+  TRANSFERRED
+  WITHDRAWN
+}
+
+type Subject {
+  id: ID!
+  name: String!
+  teachers: [TeacherSubjectAssignment!]!
+}
+
+input SubjectFilter {
+  teacherId: ID
+}
+
+input SubjectInput {
+  id: ID
+  name: String!
+  teachers: [ID!]
+}
+
+enum Table {
+  ACADEMIC_YEAR
+  ANNOUNCEMENT
+  ASSESSMENT_RESULT
+  ASSIGNMENT
+  ATTENDANCE
+  CLASS
+  CLASS_ASSIGNMENT
+  EVENT
+  EXAM
+  EXAM_RESULT
+  GRADE
+  INVOICE
+  PARENT
+  PAYROLL_PROFILE
+  PAYROLL_TRANSACTION
+  PROGRAM
+  STAFF
+  STUDENT
+  SUBJECT
+  TERM
+  TIMETABLE
+  TRANSACTION
+}
+
+type TeacherSubjectAssignment {
+  id: ID!
+  subject: Subject!
+  teacher: Staff!
+}
+
+type Term {
+  academicYear: AcademicYear!
+  endDate: DateTime
+  id: ID!
+  isCurrent: Boolean!
+  session: Int!
+  startDate: DateTime!
+}
+
+input TermInput {
+  academicYearId: ID!
+  endDate: DateTime
+  id: ID
+  session: String!
+  startDate: DateTime!
+}
+
+type TimetableAssignment {
+  class: Class!
+  dayOfWeek: Int!
+  id: ID!
+  period: TimetablePeriod!
+  subject: Subject
+  teacher: Staff
+}
+
+input TimetableAssignmentInput {
+  classId: ID!
+  dayOfWeek: Int!
+  periodId: ID!
+  subjectId: ID
+  teacherId: ID
+}
+
+input TimetableFilter {
+  classId: ID
+}
+
+type TimetablePeriod {
+  assignments: [TimetableAssignment!]!
+  endMinute: Int!
+  id: ID!
+  startMinute: Int!
+}
+
+input TimetablePeriodInput {
+  endMinute: Int!
+  id: ID
+  startMinute: Int!
+}
+
+type UniqueConstraintError implements AppError & Error {
+  code: String
+  message: String
+}

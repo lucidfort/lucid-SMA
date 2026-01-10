@@ -1,0 +1,50 @@
+query GetAcademicYears($take: Int, $includeTerm: Boolean!) {
+  academicYears(take: $take) {
+    id
+    year
+    isCurrent
+    startDate
+    endDate
+    terms @include(if: $includeTerm) {
+      id
+      session
+      isCurrent
+      startDate
+      endDate
+    }
+  }
+}
+
+mutation MutateAcademicYear($input: AcademicYearInput!) {
+  upsertAcademicYear(input: $input) {
+    __typename
+
+    ... on MutationUpsertAcademicYearSuccess {
+      data {
+        id
+      }
+    }
+
+    ... on AppError {
+      __typename
+      message
+    }
+  }
+}
+
+mutation ActivateAcademicYear($academicYearId: ID!) {
+  activateAcademicYear(academicYearId: $academicYearId) {
+    __typename
+
+    ... on AppError {
+      __typename
+      message
+    }
+
+    ... on MutationActivateAcademicYearSuccess {
+      data {
+        id
+      }
+    }
+  }
+}

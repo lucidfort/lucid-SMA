@@ -1,0 +1,42 @@
+query GetGrades($filter: GradeFilter) {
+  grades(filter: $filter) {
+    id
+    name
+  }
+}
+
+mutation CreateGrade($input: GradeInput!) {
+  createGrade(input: $input) {
+    __typename
+
+    ... on MutationCreateGradeSuccess {
+      data {
+        id
+      }
+    }
+
+    ... on AppError {
+      __typename
+      message
+    }
+
+    ... on UniqueConstraintError {
+      __typename
+      message
+    }
+  }
+}
+
+mutation UpdateGradeStatus($id: ID!, $isActive: Boolean!) {
+  changeGradeStatus(id: $id, activate: $isActive) {
+    __typename
+
+    ... on MutationChangeGradeStatusSuccess {
+      data
+    }
+    ... on AppError {
+      __typename
+      message
+    }
+  }
+}

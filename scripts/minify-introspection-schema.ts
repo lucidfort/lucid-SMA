@@ -8,4 +8,4 @@ fs.writeFileSync(
   "./introspectedSchema.json",
   JSON.stringify(minified, null, 0),
 );
-console.log("✅ Minified introspection written to introspection.min.json");
+console.log("✅ Minified introspection");

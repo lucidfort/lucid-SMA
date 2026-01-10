@@ -1,0 +1,64 @@
+query GetTimetable($filter: TimetableFilter!) {
+  timetable(filter: $filter) {
+    id
+    startMinute
+    endMinute
+    assignments {
+      id
+      dayOfWeek
+      teacher {
+        id
+        name
+        surname
+      }
+      subject {
+        id
+        name
+      }
+    }
+  }
+}
+
+mutation CreateTimetablePeriod($input: TimetablePeriodInput!) {
+  createTimetablePeriod(input: $input) {
+    __typename
+
+    ... on MutationCreateTimetablePeriodSuccess {
+      data {
+        id
+      }
+    }
+
+    ... on AppError {
+      __typename
+      message
+    }
+
+    ... on UniqueConstraintError {
+      __typename
+      message
+    }
+  }
+}
+
+mutation AssignTimetablePeriod($input: TimetableAssignmentInput!) {
+  assignTimetablePeriod(input: $input) {
+    __typename
+
+    ... on MutationAssignTimetablePeriodSuccess {
+      data {
+        id
+      }
+    }
+
+    ... on AppError {
+      __typename
+      message
+    }
+
+    ... on UniqueConstraintError {
+      __typename
+      message
+    }
+  }
+}

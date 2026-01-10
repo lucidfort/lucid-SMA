@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import "@tanstack/react-table";
-import { RoleAccessLevel } from "@/types";
+import { RoleAccessLevel } from "@/types/index";
 
 declare module "@tanstack/react-table" {
   interface ColumnMeta<_TData, TValue> {

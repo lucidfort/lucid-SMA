@@ -1,11 +1,12 @@
 import { Toaster } from "@/components/ui/sonner";
-import { UrqlProvider } from "@/lib/urql/provider";
+import { UrqlProvider } from "@/lib/urql/urql.provider";
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import localFonts from "next/font/local";
 import { ReactNode } from "react";
+import { ThemeProvider } from "@/components/theme-provider";
+
 import "./globals.css";
-import { UserProvider } from "@/provider/user.provider";
 
 const fonts = localFonts({
   src: [
@@ -26,8 +27,8 @@ const fonts = localFonts({
       weight: "200",
     },
   ],
-  variable: "--font-geist-mono"
-})
+  variable: "--font-geist-mono",
+});
 
 export const metadata: Metadata = {
   title: "School Management Application",
@@ -43,13 +44,21 @@ export default async function RootLayout({
   return (
     <>
       <ClerkProvider>
-        <html lang="en">
-          <body className={`${fonts.variable} antialiased`}>
-            <UrqlProvider>
-              {children}
-              <Toaster />
-              <UserProvider />
-            </UrqlProvider>
+        <html lang="en" suppressHydrationWarning>
+          <body
+            className={`${fonts.variable} w-full overflow-x-hidden antialiased`}
+          >
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <UrqlProvider>
+                {children}
+                <Toaster />
+              </UrqlProvider>
+            </ThemeProvider>
           </body>
         </html>
       </ClerkProvider>

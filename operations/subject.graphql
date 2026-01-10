@@ -1,0 +1,50 @@
+query GetSubjects($filter: SubjectFilter) {
+  subjects(filter: $filter) {
+    id
+    name
+  }
+}
+
+mutation CreateSubject($input: SubjectInput!) {
+  createSubject(input: $input) {
+    __typename
+
+    ... on MutationCreateSubjectSuccess {
+      data {
+        id
+      }
+    }
+
+    ... on AppError {
+      __typename
+      message
+    }
+
+    ... on UniqueConstraintError {
+      __typename
+      message
+    }
+  }
+}
+
+mutation UpdateSubject($input: SubjectInput!) {
+  updateSubject(input: $input) {
+    __typename
+
+    ... on MutationUpdateSubjectSuccess {
+      data {
+        id
+      }
+    }
+
+    ... on AppError {
+      __typename
+      message
+    }
+
+    ... on UniqueConstraintError {
+      __typename
+      message
+    }
+  }
+}

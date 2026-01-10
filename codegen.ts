@@ -1,11 +1,11 @@
 import { CodegenConfig } from "@graphql-codegen/cli";
 
 const config: CodegenConfig = {
-  schema: "./schema.graphql",
+  schema: "./server/graphql/schema.graphql",
   ignoreNoDocuments: true,
   generates: {
     "./lib/generated/graphql/client.ts": {
-      documents: ["./operations/client/*.graphql"],
+      documents: ["./operations/*.graphql"],
       plugins: ["typescript", "typescript-operations", "typescript-urql"],
       config: {
         withHooks: true,
@@ -15,7 +15,6 @@ const config: CodegenConfig = {
       documents: [
         "./app/**/*.tsx",
         "./components/**/*.tsx",
-        "./operations/server/*.ts",
       ],
       plugins: ["typescript", "typescript-operations"],
     },

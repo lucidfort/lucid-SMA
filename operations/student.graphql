@@ -1,0 +1,51 @@
+query GetStudents($filter: StudentFilter) {
+  students(filter: $filter) {
+    id
+    name
+    surname
+  }
+}
+
+mutation CreateStudent($input: StudentInput!) {
+  createStudent(input: $input) {
+    __typename
+
+    ... on MutationCreateStudentSuccess {
+      data {
+        id
+      }
+    }
+
+    ... on AppError {
+      __typename
+      message
+    }
+
+    ... on UniqueConstraintError {
+      __typename
+      message
+    }
+  }
+}
+
+mutation UpdateStudent($input: StudentInput!) {
+  updateStudent(input: $input) {
+    __typename
+
+    ... on MutationUpdateStudentSuccess {
+      data {
+        id
+      }
+    }
+
+    ... on AppError {
+      __typename
+      message
+    }
+
+    ... on UniqueConstraintError {
+      __typename
+      message
+    }
+  }
+}

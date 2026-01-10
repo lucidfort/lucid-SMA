@@ -1,17 +1,17 @@
-import { staffColumn } from "@/components/tables/staffColumn";
-import { getCurrentUser } from "@/lib/server/utils";
+import { staffColumn } from "@/components/table/column/staffColumn";
+import { getCurrentUser } from "@/lib/utils/server.utils";
 import { SearchParams } from "@/types";
-import { DataTable } from "@/components/tables/data-table";
+import { DataTable } from "@/components/table/column/data-table";
 import { gql } from "@urql/core";
 import {
   AccessLevel,
   GetStaffsQuery,
   GetStaffsQueryVariables,
 } from "@/lib/generated/graphql/server";
-import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
+import { createUrqlServerClient } from "@/lib/urql/server.client";
 
 const GET_STAFFS = gql(`
-  query GetStaffs($filter: StaffFilterInput) {
+  query GetStaffs($filter: StaffFilter) {
     staffs(filter: $filter) {
       id
       name
@@ -21,12 +21,14 @@ const GET_STAFFS = gql(`
       email
       address
       img
-      class {
-        id
-        name
-        grade {
+      assignedClass {
+        class {
           id
           name
+          grade {
+            id 
+            name
+          }
         }
       }
     }
@@ -35,21 +37,21 @@ const GET_STAFFS = gql(`
 
 const StaffListPage = async ({ searchParams }: SearchParams) => {
   const { role, classId } = await searchParams;
-
-  const { accessLevel } = await getCurrentUser();
-
   const { client } = await createUrqlServerClient();
-  const { data } = await client
-    .query<GetStaffsQuery, GetStaffsQueryVariables>(GET_STAFFS, {
+  const { data } = await client.query<GetStaffsQuery, GetStaffsQueryVariables>(
+    GET_STAFFS,
+    {
       filter: {
         isActive: true,
         ...(role && { accessLevel: role.toUpperCase() as AccessLevel }),
         ...(classId && { classId }),
       },
-    })
-    .toPromise();
+    },
+  );
 
-  const title = role ? `${role} Staffs` : "Staffs";
+  const { accessLevel } = await getCurrentUser();
+
+  const title = role ? `${role} Staffs` : "All Staffs";
 
   return (
     <div className="m-4 mt-0 flex-1 rounded-md bg-white p-4">

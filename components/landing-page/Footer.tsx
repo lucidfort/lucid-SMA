@@ -3,17 +3,17 @@ import Link from "next/link";
 
 const Footer = () => {
   return (
-    <footer className="border-t bg-background">
+    <footer className="bg-background border-t">
       <div className="container mx-auto px-4 py-12">
         <div className="grid gap-8 md:grid-cols-4">
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                <Code2 className="h-5 w-5 text-primary-foreground" />
+              <div className="bg-primary flex h-8 w-8 items-center justify-center rounded-lg">
+                <Code2 className="text-primary-foreground h-5 w-5" />
               </div>
-              <span className="text-lg font-bold">School Manager</span>
+              <span className="text-lg font-bold">Eduvia</span>
             </div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Modern school management for the next generation
             </p>
           </div>
@@ -133,8 +133,8 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-12 border-t pt-8 text-center text-sm text-muted-foreground">
-          <p>© 2025 School Manager. All rights reserved.</p>
+        <div className="text-muted-foreground mt-12 border-t pt-8 text-center text-sm">
+          <p>© 2025 Eduvia. All rights reserved.</p>
         </div>
       </div>
     </footer>

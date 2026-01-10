@@ -1,30 +1,30 @@
-import Announcements from "@/components/Announcements";
-import AttendanceChartContainer from "@/components/AttendanceChartContainer";
-import EventList from "@/components/EventList";
-import PerformanceChartContainer from "@/components/PerformanceChartContainer";
-import { InfoCard, ParentInfoCard } from "@/components/shareable/Card";
-import ShortcutLinks from "@/components/shareable/ShortcutLinks";
 import {
   GetStudentQuery,
   GetStudentQueryVariables,
-  Parent,
 } from "@/lib/generated/graphql/server";
-import { getCurrentUser } from "@/lib/server/utils";
-import { createUrqlServerClient } from "@/lib/urql/clients/server.client";
-import { calculateAge } from "@/lib/utils";
+import { getCurrentUser } from "@/lib/utils/server.utils";
+import { createUrqlServerClient } from "@/lib/urql/server.client";
 import { SearchParams } from "@/types";
-import { format, subDays } from "date-fns";
-import { Activity, Cake, GraduationCap, MapPin } from "lucide-react";
+import { subDays } from "date-fns";
+import { Activity, GraduationCap } from "lucide-react";
 import { gql } from "urql/core";
+import {
+  AttendanceChartContainer,
+  GuardianInfoCard,
+  PerformanceChartContainer,
+  ShortcutLinks,
+  UserInfoCard,
+} from "@/components/dashboard";
+import { notFound } from "next/navigation";
 
 const GET_STUDENT = gql(`
-    query GetStudent($id: ID!, $attendanceFilter: AttendanceFilter!) {
+    query GetStudent($id: ID!, $attendanceFilter: AttendanceFilter!, $resultFilter: ResultFilter!) {
       student(id: $id) {
         id 
         name 
         surname 
         registrationNumber 
-        activeState 
+        status 
         sex 
         address 
         birthday
@@ -46,14 +46,34 @@ const GET_STUDENT = gql(`
           }
         }
         attendances(filter: $attendanceFilter) {
-          date present
+          date 
+          status
         }
     }
+
+     results(filter: $resultFilter) {
+       ... on AssessmentResult {
+         id
+         score
+         assignment {
+           maxScore
+         }
+       }
+       
+       ...on ExamResult {
+         id
+         score
+         exam {
+           maxScore
+         }
+       }
+     }
   }
 `);
 
-const SingleStudentPage = async ({ params }: SearchParams) => {
+const StudentDetailsPage = async ({ params }: SearchParams) => {
   const { id } = await params;
+
   const { accessLevel } = await getCurrentUser();
 
   const today = new Date();
@@ -70,88 +90,82 @@ const SingleStudentPage = async ({ params }: SearchParams) => {
     attendanceFilter: {
       startDate: lastMonday,
     },
+    resultFilter: {
+      studentId: id,
+    },
   });
 
   const student = data?.student;
-  if (!student) return (
-    <p>Loading...</p>
-  );
+  if (!student) notFound();
 
   const attendances = student?.attendances || [];
-  const presentDays = attendances.filter((day) => day.present).length;
+  const presentDays = attendances.filter(
+    (day) => day.status === "PRESENT",
+  ).length;
   const attendanceRate = Math.floor((presentDays / 5) * 100);
 
-  const cards = [
-    {
-      label: "Birthday",
-      value: `${format(new Date(student.birthday), "MMM d, yyy")} (${calculateAge(student.birthday)} years)`,
-      icon: Cake,
-    },
-    {
-      label: "Class",
-      value: `${student.class.grade.name} ${student.class.name}`,
-      icon: GraduationCap,
-    },
-    {
-      label: "Attendance",
-      value: `${attendanceRate || "-"}%`,
-      icon: Activity,
-    },
-    {
-      label: "Address",
-      value: student.address,
-      icon: MapPin,
-    },
-  ];
-
   return (
-    <div className="flex flex-1 flex-col gap-4 xl:flex-row rounded-t-x-2xl">
+    <div className="rounded-t-x-2xl flex flex-1 flex-col gap-4 xl:flex-row">
       {/* LEFT */}
       <div className="flex w-full flex-col gap-4 xl:w-2/3">
-        <InfoCard
+        <UserInfoCard
           table="student"
-          data={student}
-          cards={cards}
+          data={{ ...student, attendanceRate }}
+          cards={[
+            {
+              label: "Class",
+              value: `${student.class.grade.name} ${student.class.name}`,
+              icon: GraduationCap,
+            },
+            {
+              label: "Attendance",
+              value: `${attendanceRate || "-"}%`,
+              icon: Activity,
+            },
+          ]}
           accessLevel={accessLevel!}
         />
 
         <div className="flex flex-col justify-between gap-4 lg:flex-row">
-          {student.guardians &&
-            student.guardians.length > 0 &&
-            student.guardians.map((guardian) => (
-              <ParentInfoCard
-                key={guardian.parent.id}
-                parent={guardian.parent as Parent}
-                relation={guardian.relation}
-              />
-            ))}
+          <GuardianInfoCard guardians={student?.guardians || []} />
         </div>
 
         <div className="h-[450px] w-full">
-          <AttendanceChartContainer data={attendances} />
+          <AttendanceChartContainer range="WEEKLY" data={attendances} />
         </div>
       </div>
 
       {/* RIGHT */}
       <div className="flex w-full flex-col gap-4 xl:w-1/3">
-        <div className="rounded-md bg-white p-4">
-          <h2 className="text-lg font-semibold">Shortcuts</h2>
-          <ShortcutLinks links={[
-            { href: `/list/staffs?classId=${student.class.id}`, label: "Student's Teachers" },
-            { href: `/list/exams?classId=${student.class.id}`, label: "Student's Exams", className: "bg-pink-50" },
-            { href: `/list/assignments?classId=${student.class.id}`, label: "Student's Assignments", className: "bg-lamaSkyLight" },
-            { href: `/list/results?studentId=${student.id}`, label: "Student's Results", className: "bg-lamaYellowLight" },
-            { href: `/list/fees/pay?studentId=${student.id}`, label: "Pay Fees" },
-          ]} />
-        </div>
+        <ShortcutLinks
+          links={[
+            {
+              href: `/list/staffs?classId=${student.class.id}`,
+              label: "Student's Teachers",
+            },
+            {
+              href: `/list/exams?classId=${student.class.id}`,
+              label: "Student's Exams",
+            },
+            {
+              href: `/list/assignments?classId=${student.class.id}`,
+              label: "Student's Assignments",
+            },
+            {
+              href: `/list/results?studentId=${student.id}`,
+              label: "Student's Results",
+            },
+            {
+              href: `/finance/invoice/pay?studentId=${student.id}`,
+              label: "Pay Fees",
+            },
+          ]}
+        />
 
-        <PerformanceChartContainer studentId={id} />
-
-        <EventList gradeId={student.class.grade.id} />
-        <Announcements gradeId={student.class.grade.id} />
+        <PerformanceChartContainer results={data?.results || []} />
       </div>
     </div>
   );
 };
 
-export default SingleStudentPage;
+export default StudentDetailsPage;

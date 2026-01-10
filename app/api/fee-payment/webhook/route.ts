@@ -1,4 +1,4 @@
-import { updatePayrollTransfer } from "@/lib/actions/payroll";
+import { updatePayrollTransfer } from "@/server/actions/payroll";
 import crypto from "crypto";
 import { type NextRequest, NextResponse } from "next/server";
 

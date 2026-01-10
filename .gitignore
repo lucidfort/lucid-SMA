@@ -47,3 +47,6 @@ next-env.d.ts
 introspectedSchema.json
 /lib/generated
 /prisma/migrations 
+
+# clerk configuration (can include secrets)
+/.clerk/

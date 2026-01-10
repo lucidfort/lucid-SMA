@@ -1,0 +1,38 @@
+query GetPrograms {
+  programs {
+    id
+    name
+  }
+}
+
+mutation CreateProgram($input: ProgramInput!) {
+  createProgram(input: $input) {
+    __typename
+
+    ... on MutationCreateProgramSuccess {
+      data {
+        id
+      }
+    }
+
+    ... on AppError {
+      __typename
+      message
+      code
+    }
+  }
+}
+
+mutation UpdateProgramStatus($id: ID!, $isActive: Boolean!) {
+  changeProgramStatus(id: $id, activate: $isActive) {
+    __typename
+
+    ... on MutationChangeProgramStatusSuccess {
+      data
+    }
+    ... on AppError {
+      __typename
+      message
+    }
+  }
+}
