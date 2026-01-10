@@ -2,11 +2,6 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { defaultHome, routeAccessMap } from "./lib/settings";
 import { RoleAccessLevel } from "./types";
-//
-// const matchers = Object.keys(routeAccessMap).map((route) => ({
-//   matcher: createRouteMatcher([route]),
-//   allowedRoles: routeAccessMap[route],
-// }));
 
 const matchers = Object.entries(routeAccessMap)
   .map(([route, allowedRoles]) => ({
@@ -63,12 +58,7 @@ export default clerkMiddleware(async (auth, req) => {
 
 export const config = {
   matcher: [
-    "/auth/:path*",
-    "/admin",
-    "/parent",
-    "/teacher",
-    "/list/:path*",
-    "/finance/:path*",
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
     // Always run for API routes
     "/api(.*)",
   ],
